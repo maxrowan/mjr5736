@@ -1,2 +1,3 @@
 # MVP
-minimum viable product
+
+This is the minimum viable product
