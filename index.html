@@ -1,0 +1,66 @@
+<!-- my file | displays map -->
+
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Test App</title>
+        <style>
+            #map {
+                height: 100%;
+            }
+            html, body {
+                height: 100%;
+                margin: 0;
+                padding: 0;
+            }
+        </style>
+    </head>   
+    <body>
+        <script src="/socket.io/socket.io.js"></script>
+        <div id="map"></div>
+        <script>
+            var map;
+            var markers = [];
+            
+            function initMap() {
+                var behrend = {lat: 42.119308, lng: -79.983714};
+                map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 4,
+                    center: behrend
+                });
+                //var marker = new google.maps.Marker({
+                //    position: behrend,
+                //    map: map
+                //});
+            }
+            
+            var socket = io();//'http://localhost:3000');
+            
+            // add point to array and show it on map when it's received from the server
+            socket.on('tweetEvent', function(geoPoint) {
+                console.log('tweet');
+                var marker = new google.maps.Marker({
+                    position: {lat: geoPoint.lat, lng: geoPoint.lng},
+                    map: map
+                });
+                markers.push(marker);
+                google.maps.event.trigger(map, 'resize');
+                
+                 var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+      
+            });
+            
+            // add listeners to re-draw clusters when map is moved or resized
+            map.addListener('center_changed', function() {
+                var markerCluster = new MarkerClusterer(map, markers,{imagePath: 'https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/m'});
+            });
+
+
+        </script>
+        <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+        </script>
+        <script async defer
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&callback=initMap">
+        </script>
+    </body>
+</html>
