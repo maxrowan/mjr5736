@@ -24,12 +24,9 @@ Twitter.stream('statuses/filter', {track: 'weather, rain, snow, sleet, hail, rai
         // if tweet has coordinates
         if (tweet.coordinates) {
             
-            // print out the text of the tweet that came in
-            console.log(tweet.text);
-            
             if (tweet.coordinates !== null){
-                var geo_lat = tweet.coordinates.coordinates[0];
-                var geo_lng = tweet.coordinates.coordinates[1];
+                var geo_lng = tweet.coordinates.coordinates[0];
+                var geo_lat = tweet.coordinates.coordinates[1];
             }
             else if(tweet.place){
                 
@@ -43,11 +40,12 @@ Twitter.stream('statuses/filter', {track: 'weather, rain, snow, sleet, hail, rai
                         centerLat += coord[0];
                         centerLng += coord[1];
                     }
-                    geo_lat = centerLat / coords.length;
-                    geo_lng = centerLng / coords.length;
+                    geo_lng = centerLat / coords.length;
+                    geo_lat = centerLng / coords.length;
                 }
             }
-                            
+            // print out the text of the tweet that came in
+            console.log(tweet.text);
                 
             var geoPoint = {lat: geo_lat, lng: geo_lng};
             console.log(geo_lat + ' ' + geo_lng);
