@@ -12,7 +12,7 @@ To Run:
 	> npm install 
 	
 3. To launch, run the command:
-	> node server.js
+	> npm start
 	
 4. For additional information about the markers being plotted, open a console window in the browser. The text and location of incoming tweets are displayed in the console.
 
