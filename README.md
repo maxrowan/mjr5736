@@ -16,4 +16,4 @@ To Run:
 	
 4. For additional information about the markers being plotted, open a console window in the browser. The text and location of incoming tweets are displayed in the console.
 
-Opening the console: https://kb.mailster.co/how-can-i-open-the-browsers-console/
+	Opening the console: https://kb.mailster.co/how-can-i-open-the-browsers-console/
