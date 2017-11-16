@@ -21,6 +21,7 @@
         <script>
             // declare map and heatmap
             var map, heatmap;
+            var tweetCount = 0;
             
             // initialize map
             function initMap() {
@@ -30,7 +31,7 @@
                     center: behrend,
                 });
                 heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: markers,
+                    data: [],
                     map: map,
                     radius: 16
                 });
@@ -39,17 +40,18 @@
             var socket = io();//'http://localhost:3000');
             
             // add point to array and show it on map when it's received from the server
-            socket.on('tweetEvent', function(geoPoint) {
-                console.log('tweet');
+            socket.on('tweetEvent', function(geoPoint, text) {
+                tweetCount++;
+                
+                console.log('tweet #' + tweetCount + ': ' + text
+                           + '\n\n' + geoPoint.lat + ' ' + geoPoint.lng);
+                
                 var marker = new google.maps.LatLng(geoPoint.lat, geoPoint.lng);
                 
                 // add marker to heatmap
                 heatmap.getData().push(marker);
       
             });
-
-
-
         </script>
         <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
         </script>

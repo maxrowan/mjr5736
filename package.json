@@ -1,25 +1,29 @@
 {
-  "name": "test",
+  "name": "test2",
   "version": "1.0.0",
-  "description": "test application for tweet mappings",
+  "description": "Application Test II",
   "main": "server.js",
-  "dependencies": {
-    "firebase": "^4.6.2"
-  },
-  "devDependencies": {},
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "node server.js",
     "start": "node server.js"
   },
-  "dependenxies": {
-      "express": "*",
-      "twitter": "*",
-      "socket.io": "*"
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mjr5736/MVP.git"
   },
   "keywords": [
-    "test",
-    "weather"
+    "weather",
+    "test"
   ],
   "author": "Max Rowan",
-  "license": "ISC"
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mjr5736/MVP/issues"
+  },
+  "homepage": "https://github.com/mjr5736/MVP#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "socket.io": "^2.0.4",
+    "twitter": "^1.7.1"
+  }
 }
