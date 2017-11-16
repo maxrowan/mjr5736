@@ -1,6 +1,7 @@
 # MVP
 
 Prerequisites:
+
 Ensure Node is installed.
 	To install, go to https://nodejs.org/en/download/ and click on the download link.
 
