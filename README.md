@@ -14,7 +14,7 @@ To Run:
 3. To launch, run the command:
 	> npm start
 
-4. Open your browser of choice and navigate to http://localhost:3000 to view the map and tweet locations being plotted
+4. Open your browser of choice and navigate to http://localhost:3000 to view the map and tweet locations being plotted.
 
 5. For additional information about the markers being plotted, open a console window in the browser. The text and location of incoming tweets are displayed in the console.
 
