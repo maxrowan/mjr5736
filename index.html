@@ -14,49 +14,53 @@
                 padding: 0;
             }
         </style>
-    </head>   
+    </head>
     <body>
+
         <script src="/socket.io/socket.io.js"></script>
         <div id="map"></div>
+
         <script>
             // declare map and heatmap
-            var map, heatmap;
+            var map;
+            var heatmap;
+            var liveTweets;
             var tweetCount = 0;
-            
+
             // initialize map
             function initMap() {
+                liveTweets = new google.maps.MVCArray();
                 var behrend = {lat: 42.119308, lng: -79.983714};
                 map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 4,
-                    center: behrend,
+                    center: behrend
                 });
+
                 heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: [],
+                    data: liveTweets,
                     map: map,
                     radius: 16
                 });
             }
-            
+
             var socket = io();//'http://localhost:3000');
-            
+
             // add point to array and show it on map when it's received from the server
             socket.on('tweetEvent', function(geoPoint, text) {
                 tweetCount++;
-                
                 console.log('tweet #' + tweetCount + ': ' + text
                            + '\n\n' + geoPoint.lat + ' ' + geoPoint.lng);
-                
                 var marker = new google.maps.LatLng(geoPoint.lat, geoPoint.lng);
-                
-                // add marker to heatmap
-                heatmap.getData().push(marker);
-      
+
+                liveTweets.push(marker); //add marker to heatmap
+
+                // sets timeout for markers (they're only visible for 5 minutes)
+                setTimeout(function () {
+                    liveTweets.removeAt(0);
+                }, 300000);
             });
         </script>
-        <script src="https://developers.google.com/maps/documentation/javascript/examples/markerclusterer/markerclusterer.js">
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap">
         </script>
-        <script async defer
-            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap">
-    </script>
     </body>
 </html>
