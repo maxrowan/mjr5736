@@ -5,10 +5,8 @@ Prerequisites:
 Ensure Node is installed.
 	To install, go to https://nodejs.org/en/download/ and click on the download link.
 
-Before running for the first time, open a command prompt and run the command:
+To install the dependencies listed in the 'package.json' file, open a command prompt and run the command:
 	> npm install
-
-	This will install the dependencies listed in the package.json files
 
 To Run:
 1. Open a command prompt and navigate to the directory the files are in.
