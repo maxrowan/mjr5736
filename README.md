@@ -1,11 +1,10 @@
 # MVP
 
 Prerequisites:
-
-Ensure Node is installed.
+1. Ensure Node is installed.
 	To install, go to https://nodejs.org/en/download/ and click on the download link.
 
-To install the dependencies listed in the 'package.json' file, open a command prompt and run the command:
+2. To install the dependencies listed in the 'package.json' file, open a command prompt and run the command:
 	
 	> npm install
 
