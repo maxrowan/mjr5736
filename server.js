@@ -1,10 +1,15 @@
 var TwitterPackage = require('twitter');
-var app = require('express')();
+var express = require('express');
+var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
 
-// resolve path 
+var MongoClient = require('mongodb').MongoClient;
+var assert = require('assert');
+var uri = "mongodb://mjr5736:seni0rDes!gn@cluster0-shard-00-00-hiyas.mongodb.net:27017,cluster0-shard-00-01-hiyas.mongodb.net:27017,cluster0-shard-00-02-hiyas.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
+
+// resolve path to ui page
 app.get('/', function(req, res) {
     res.sendFile(path.resolve('index.html'));
 });
@@ -20,16 +25,16 @@ Twitter.stream('statuses/filter', {track: 'weather, rain, snow, sleet, hail, rai
 
     // when we get tweet data
     stream.on('data', function(tweet) {
-         
+
         // if tweet has coordinates
         if (tweet.coordinates) {
-            
+
             if (tweet.coordinates !== null){
                 var geoLng = tweet.coordinates.coordinates[0];
                 var geoLat = tweet.coordinates.coordinates[1];
             }
             else if(tweet.place){
-                
+
                 if(tweet.place.bounding_box === 'Polygon'){
                     // Calculate the center of the bounding box for the tweet
                     var coord, _i, _len;
@@ -46,14 +51,25 @@ Twitter.stream('statuses/filter', {track: 'weather, rain, snow, sleet, hail, rai
             }
             // print out the text of the tweet that came in
             console.log(tweet.text);
-                
+
             var geoPoint = {lat: geoLat, lng: geoLng};
             console.log(geoLat + ' ' + geoLng);
             console.log();
-            
+
             // send tweet event to client
-            io.emit('tweetEvent', geoPoint, tweet.text);
-        }    
+            io.emit('tweetEvent', geoPoint, tweet);
+
+            // insert tweet in database
+            MongoClient.connect(uri, function(err, client) {
+                if (err) throw err;
+                const collection = client.db("test").collection("MVP");
+                collection.insertOne(tweet, function(err, res) {
+                    if (err) throw err;
+                    console.log('doc inserted!');
+                });
+                client.close();
+            });
+        }
     });
 
     /* stream functions */
