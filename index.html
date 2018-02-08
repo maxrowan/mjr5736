@@ -88,23 +88,43 @@
             // declare map and heatmap
             var map;
             var heatmap;
-            var liveTweets;
+            var mainTweets, opacTweets;
             var tweetCount = 0;
 
             // initialize map
             function initMap() {
-                liveTweets = new google.maps.MVCArray();
+                /* google map */
+                mainTweets = new google.maps.MVCArray();
+
+                /**
+                 * test opac Tweets
+                 */
+                opacTweets = new google.maps.MVCArray();
+
                 var behrend = {lat: 42.119308, lng: -79.983714};
                 map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 4,
                     center: behrend
                 });
 
+                /* main heatmap */
                 heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: liveTweets,
+                    data: mainTweets,
                     map: map,
                     radius: 16
                 });
+
+                /**
+                 * test heatmap for opacity markers
+                 */
+                opacityHeatmap = new google.maps.visualization.HeatmapLayer({
+                    data: opacTweets,
+                    map: map,
+                    radius: 16,
+                    opcity: 0.2
+                });
+                opacityHeatmap.set('opacity', opacityHeatmap.get('opacity') ? null : 0.2);
+
             }
 
             var socket = io();//'http://localhost:3000');
@@ -113,21 +133,52 @@
             socket.on('tweetEvent', function(geoPoint, tweet) {
                 tweetCount++;
                 var text = tweet.text;
+                var key = geoPoint.lat.toFixed(5) + ' ' + geoPoint.lng.toFixed(5);
                 console.log('tweet #' + tweetCount + ': ' + text
-                           + '\n\n' + geoPoint.lat + ' ' + geoPoint.lng);
+                           + '\n\n' + key);
                 var marker = new google.maps.LatLng(geoPoint.lat, geoPoint.lng);
 
-                liveTweets.push(marker); //add marker to heatmap
+                /**
+                 * if a tweet in the sidebar is selected,
+                 * immediately add to opacTweets
+                 * otherwise, add it to mainTweets
+                 */
+                //if (tweetSelected) {
+                //    //
+                //    opacTweets.push(mainTweets.pop());
+                //} else {
+                mainTweets.push(marker); //add marker to heatmap
+                //}
 
                 // sets timeout for markers (they're only visible for 5 minutes (300000 ms))
-                setTimeout(function () {
-                    liveTweets.removeAt(0);
-                }, 300000);
+                //setTimeout(function () {
+                //    mainTweets.removeAt(0);
+                //}, 300000);
 
                 // add tweet to sidebar feed
                 var p = document.createElement("P");
-                var t = document.createTextNode(text);
-                p.appendChild(t);
+                p.innerHTML = text;
+                p.id = key;
+
+                /**
+                 * if p is clicked, add it to opacTweets
+                 */
+                p.addEventListener("click", function() {
+                    // highlight p
+
+                    // highlight markers
+                    mainTweets.forEach(function(element, index) {
+
+                        var display = element.lat().toFixed(5) + ' ' + element.lng().toFixed(5);
+
+                        if (p.id !== display) {
+                            opacTweets.push(element);
+                            mainTweets.removeAt(index);
+                        }
+                    });
+                });
+
+
                 document.getElementById("cardOne").appendChild(p);
             });
         </script>
@@ -143,7 +194,7 @@
                     Tweets
                   </a>
                 </div>
-                <div id="collapseOne" class="collapse show">
+                <div id="collapseOne" class="collapse">
                   <div class="card-body pre-scrollable" id="cardOne">
                       <!--This is where the Tweets will appear-->
                   </div>
