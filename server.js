@@ -4,12 +4,20 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
+var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 
-var watson = require('watson-developer-cloud');
-var natural_language_classifier = watson.natural_language_classifier({
-    username: '0780be29-7459-493a-aaaa-0ce2773d41a4',
-    password: '3Grq4DtGw3aR',
-    version: 'v1'
+//var watson = require('watson-developer-cloud');
+//var natural_language_classifier = watson.natural_language_classifier({
+//    username: '0780be29-7459-493a-aaaa-0ce2773d41a4',
+//    password: '3Grq4DtGw3aR',
+//    version: 'v1'
+//});
+
+
+var natural_language_understanding = new NaturalLanguageUnderstandingV1({
+    'username': '30ffa7bd-8bc9-47c9-b957-c08a16c10c19',
+    'password': 'xctX8Eiky2tK',
+    'version_date': '2017-02-27'
 });
 
 
@@ -73,38 +81,52 @@ stream.on('tweet', function ( tweet ) {
          var geoPoint = {lat: geoLat, lng: geoLng};
 
          /**
-          * check with the natural language classifier to see if the tweet's text is weather-related
+          * check with the natural language understanding to see if the tweet's text is weather-related
           */
-         //natural_language_classifier.classify({
-         //        text: tweet.text,
-         //        classifier_id: '33c2fbx273-nlc-8618' },
-         //    function(err, response) {
-         //        if (err)
-         //            console.log('error:', err);
-         //        else {
-                     console.log(tweet.text);
-         //            console.log(response.top_class);
-         //            console.log('\n\n')
-//
-         //            if ( response.top_class === 'weather') {
-                         io.emit('tweetEvent', geoPoint, tweet);
-                         console.log();
+         var parameters = {
+             'text': tweet.text,
+             'features': {
+                 'categories': {
+                 }
+             }
+         };
 
-         //                /**
-         //                 * connect to database and insert tweet
-         //                 */
-         //                //MongoClient.connect(uri, function(err, client) {//
-         //                //    if (err) throw err;
-         //                //    const collection = client.db("test").collection("MVP");
-         //                //    collection.insertOne(tweet, function(err, res) {
-         //                //        if (err) throw err;
-         //                //        console.log('doc inserted!');
-         //                //    });
-         //                //    client.close();
-         //                //});
-         //            }
-         //        }
+         natural_language_understanding.analyze(parameters, function(err, response) {
+             if (err)
+                 console.log('error:', err);
+             else {
+                 try {
+                     //console.log(JSON.stringify(response, null, 2));
+                     console.log(response.categories[0].label);
+
+                     if (response.categories[0].label === '/science/weather') {
+                         console.log('\n\\********************************************************\\\n')
+                         console.log(tweet.text + '\nweather');
+                         console.log('\n\\********************************************************\\\n')
+                     }
+
+                     //io.emit('tweetEvent', geoPoint, tweet);
+                 } catch ( err ) {
+                     console.log( err );
+                 }
+             }
+         });
+
+
+
+
+         ///**
+         // * connect to database and insert tweet
+         // */
+         //MongoClient.connect(uri, function(err, client) {//
+         //    if (err) throw err;
+         //    const collection = client.db("test").collection("MVP");
+         //    collection.insertOne(tweet, function(err, res) {
+         //        if (err) throw err;
+         //        console.log('doc inserted!');
          //    });
+         //    client.close();
+         //});
      }
  });
 
