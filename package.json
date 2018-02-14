@@ -1,31 +1,20 @@
 {
-  "name": "test2",
+  "name": "socketio",
   "version": "1.0.0",
-  "description": "Application Test II",
+  "description": "socket.io test",
   "main": "server.js",
   "scripts": {
-    "test": "node server.js",
-    "start": "node server.js"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/mjr5736/MVP.git"
-  },
-  "keywords": [
-    "weather",
-    "test"
-  ],
-  "author": "Max Rowan",
+  "author": "max",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/mjr5736/MVP/issues"
-  },
-  "homepage": "https://github.com/mjr5736/MVP#readme",
   "dependencies": {
+    "cookie-parser": "^1.4.3",
+    "errorhandler": "^1.5.0",
     "express": "^4.16.2",
-    "mongodb": "^3.0.1",
-    "socket.io": "^2.0.4",
-    "twit": "^2.2.9",
-    "watson-developer-cloud": "^3.0.5"
+    "express-error-handler": "^1.1.0",
+    "express-session": "^1.15.6",
+    "mongoose": "^4.13.10",
+    "socket.io": "^2.0.4"
   }
 }

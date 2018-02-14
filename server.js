@@ -1,151 +1,158 @@
-var Twit = require('twit');
-var express = require('express');
+//Express Basic module calling
+var express = require('express')
+    ,http = require('http')
+    ,path = require('path')
+//------------------------------------------
+//express middle-ware calling
+var bodyParser = require('body-parser')
+    ,cookieParser = require('cookie-parser')
+    ,static = require('serve-static')
+    ,errorHandler = require('errorhandler')
+//------------------------------------------
+// Error handler
+var expressErrorHandler = require('express-error-handler');
+
+//session middleware handler
+var expressionSession = require('express-session')
+
+//express object Create
 var app = express();
-var http = require('http').Server(app);
+
+//method use() enables to call or enable to use body-parser,cookie-parser,express-session
+//basic porpoerty set up
+app.set('port',process.env.PORT ||3000);
+
+//body-parser will be using applcation/x-ww-form-urlencoded parsing
+app.use(bodyParser.urlencoded({extended:false}));
+
+//body-parser will be used to parse applcation/json
+app.use(bodyParser.json());
+
+//public folder static, open
+app.use('/public', static(path.join(__dirname,'public')));
+
+//cookie -parser
+app.use(cookieParser());
+
+// session change
+app.use(expressionSession({
+    secret:'my key',
+    resave:true,
+    saveUninitialized:true
+}));
+//---------------------------------------------------------
+var MongoClient = require ('mongoose');
+
+//database object intialize
+var database;
+
+//connect to db
+
+function connectDB()
+{   console.log("connecting mongo database...");
+//database connect info
+//to change to database change to mongodb://(ip adress of db):(port # db)/db name
+//var databaseUrl = 'mongodb://localhost:27017/local';
+var databaseUrl = 'mongodb://jlee:456852@ds121456.mlab.com:21456/twm';
+MongoClient.connection.on('open',function(ref){console.log('Connected to Mongo')});
+MongoClient.connection.on('error',function(ref){console.log('Not Connected to Mongo')});
+MongoClient.connect(databaseUrl,{useMongoClient:true},function(err,db){
+MongoClient
+    database = db;
+
+});
+}
+
+
+
 var io = require('socket.io')(http);
-var path = require('path');
-var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 
-//var watson = require('watson-developer-cloud');
-//var natural_language_classifier = watson.natural_language_classifier({
-//    username: '0780be29-7459-493a-aaaa-0ce2773d41a4',
-//    password: '3Grq4DtGw3aR',
-//    version: 'v1'
-//});
+/*
 
+// logs message on connection
+io.on('connection', function(socket){
+    console.log('a user connected');
 
-var natural_language_understanding = new NaturalLanguageUnderstandingV1({
-    'username': '30ffa7bd-8bc9-47c9-b957-c08a16c10c19',
-    'password': 'xctX8Eiky2tK',
-    'version_date': '2017-02-27'
+    // display message when 'chat message' event ids received from client
+    socket.on('chat message', function(msg){
+        console.log('message: ' + msg);
+    });
+
+    socket.on('disconnect', function() {
+        console.log('user disconnected');
+    });
+});
+*/
+// listens to port 3000
+//---------------------------------------------------------
+/*
+//404 error message handler
+app.post('/request',function(req,res){
+    console.log("request accepted");
+    database.collection('twmsg').find({}, {_id: false}).toArray
+    (function(err,dt){res.json(dt)});
+}
+);
+app.get('/send',function(req,res){
+    
+    req.on('data',function(data)
+    {   console.log("Data received");
+        console.log(data);
+        //value = JSON.parse(data);
+    });
+    console.log(value);
+});
+*/
+//redriect to error page
+
+//gets the request for tweets 
+var myRequest = [];
+app.post('/requestData',function(req,res){
+
+    var key = Object.keys(req.body);
+    
+    var len = key.length;
+    
+    for(i = 0; i < len; i++)
+    {
+        myRequest.push(req.body[key[i]]);
+    }
+    console.log(myRequest);
+    
+   res.send("Request Received");
+
+    
+    
+}
+);
+
+app.get('/callback',function(req,res)
+{   //twmsg
+    
+   database.collection(myRequest[0]).find({}, {_id: false}).toArray
+   (function(err,dt){res.json(dt)});
+   myRequest = [];
+}
+);
+
+var errorHandler = expressErrorHandler({
+static:{
+    '404':'./public/404.html'
+}
 });
 
-
-//var MongoClient = require('mongodb').MongoClient;
-//var assert = require('assert');
-//
-//
-//
-//var uri = "mongodb://mjr5736:seni0rDes!gn@cluster0-shard-00-00-hiyas.mongodb.net:27017,cluster0-shard-00-01-hiyas.mongodb.net:27017,cluster0-shard-00-02-hiyas.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
-//
-//
+app.use(expressErrorHandler.httpError(404));
+app.use(errorHandler);
+//exception handle end here
+//---------------------------------------------------------
+//server startup
 
 
-// resolve path to ui page
-app.get('/', function(req, res) {
-    res.sendFile(path.resolve('index.html'));
+var MyServer = http.createServer(app).listen(app.get('port'),function(){
+console.log('Server Started at Port: ' + app.get('port'));
+//connect to mongodt db
+connectDB();
 });
 
-// import secret.json file
-var secret = require("./secret");
-
-// make a new Twitter object
-var T = new Twit(secret);
-
-/**
- * filter public stream by the lat/long bounded box of the US and by the English language
- */
-var top = 49.3457868;       //north lat
-var left = -124.7844079;    // west long
-var right = -66.9513812;    // east long
-var bottom =  24.7433195;   // south lat
-
-var us = [ left, bottom, right, top ];
-var stream = T.stream('statuses/filter',  { locations: us, language: 'en' });
-stream.on('tweet', function ( tweet ) {
-
-     // if tweet has coordinates
-     if (tweet.coordinates) {
-
-         if (tweet.coordinates !== null){
-             var geoLng = tweet.coordinates.coordinates[0];
-             var geoLat = tweet.coordinates.coordinates[1];
-         }
-         else if(tweet.place){
-
-             if(tweet.place.bounding_box === 'Polygon'){
-                 // Calculate the center of the bounding box for the tweet
-                 var coord, _i, _len;
-                 var centerLat = 0;
-                 var centerLng = 0;
-                 for (_i = 0, _len = coords.length; _i < _len; _i++) {
-                     coord = coords[_i];
-                     centerLat += coord[0];
-                     centerLng += coord[1];
-                 }
-                 geoLng = centerLat / coords.length;
-                 geoLat = centerLng / coords.length;
-             }
-         }
-
-         var geoPoint = {lat: geoLat, lng: geoLng};
-
-         /**
-          * check with the natural language understanding to see if the tweet's text is weather-related
-          */
-         var parameters = {
-             'text': tweet.text,
-             'features': {
-                 'categories': {
-                 }
-             }
-         };
-
-         natural_language_understanding.analyze(parameters, function(err, response) {
-             if (err)
-                 console.log('error:', err);
-             else {
-                 try {
-                     //console.log(JSON.stringify(response, null, 2));
-                     console.log(response.categories[0].label);
-
-                     if (response.categories[0].label === '/science/weather') {
-                         console.log('\n\\********************************************************\\\n')
-                         console.log(tweet.text + '\nweather');
-                         console.log('\n\\********************************************************\\\n')
-                     }
-
-                     //io.emit('tweetEvent', geoPoint, tweet);
-                 } catch ( err ) {
-                     console.log( err );
-                 }
-             }
-         });
-
-
-
-
-         ///**
-         // * connect to database and insert tweet
-         // */
-         //MongoClient.connect(uri, function(err, client) {//
-         //    if (err) throw err;
-         //    const collection = client.db("test").collection("MVP");
-         //    collection.insertOne(tweet, function(err, res) {
-         //        if (err) throw err;
-         //        console.log('doc inserted!');
-         //    });
-         //    client.close();
-         //});
-     }
- });
-
-    /* stream functions */
-    stream.on('error', function(error) {
-        console.log(error);
-    });
-    stream.on('limit', function(error) {
-        console.log(error);
-    });
-    stream.on('warning', function(error) {
-        console.log(error);
-    });
-    stream.on('disconnect', function(disconnect) {
-        console.log(disconnect);
-    });
-
-
-// connect to localhost
-http.listen(3000, function() {
-    console.log('listening on localhost:3000');
-});
+//open server 
+//---------------------------------------------------------
