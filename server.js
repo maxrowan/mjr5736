@@ -20,15 +20,8 @@ var natural_language_understanding = new NaturalLanguageUnderstandingV1({
     'version_date': '2017-02-27'
 });
 
-
-//var MongoClient = require('mongodb').MongoClient;
-//var assert = require('assert');
-//
-//
-//
-//var uri = "mongodb://mjr5736:seni0rDes!gn@cluster0-shard-00-00-hiyas.mongodb.net:27017,cluster0-shard-00-01-hiyas.mongodb.net:27017,cluster0-shard-00-02-hiyas.mongodb.net:27017/test?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin";
-//
-//
+var MongoClient = require('mongodb').MongoClient;
+var uri = "mongodb://mjr5736:sen!0rDesign@seniordesign-shard-00-00-hiyas.mongodb.net:27017,seniordesign-shard-00-01-hiyas.mongodb.net:27017,seniordesign-shard-00-02-hiyas.mongodb.net:27017/test?ssl=true&replicaSet=SeniorDesign-shard-0&authSource=admin";
 
 
 // resolve path to ui page
@@ -103,7 +96,21 @@ stream.on('tweet', function ( tweet ) {
                          console.log('\n\\********************************************************\\\n');
                          console.log('\n' + response.categories[0].label + '\n');
                          console.log(tweet.text + '\n');
-                         // save tweet in database
+
+                         /**
+                          * connect to database and insert tweet
+                          */
+                         MongoClient.connect(uri, function(err, db) {
+                             if (err) throw err;
+                             var database = db.db("test");
+                             var collection = database.collection("test");
+                             collection.insertOne(tweet, function(err, res) {
+                                 if (err) throw err;
+                                 console.log('\n\nInserted in database!\n\n');
+                             });
+                             db.close();
+                         });
+
                          console.log('\n\\********************************************************\\\n');
 
                          io.emit('tweetEvent', geoPoint, tweet);
@@ -113,22 +120,6 @@ stream.on('tweet', function ( tweet ) {
                  }
              }
          });
-
-
-
-
-         /**
-          * connect to database and insert tweet
-          */
-         //MongoClient.connect(uri, function(err, client) {
-         //    if (err) throw err;
-         //    const collection = client.db("test").collection("MVP");
-         //    collection.insertOne(tweet, function(err, res) {
-         //        if (err) throw err;
-         //        console.log('doc inserted!');
-         //    });
-         //    client.close();
-         //});
      }
  });
 
