@@ -100,12 +100,14 @@ stream.on('tweet', function ( tweet ) {
                      console.log(response.categories[0].label);
 
                      if (response.categories[0].label === '/science/weather') {
-                         console.log('\n\\********************************************************\\\n')
-                         console.log(tweet.text + '\nweather');
-                         console.log('\n\\********************************************************\\\n')
-                     }
+                         console.log('\n\\********************************************************\\\n');
+                         console.log('\n' + response.categories[0].label + '\n');
+                         console.log(tweet.text + '\n');
+                         // save tweet in database
+                         console.log('\n\\********************************************************\\\n');
 
-                     //io.emit('tweetEvent', geoPoint, tweet);
+                         io.emit('tweetEvent', geoPoint, tweet);
+                     }
                  } catch ( err ) {
                      console.log( err );
                  }
@@ -115,10 +117,10 @@ stream.on('tweet', function ( tweet ) {
 
 
 
-         ///**
-         // * connect to database and insert tweet
-         // */
-         //MongoClient.connect(uri, function(err, client) {//
+         /**
+          * connect to database and insert tweet
+          */
+         //MongoClient.connect(uri, function(err, client) {
          //    if (err) throw err;
          //    const collection = client.db("test").collection("MVP");
          //    collection.insertOne(tweet, function(err, res) {
