@@ -4,25 +4,9 @@ var app = express();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
 var path = require('path');
-var NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 
-//var watson = require('watson-developer-cloud');
-//var natural_language_classifier = watson.natural_language_classifier({
-//    username: '0780be29-7459-493a-aaaa-0ce2773d41a4',
-//    password: '3Grq4DtGw3aR',
-//    version: 'v1'
-//});
-
-
-var natural_language_understanding = new NaturalLanguageUnderstandingV1({
-    'username': '30ffa7bd-8bc9-47c9-b957-c08a16c10c19',
-    'password': 'xctX8Eiky2tK',
-    'version_date': '2017-02-27'
-});
-
-var MongoClient = require('mongodb').MongoClient;
-var uri = "mongodb://mjr5736:sen!0rDesign@seniordesign-shard-00-00-hiyas.mongodb.net:27017,seniordesign-shard-00-01-hiyas.mongodb.net:27017,seniordesign-shard-00-02-hiyas.mongodb.net:27017/test?ssl=true&replicaSet=SeniorDesign-shard-0&authSource=admin";
-
+const dbFunctions = require( './scripts/database' );
+const nluFunctions = require( './scripts/NLU' );
 
 // resolve path to ui page
 app.get('/', function(req, res) {
@@ -50,95 +34,73 @@ stream.on('tweet', function ( tweet ) {
      // if tweet has coordinates
      if (tweet.coordinates) {
 
-         if (tweet.coordinates !== null){
-             var geoLng = tweet.coordinates.coordinates[0];
-             var geoLat = tweet.coordinates.coordinates[1];
-         }
-         else if(tweet.place){
+         var geoPoint = getCoords( tweet );
 
-             if(tweet.place.bounding_box === 'Polygon'){
-                 // Calculate the center of the bounding box for the tweet
-                 var coord, _i, _len;
-                 var centerLat = 0;
-                 var centerLng = 0;
-                 for (_i = 0, _len = coords.length; _i < _len; _i++) {
-                     coord = coords[_i];
-                     centerLat += coord[0];
-                     centerLng += coord[1];
-                 }
-                 geoLng = centerLat / coords.length;
-                 geoLat = centerLng / coords.length;
-             }
-         }
+         // passes geoPoint and tweet as data for callback
+         var data = { geoPoint: geoPoint, tweet: tweet };
+         nluFunctions.getClassification( data, dbFunctions.addTweetToDB, sendToClient );
 
-         var geoPoint = {lat: geoLat, lng: geoLng};
-
-         /**
-          * check with the natural language understanding to see if the tweet's text is weather-related
-          */
-         var parameters = {
-             'text': tweet.text,
-             'features': {
-                 'categories': {
-                 }
-             }
-         };
-
-         natural_language_understanding.analyze(parameters, function(err, response) {
-             if (err)
-                 console.log('error:', err);
-             else {
-                 try {
-                     //console.log(JSON.stringify(response, null, 2));
-                     console.log(response.categories[0].label);
-
-                     if (response.categories[0].label === '/science/weather') {
-                         console.log('\n\\********************************************************\\\n');
-                         console.log('\n' + response.categories[0].label + '\n');
-                         console.log(tweet.text + '\n');
-
-                         /**
-                          * connect to database and insert tweet
-                          */
-                         MongoClient.connect(uri, function(err, db) {
-                             if (err) throw err;
-                             var database = db.db("test");
-                             var collection = database.collection("test");
-                             collection.insertOne(tweet, function(err, res) {
-                                 if (err) throw err;
-                                 console.log('\n\nInserted in database!\n\n');
-                             });
-                             db.close();
-                         });
-
-                         console.log('\n\\********************************************************\\\n');
-
-                         io.emit('tweetEvent', geoPoint, tweet);
-                     }
-                 } catch ( err ) {
-                     console.log( err );
-                 }
-             }
-         });
      }
  });
 
-    /* stream functions */
-    stream.on('error', function(error) {
-        console.log(error);
-    });
-    stream.on('limit', function(error) {
-        console.log(error);
-    });
-    stream.on('warning', function(error) {
-        console.log(error);
-    });
-    stream.on('disconnect', function(disconnect) {
-        console.log(disconnect);
-    });
+/**
+ * stream functions
+ */
+stream.on('error', function(error) {
+    console.log(error);
+});
+stream.on('limit', function(error) {
+    console.log(error);
+});
+stream.on('warning', function(error) {
+    console.log(error);
+});
+stream.on('disconnect', function(disconnect) {
+    console.log(disconnect);
+});
 
 
-// connect to localhost
+/**
+ * connect
+ */
 http.listen(3000, function() {
     console.log('listening on localhost:3000');
 });
+
+/**
+ * gets the coordinates from a tweet
+ * @param tweet
+ * @returns {{lat: *, lng: *}}
+ */
+function getCoords (tweet) {
+
+    if (tweet.coordinates !== null){
+        var geoLng = tweet.coordinates.coordinates[0];
+        var geoLat = tweet.coordinates.coordinates[1];
+    }
+    else if(tweet.place){
+
+        if(tweet.place.bounding_box === 'Polygon'){
+            // Calculate the center of the bounding box for the tweet
+            var coord, _i, _len;
+            var centerLat = 0;
+            var centerLng = 0;
+            for (_i = 0, _len = coords.length; _i < _len; _i++) {
+                coord = coords[_i];
+                centerLat += coord[0];
+                centerLng += coord[1];
+            }
+            geoLng = centerLat / coords.length;
+            geoLat = centerLng / coords.length;
+        }
+    }
+
+    return {lat: geoLat, lng: geoLng};
+}
+
+/**
+ * sends a data object with geoPoint and tweet vars
+ */
+function sendToClient( geoPoint, tweet ) {
+    io.emit('tweetEvent', geoPoint, tweet );
+}
