@@ -86,10 +86,10 @@
 
         <script>
             // declare map and heatmap
-            var map;
-            var heatmap;
-            var mainTweets, opacTweets;
-            var tweetCount = 0;
+            let map;
+            let heatmap;
+            let mainTweets, opacTweets;
+            let tweetCount = 0;
 
             // initialize map
             function initMap() {
@@ -101,7 +101,7 @@
                  */
                 opacTweets = new google.maps.MVCArray();
 
-                var behrend = {lat: 42.119308, lng: -79.983714};
+                let behrend = {lat: 42.119308, lng: -79.983714};
                 map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 4,
                     center: behrend
@@ -113,42 +113,24 @@
                     map: map,
                     radius: 16
                 });
-
-                /**
-                 * test heatmap for opacity markers
-                 */
-                opacityHeatmap = new google.maps.visualization.HeatmapLayer({
-                    data: opacTweets,
-                    map: map,
-                    radius: 16,
-                    opcity: 0.2
-                });
-                opacityHeatmap.set('opacity', opacityHeatmap.get('opacity') ? null : 0.2);
-
             }
 
-            var socket = io();//'http://localhost:3000');
+            let socket = io();
 
-            // add point to array and show it on map when it's received from the server
-            socket.on('tweetEvent', function(geoPoint, tweet) {
+            /**
+             * add point to array and show it on map when it's received from the server
+             */
+            socket.on('tweetEvent', function( tweet ) {
+
                 tweetCount++;
-                var text = tweet.text;
-                var key = geoPoint.lat.toFixed(5) + ' ' + geoPoint.lng.toFixed(5);
+                let geoPoint = tweet.geoPoint;
+                let text = tweet.text;
+                let key = geoPoint.lat.toFixed(5) + ' ' + geoPoint.lng.toFixed(5);
                 console.log('tweet #' + tweetCount + ': ' + text
                            + '\n\n' + key);
-                var marker = new google.maps.LatLng(geoPoint.lat, geoPoint.lng);
+                let marker = new google.maps.LatLng(geoPoint.lat, geoPoint.lng);
 
-                /**
-                 * if a tweet in the sidebar is selected,
-                 * immediately add to opacTweets
-                 * otherwise, add it to mainTweets
-                 */
-                //if (tweetSelected) {
-                //    //
-                //    opacTweets.push(mainTweets.pop());
-                //} else {
-                mainTweets.push(marker); //add marker to heatmap
-                //}
+                mainTweets.push(marker);
 
                 // sets timeout for markers (they're only visible for 5 minutes (300000 ms))
                 //setTimeout(function () {
@@ -156,27 +138,9 @@
                 //}, 300000);
 
                 // add tweet to sidebar feed
-                var p = document.createElement("P");
+                let p = document.createElement("P");
                 p.innerHTML = text;
                 p.id = key;
-
-                /**
-                 * if p is clicked, add it to opacTweets
-                 */
-                p.addEventListener("click", function() {
-                    // highlight p
-
-                    // highlight markers
-                    mainTweets.forEach(function(element, index) {
-
-                        var display = element.lat().toFixed(5) + ' ' + element.lng().toFixed(5);
-
-                        if (p.id !== display) {
-                            opacTweets.push(element);
-                            mainTweets.removeAt(index);
-                        }
-                    });
-                });
 
 
                 document.getElementById("cardOne").appendChild(p);

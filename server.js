@@ -1,12 +1,18 @@
-var Twit = require('twit');
-var express = require('express');
-var app = express();
-var http = require('http').Server(app);
-var io = require('socket.io')(http);
-var path = require('path');
+/**
+ * Senior Design Project 2017 - 2018
+ * Max Rowan
+ */
 
-const dbFunctions = require( './scripts/database' );
-const nluFunctions = require( './scripts/NLU' );
+let Twit = require('twit');
+let app = require('express')();
+let http = require('http').Server(app);
+let io = require('socket.io')(http);
+let path = require('path');
+
+let ex = module.exports = {};
+
+const db = require( './scripts/database' );
+const nlu = require( './scripts/NLU' );
 
 // resolve path to ui page
 app.get('/', function(req, res) {
@@ -14,34 +20,21 @@ app.get('/', function(req, res) {
 });
 
 // import secret.json file
-var secret = require("./secret");
+let secret = require("./secret");
 
 // make a new Twitter object
-var T = new Twit(secret);
+let T = new Twit(secret);
 
 /**
- * filter public stream by the lat/long bounded box of the US and by the English language
+ * filter public stream by the lat/long bounded box of Pennsylvania and by the English language
  */
-var top = 49.3457868;       //north lat
-var left = -124.7844079;    // west long
-var right = -66.9513812;    // east long
-var bottom =  24.7433195;   // south lat
-
-var us = [ left, bottom, right, top ];
-var stream = T.stream('statuses/filter',  { locations: us, language: 'en' });
-stream.on('tweet', function ( tweet ) {
-
-     // if tweet has coordinates
-     if (tweet.coordinates) {
-
-         var geoPoint = getCoords( tweet );
-
-         // passes geoPoint and tweet as data for callback
-         var data = { geoPoint: geoPoint, tweet: tweet };
-         nluFunctions.getClassification( data, dbFunctions.addTweetToDB, sendToClient );
-
-     }
- });
+let us = [ -124.7844079,    // west long (left)
+    -66.9513812,            // south lat (bottom)
+    -66.9513812,            // esat long (right)
+    49.3457868              // north lat (top)
+];
+let stream = T.stream('statuses/filter',  { locations: us, language: 'en' });
+stream.on('tweet', onTweet);
 
 /**
  * stream functions
@@ -59,32 +52,42 @@ stream.on('disconnect', function(disconnect) {
     console.log(disconnect);
 });
 
-
 /**
- * connect
+ * executes when a tweet comes in from the stream (when we catch a wild tweet)
+ * @param tweet
  */
-http.listen(3000, function() {
-    console.log('listening on localhost:3000');
-});
+function onTweet( tweet ) {
+
+    // if tweet has coordinates
+    if ( tweet.coordinates ) {
+
+        // adds geoPoint var to tweet obj
+        tweet.geoPoint = getCoords( tweet );
+        nlu.classify( tweet, db.addTweetToDB, sendToClient );
+    }
+}
 
 /**
  * gets the coordinates from a tweet
  * @param tweet
  * @returns {{lat: *, lng: *}}
  */
-function getCoords (tweet) {
+function getCoords ( tweet ) {
+
+    let geoLng;
+    let geoLat;
 
     if (tweet.coordinates !== null){
-        var geoLng = tweet.coordinates.coordinates[0];
-        var geoLat = tweet.coordinates.coordinates[1];
+        geoLng = tweet.coordinates.coordinates[0];
+        geoLat = tweet.coordinates.coordinates[1];
     }
     else if(tweet.place){
 
         if(tweet.place.bounding_box === 'Polygon'){
             // Calculate the center of the bounding box for the tweet
-            var coord, _i, _len;
-            var centerLat = 0;
-            var centerLng = 0;
+            let coord, _i, _len;
+            let centerLat = 0;
+            let centerLng = 0;
             for (_i = 0, _len = coords.length; _i < _len; _i++) {
                 coord = coords[_i];
                 centerLat += coord[0];
@@ -101,6 +104,20 @@ function getCoords (tweet) {
 /**
  * sends a data object with geoPoint and tweet vars
  */
-function sendToClient( geoPoint, tweet ) {
-    io.emit('tweetEvent', geoPoint, tweet );
+function sendToClient( tweet ) {
+    io.emit('tweetEvent', tweet );
 }
+
+/**
+ * connect
+ */
+http.listen(3000, function() {
+    console.log('listening on localhost:3000');
+});
+
+
+/**
+ * export functions for testing
+ */
+ex.sendToClient = sendToClient;
+ex.onTweet = onTweet;

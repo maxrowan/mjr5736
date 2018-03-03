@@ -1,10 +1,10 @@
 {
-  "name": "test2",
+  "name": "MVP",
   "version": "1.0.0",
-  "description": "Application Test II",
+  "description": "Senior Design Project",
   "main": "server.js",
   "scripts": {
-    "test": "node server.js",
+    "test": "jest",
     "start": "node server.js"
   },
   "repository": {
@@ -12,8 +12,10 @@
     "url": "git+https://github.com/mjr5736/MVP.git"
   },
   "keywords": [
-    "weather",
-    "test"
+    "weather"
+  ],
+  "presets": [
+    "env"
   ],
   "author": "Max Rowan",
   "license": "ISC",
@@ -22,10 +24,18 @@
   },
   "homepage": "https://github.com/mjr5736/MVP#readme",
   "dependencies": {
+    "babel-preset-env": "^1.6.1",
     "express": "^4.16.2",
+    "jest-cli": "^22.4.0",
     "mongodb": "^3.0.1",
     "socket.io": "^2.0.4",
+    "socket.io-client": "^2.0.4",
+    "string-format": "^0.5.0",
     "twit": "^2.2.9",
     "watson-developer-cloud": "^3.0.5"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "jest": "^22.4.2"
   }
 }
