@@ -1,4 +1,3 @@
-// import nlu module
 const nlu = require ('../scripts/NLU');
 
 test( 'splits string to see if weather is correctly recognized as such', () => {

@@ -83,69 +83,8 @@
     <body>
         <script src="/socket.io/socket.io.js"></script>
         <div id="map"></div>
+        <script src="client.js"></script>
 
-        <script>
-            // declare map and heatmap
-            let map;
-            let heatmap;
-            let mainTweets, opacTweets;
-            let tweetCount = 0;
-
-            // initialize map
-            function initMap() {
-                /* google map */
-                mainTweets = new google.maps.MVCArray();
-
-                /**
-                 * test opac Tweets
-                 */
-                opacTweets = new google.maps.MVCArray();
-
-                let behrend = {lat: 42.119308, lng: -79.983714};
-                map = new google.maps.Map(document.getElementById('map'), {
-                    zoom: 4,
-                    center: behrend
-                });
-
-                /* main heatmap */
-                heatmap = new google.maps.visualization.HeatmapLayer({
-                    data: mainTweets,
-                    map: map,
-                    radius: 16
-                });
-            }
-
-            let socket = io();
-
-            /**
-             * add point to array and show it on map when it's received from the server
-             */
-            socket.on('tweetEvent', function( tweet ) {
-
-                tweetCount++;
-                let geoPoint = tweet.geoPoint;
-                let text = tweet.text;
-                let key = geoPoint.lat.toFixed(5) + ' ' + geoPoint.lng.toFixed(5);
-                console.log('tweet #' + tweetCount + ': ' + text
-                           + '\n\n' + key);
-                let marker = new google.maps.LatLng(geoPoint.lat, geoPoint.lng);
-
-                mainTweets.push(marker);
-
-                // sets timeout for markers (they're only visible for 5 minutes (300000 ms))
-                //setTimeout(function () {
-                //    mainTweets.removeAt(0);
-                //}, 300000);
-
-                // add tweet to sidebar feed
-                let p = document.createElement("P");
-                p.innerHTML = text;
-                p.id = key;
-
-
-                document.getElementById("cardOne").appendChild(p);
-            });
-        </script>
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
 
         <!---sidenav-->

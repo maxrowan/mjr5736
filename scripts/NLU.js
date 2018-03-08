@@ -35,19 +35,17 @@ function classify ( tweet, addTweetToDB, clientCallback) {
         else {
             try {
                 let label = response.categories[0].label.toString();
-                let entities = [];
-                if ( response.entities.length > 0 ) {
-                    entities = response.entities;
-                }
+                let entity = getEntity( response.entities );
 
                 let isAWeatherTweet = ex.isWeather( label );
+                let isAnInclementTweet = ex.isInclement( entity );
 
-                // add highest matching label and entities to tweet
+                // add highest matching label and most specific entity to tweet
                 tweet.NLULabel = label;
-                tweet.NLUEntities = entities;
-                printInfo( tweet, isAWeatherTweet );
+                tweet.NLUEntity = entity;
+                printInfo( tweet, isAnInclementTweet );
 
-                if ( isAWeatherTweet ) {
+                if ( isAWeatherTweet && isAnInclementTweet ) {
                     // add tweet to database
                     addTweetToDB( tweet );
 
@@ -66,37 +64,75 @@ function classify ( tweet, addTweetToDB, clientCallback) {
  * @param label
  * @returns {boolean}
  */
-function isWeather (label) {
+function isWeather ( label ) {
     let labels = label.split('/');
     return labels.includes( 'weather' );
 }
 
 /**
+ * determins if the weather is an inclement subtype or not
+ * @param entity
+ * @returns {boolean}
+ */
+function isInclement( entity ) {
+    return (
+        entity === "INCLEMENT_WEATHER" ||
+        entity === "RAIN" ||
+        entity === "SNOW" ||
+        entity === "SLEET" ||
+        entity === "HAIL" ||
+        entity === "WIND" ||
+        entity === "ICE" ||
+        entity === "FIRE"
+    );
+}
+
+/**
+ * returns primary entity type or subtype of first weather entity encountered
+ * @param entities
+ * @returns {*}
+ */
+function getEntity( entities ) {
+
+    let entity = ' Could not Classify';
+
+    if ( entities.length > 0 ) {
+
+        entity = entities[0].type;
+
+        for (let i = 0; i < entities.length; i++) {
+
+            let type = entities[i].type;
+            let subtype =  entities[i].disambiguation.subtype[0];
+
+            if ( type === 'WEATHER' ) {
+                if ( subtype ) {
+                    return subtype;
+                }
+            }
+        }
+    }
+    return entity;
+}
+
+/**
  * prints info about the returned NLU JSON object and corresponding tweet
  */
-function printInfo( tweet, isAWeatherTweet ) {
+function printInfo( tweet, inclement ) {
 
-    let entities = tweet.NLUEntities;
-    let entitiesString = '';
-    if ( entities.length > 0 ) {
-        for (let i = 0; i < entities.length; i++) {
-            entitiesString += format('Type: {0} | Subtype: {1}\n',
-                entities[i].type,
-                entities[i].disambiguation.subtype);
-        }
-    } else {
-        entitiesString = 'Could not define entities\n';
-    }
+    let label = tweet.NLULabel;
+    let entity = tweet.NLUEntity;
+    let text = tweet.text;
 
-    if ( !isAWeatherTweet ) {
+    if ( !inclement ) {
         console.log(
             '******* NLU Top Label *******\n' +
-            tweet.NLULabel + '\n' +
+            label + '\n' +
             '******* WKS-NLU Entities *******\n' +
-            entitiesString +
+            entity + '\n' +
 
             '/******* Tweet Text *******\n' +
-            tweet.text + '\n\n'
+            text + '\n\n'
         );
         return;
     }
@@ -108,17 +144,18 @@ function printInfo( tweet, isAWeatherTweet ) {
         //JSON.stringify(response, null, 2) + '\n\n' +
 
         '******* NLU Top Label *******\n' +
-        tweet.NLULabel + '\n\n' +
+        label + '\n\n' +
 
         '******* WKS-NLU Entities *******\n' +
-        entitiesString + '\n' +
+        entity+ '\n' +
 
         '/******* Tweet Text *******\n' +
-        tweet.text + '\n\n' +
+        text + '\n\n' +
         '\\************************************************\\\n' +
         '\\********************************************************\\\n');
 }
 
 ex.classify = classify;
 ex.isWeather = isWeather;
+ex.isInclement = isInclement;
 

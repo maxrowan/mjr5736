@@ -4,7 +4,8 @@
  */
 
 let Twit = require('twit');
-let app = require('express')();
+let express = require('express');
+let app = express();
 let http = require('http').Server(app);
 let io = require('socket.io')(http);
 let path = require('path');
@@ -18,6 +19,7 @@ const nlu = require( './scripts/NLU' );
 app.get('/', function(req, res) {
     res.sendFile(path.resolve('index.html'));
 });
+app.use(express.static(__dirname + '/public'));
 
 // import secret.json file
 let secret = require("./secret");
@@ -33,24 +35,25 @@ let us = [ -124.7844079,    // west long (left)
     -66.9513812,            // esat long (right)
     49.3457868              // north lat (top)
 ];
-let stream = T.stream('statuses/filter',  { locations: us, language: 'en' });
-stream.on('tweet', onTweet);
+let stream;
+startStream();
+
 
 /**
- * stream functions
+ * starts twitter stream
  */
-stream.on('error', function(error) {
-    console.log(error);
-});
-stream.on('limit', function(error) {
-    console.log(error);
-});
-stream.on('warning', function(error) {
-    console.log(error);
-});
-stream.on('disconnect', function(disconnect) {
-    console.log(disconnect);
-});
+function startStream() {
+    stream = T.stream('statuses/filter', {track: 'thunderstorm,storm,rain,snow,sleet,hail', language: 'en'});
+
+    /**
+     * stream functions
+     */
+    stream.on('tweet', onTweet);
+    stream.on('error', displayMessage );
+    stream.on('limit', displayMessage );
+    stream.on('warning', displayMessage );
+    stream.on('disconnect', displayMessage );
+}
 
 /**
  * executes when a tweet comes in from the stream (when we catch a wild tweet)
@@ -106,6 +109,10 @@ function getCoords ( tweet ) {
  */
 function sendToClient( tweet ) {
     io.emit('tweetEvent', tweet );
+}
+
+function displayMessage ( msg ) {
+    console.log( msg );
 }
 
 /**
