@@ -30,11 +30,6 @@ let T = new Twit(secret);
 /**
  * filter public stream by the lat/long bounded box of Pennsylvania and by the English language
  */
-let us = [ -124.7844079,    // west long (left)
-    -66.9513812,            // south lat (bottom)
-    -66.9513812,            // esat long (right)
-    49.3457868              // north lat (top)
-];
 let stream;
 startStream();
 
@@ -43,7 +38,12 @@ startStream();
  * starts twitter stream
  */
 function startStream() {
-    stream = T.stream('statuses/filter', {track: 'thunderstorm,storm,rain,snow,sleet,hail', language: 'en'});
+    let us = [ -124.7844079,    // west long (left)
+        -66.9513812,            // south lat (bottom)
+        -66.9513812,            // esat long (right)
+        49.3457868              // north lat (top)
+    ];
+    stream = T.stream('statuses/filter', {/*locations: us, */track: 'thunderstorm,storm,rain,snow,sleet,hail', language: 'en'});
 
     /**
      * stream functions

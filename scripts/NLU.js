@@ -43,7 +43,7 @@ function classify ( tweet, addTweetToDB, clientCallback) {
                 // add highest matching label and most specific entity to tweet
                 tweet.NLULabel = label;
                 tweet.NLUEntity = entity;
-                printInfo( tweet, isAnInclementTweet );
+                printInfo( tweet, isAWeatherTweet, isAnInclementTweet );
 
                 if ( isAWeatherTweet && isAnInclementTweet ) {
                     // add tweet to database
@@ -118,13 +118,13 @@ function getEntity( entities ) {
 /**
  * prints info about the returned NLU JSON object and corresponding tweet
  */
-function printInfo( tweet, inclement ) {
+function printInfo( tweet, weather, inclement ) {
 
     let label = tweet.NLULabel;
     let entity = tweet.NLUEntity;
     let text = tweet.text;
 
-    if ( !inclement ) {
+    if ( !weather || !inclement ) {
         console.log(
             '******* NLU Top Label *******\n' +
             label + '\n' +
@@ -134,25 +134,25 @@ function printInfo( tweet, inclement ) {
             '/******* Tweet Text *******\n' +
             text + '\n\n'
         );
-        return;
+    } else {
+        console.log(
+            '\\********************************************************\\\n' +
+            '\\************************************************\\\n\n' +
+            //'******* Response from NLU *******\n' +
+            //JSON.stringify(response, null, 2) + '\n\n' +
+
+            '******* NLU Top Label *******\n' +
+            label + '\n\n' +
+
+            '******* WKS-NLU Entities *******\n' +
+            entity+ '\n' +
+
+            '/******* Tweet Text *******\n' +
+            text + '\n\n' +
+            '\\************************************************\\\n' +
+            '\\********************************************************\\\n'
+        );
     }
-
-    console.log(
-        '\\********************************************************\\\n' +
-        '\\************************************************\\\n\n' +
-        //'******* Response from NLU *******\n' +
-        //JSON.stringify(response, null, 2) + '\n\n' +
-
-        '******* NLU Top Label *******\n' +
-        label + '\n\n' +
-
-        '******* WKS-NLU Entities *******\n' +
-        entity+ '\n' +
-
-        '/******* Tweet Text *******\n' +
-        text + '\n\n' +
-        '\\************************************************\\\n' +
-        '\\********************************************************\\\n');
 }
 
 ex.classify = classify;

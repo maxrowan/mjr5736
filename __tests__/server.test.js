@@ -1,4 +1,6 @@
 const nlu = require ('../scripts/NLU');
+
+
 const mockServer = require('mock-socket').Server;
 const socketIO = require('mock-socket').SocketIO;
 const mockWebSocket = require('mock-socket').WebSocket;
@@ -22,7 +24,7 @@ describe('Client Unit Test', () => {
 
         // Now when Chat tries to do io() or io.connect()
         // it will use MockSocketIO object
-        var chatApp = new Chat();
+        let chatApp = new Chat();
 
         setTimeout(() => {
             const messageLen = chatApp.messages.length;

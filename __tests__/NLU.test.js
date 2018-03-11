@@ -103,3 +103,4 @@ test( 'assert that non-weather tweets are classified correctly', done => {
     // test getClassification
     nlu.classify( mockTweet, dontAddToDB, mockClientCallback);
 });
+

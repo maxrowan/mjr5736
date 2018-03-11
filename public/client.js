@@ -1,12 +1,12 @@
 let map;
-let inclementTweets,
-    rainTweets,
-    snowTweets,
-    sleetTweets,
-    hailTweets,
-    windTweets,
-    iceTweets,
-    fireTweets;
+let inclementTweets,    // rgba( 0, 255, 0, 1)
+    rainTweets,         // rgba( 255, 165, 0, 1)
+    snowTweets,         // rgba( 0, 255, 255, 1)
+    sleetTweets,        // rgba( 123, 104, 238, 1)
+    hailTweets,         // rgba( 219, 112, 147, 1)
+    windTweets,         // rgba( 255, 20, 147, 1)
+    iceTweets,          // rgba( 139, 0, 139, 1)
+    fireTweets;         // rgba( 233, 150, 122, 1)
 let inclementHeatmap,
     rainHeatmap,
     snowHeatmap,
@@ -27,27 +27,16 @@ function initMap() {
         center: behrend
     });
 
-    /* Inclement heatmap */
+    /* Heat maps */
     inclementTweets = new google.maps.MVCArray();
     inclementHeatmap = new google.maps.visualization.HeatmapLayer({
         data: inclementTweets,
         map: map,
         radius: 16,
         gradient: [
-            'rgba(0, 255, 255, 0)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(0, 191, 255, 1)',
-            'rgba(0, 127, 255, 1)',
-            'rgba(0, 63, 255, 1)',
-            'rgba(0, 0, 255, 1)',
-            'rgba(0, 0, 223, 1)',
-            'rgba(0, 0, 191, 1)',
-            'rgba(0, 0, 159, 1)',
-            'rgba(0, 0, 127, 1)',
-            'rgba(63, 0, 91, 1)',
-            'rgba(127, 0, 63, 1)',
-            'rgba(191, 0, 31, 1)',
-            'rgba(255, 0, 0, 1)'
+            'rgba( 0, 255, 0, 0)',
+            'rgba( 0, 255, 0, 0.6)',
+            'rgba( 0, 255, 0, 1)'
         ]
     });
 
@@ -57,20 +46,9 @@ function initMap() {
         map: map,
         radius: 16,
         gradient: [
-            'rgba(0, 255, 255, 0)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(0, 191, 255, 1)',
-            'rgba(0, 127, 255, 1)',
-            'rgba(0, 63, 255, 1)',
-            'rgba(0, 0, 255, 1)',
-            'rgba(0, 0, 223, 1)',
-            'rgba(0, 0, 191, 1)',
-            'rgba(0, 0, 159, 1)',
-            'rgba(0, 0, 127, 1)',
-            'rgba(63, 0, 91, 1)',
-            'rgba(127, 0, 63, 1)',
-            'rgba(191, 0, 31, 1)',
-            'rgba(255, 0, 0, 1)'
+            'rgba( 255, 165, 0, 0)',
+            'rgba( 255, 165, 0, 0.6)',
+            'rgba( 255, 165, 0, 1)'
         ]
     });
 
@@ -78,23 +56,7 @@ function initMap() {
     snowHeatmap = new google.maps.visualization.HeatmapLayer({
         data: snowTweets,
         map: map,
-        radius: 16,
-        gradient: [
-            'rgba(0, 255, 255, 0)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(0, 191, 255, 1)',
-            'rgba(0, 127, 255, 1)',
-            'rgba(0, 63, 255, 1)',
-            'rgba(0, 0, 255, 1)',
-            'rgba(0, 0, 223, 1)',
-            'rgba(0, 0, 191, 1)',
-            'rgba(0, 0, 159, 1)',
-            'rgba(0, 0, 127, 1)',
-            'rgba(63, 0, 91, 1)',
-            'rgba(127, 0, 63, 1)',
-            'rgba(191, 0, 31, 1)',
-            'rgba(255, 0, 0, 1)'
-        ]
+        radius: 16
     });
 
     sleetTweets = new google.maps.MVCArray();
@@ -103,20 +65,9 @@ function initMap() {
         map: map,
         radius: 16,
         gradient: [
-            'rgba(0, 255, 255, 0)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(0, 191, 255, 1)',
-            'rgba(0, 127, 255, 1)',
-            'rgba(0, 63, 255, 1)',
-            'rgba(0, 0, 255, 1)',
-            'rgba(0, 0, 223, 1)',
-            'rgba(0, 0, 191, 1)',
-            'rgba(0, 0, 159, 1)',
-            'rgba(0, 0, 127, 1)',
-            'rgba(63, 0, 91, 1)',
-            'rgba(127, 0, 63, 1)',
-            'rgba(191, 0, 31, 1)',
-            'rgba(255, 0, 0, 1)'
+            'rgba( 0, 255, 255, 0)',
+            'rgba( 0, 255, 255, 0.6)',
+            'rgba( 0, 255, 255, 1)'
         ]
     });
 
@@ -126,20 +77,9 @@ function initMap() {
         map: map,
         radius: 16,
         gradient: [
-            'rgba(0, 255, 255, 0)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(0, 191, 255, 1)',
-            'rgba(0, 127, 255, 1)',
-            'rgba(0, 63, 255, 1)',
-            'rgba(0, 0, 255, 1)',
-            'rgba(0, 0, 223, 1)',
-            'rgba(0, 0, 191, 1)',
-            'rgba(0, 0, 159, 1)',
-            'rgba(0, 0, 127, 1)',
-            'rgba(63, 0, 91, 1)',
-            'rgba(127, 0, 63, 1)',
-            'rgba(191, 0, 31, 1)',
-            'rgba(255, 0, 0, 1)'
+            'rgba( 219, 112, 147, 0)',
+            'rgba( 219, 112, 147, 0.6)',
+            'rgba( 219, 112, 147, 1)'
         ]
     });
 
@@ -149,20 +89,9 @@ function initMap() {
         map: map,
         radius: 16,
         gradient: [
-            'rgba(0, 255, 255, 0)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(0, 191, 255, 1)',
-            'rgba(0, 127, 255, 1)',
-            'rgba(0, 63, 255, 1)',
-            'rgba(0, 0, 255, 1)',
-            'rgba(0, 0, 223, 1)',
-            'rgba(0, 0, 191, 1)',
-            'rgba(0, 0, 159, 1)',
-            'rgba(0, 0, 127, 1)',
-            'rgba(63, 0, 91, 1)',
-            'rgba(127, 0, 63, 1)',
-            'rgba(191, 0, 31, 1)',
-            'rgba(255, 0, 0, 1)'
+            'rgba( 255, 20, 147, 0)',
+            'rgba( 255, 20, 147, 0.6)',
+            'rgba( 255, 20, 147, 1)'
         ]
     });
 
@@ -172,20 +101,9 @@ function initMap() {
         map: map,
         radius: 16,
         gradient: [
-            'rgba(0, 255, 255, 0)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(0, 191, 255, 1)',
-            'rgba(0, 127, 255, 1)',
-            'rgba(0, 63, 255, 1)',
-            'rgba(0, 0, 255, 1)',
-            'rgba(0, 0, 223, 1)',
-            'rgba(0, 0, 191, 1)',
-            'rgba(0, 0, 159, 1)',
-            'rgba(0, 0, 127, 1)',
-            'rgba(63, 0, 91, 1)',
-            'rgba(127, 0, 63, 1)',
-            'rgba(191, 0, 31, 1)',
-            'rgba(255, 0, 0, 1)'
+            'rgba( 139, 0, 139, 0)',
+            'rgba( 139, 0, 139, 0.6)',
+            'rgba( 139, 0, 139, 1)'
         ]
     });
 
@@ -195,20 +113,9 @@ function initMap() {
         map: map,
         radius: 16,
         gradient: [
-            'rgba(0, 255, 255, 0)',
-            'rgba(0, 255, 255, 1)',
-            'rgba(0, 191, 255, 1)',
-            'rgba(0, 127, 255, 1)',
-            'rgba(0, 63, 255, 1)',
-            'rgba(0, 0, 255, 1)',
-            'rgba(0, 0, 223, 1)',
-            'rgba(0, 0, 191, 1)',
-            'rgba(0, 0, 159, 1)',
-            'rgba(0, 0, 127, 1)',
-            'rgba(63, 0, 91, 1)',
-            'rgba(127, 0, 63, 1)',
-            'rgba(191, 0, 31, 1)',
-            'rgba(255, 0, 0, 1)'
+            'rgba( 233, 150, 122, 0)',
+            'rgba( 233, 150, 122, 0.6)',
+            'rgba( 233, 150, 122, 1)'
         ]
     });
 }
