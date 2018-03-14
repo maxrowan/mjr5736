@@ -4,14 +4,146 @@ test( 'splits string to see if weather is correctly recognized as such', () => {
     expect( nlu.isWeather( '/science/weather/natural disaster' )).toBe( true );
 });
 
-test( 'assert that weather tweets are classified correctly', done => {
+describe( 'Asserts that weather-related tweets are classified correctly', () => {
 
-    // mock tweet
-    let mockTweet = {
+    // mock tweets
+    let mockInclementTweet = {
         created_at: "Mon Jan 1 00:00:00 +0000 2018",
         id: 999999999999999999,
         id_str: "999999999999999999",
-        text: 'Ice storm...I had the day off, but most places are closed today.',
+        text: 'Severe Weather In Dallas Causes Flight Delays, Diversions In SA from KSAT - Local News',
+        geoPoint: {
+            lat: 26.71903,
+            lng: -80.05049
+        },
+        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+        place:
+            { id: '4de072969805ac41',
+                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+                place_type: 'city',
+                name: 'West Palm Beach',
+                full_name: 'West Palm Beach, FL',
+                country_code: 'US',
+                country: 'United States',
+                bounding_box: { type: 'Polygon', coordinates: [Array] },
+                attributes: {} },
+    };
+    let mockRainTweet = {
+        created_at: "Mon Jan 1 00:00:00 +0000 2018",
+        id: 999999999999999999,
+        id_str: "999999999999999999",
+        text: 'Good dreary, rainy, foggy, drizzly, misty, stormy morning everyone.',
+        geoPoint: {
+            lat: 26.71903,
+            lng: -80.05049
+        },
+        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+        place:
+            { id: '4de072969805ac41',
+                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+                place_type: 'city',
+                name: 'West Palm Beach',
+                full_name: 'West Palm Beach, FL',
+                country_code: 'US',
+                country: 'United States',
+                bounding_box: { type: 'Polygon', coordinates: [Array] },
+                attributes: {} },
+    };
+    let mockSnowTweet = {
+        created_at: "Mon Jan 1 00:00:00 +0000 2018",
+        id: 999999999999999999,
+        id_str: "999999999999999999",
+        text: 'Wednesday - Snow showers. Snow accumulation 3 to 5 inches. Highs in the 30s.',
+        geoPoint: {
+            lat: 26.71903,
+            lng: -80.05049
+        },
+        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+        place:
+            { id: '4de072969805ac41',
+                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+                place_type: 'city',
+                name: 'West Palm Beach',
+                full_name: 'West Palm Beach, FL',
+                country_code: 'US',
+                country: 'United States',
+                bounding_box: { type: 'Polygon', coordinates: [Array] },
+                attributes: {} },
+    };
+    let mockHailTweet = {
+        created_at: "Mon Jan 1 00:00:00 +0000 2018",
+        id: 999999999999999999,
+        id_str: "999999999999999999",
+        text: 'covered in hail like snow earlier tonight.',
+        geoPoint: {
+            lat: 26.71903,
+            lng: -80.05049
+        },
+        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+        place:
+            { id: '4de072969805ac41',
+                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+                place_type: 'city',
+                name: 'West Palm Beach',
+                full_name: 'West Palm Beach, FL',
+                country_code: 'US',
+                country: 'United States',
+                bounding_box: { type: 'Polygon', coordinates: [Array] },
+                attributes: {} },
+    };
+    let mockWindTweet = {
+        created_at: "Mon Jan 1 00:00:00 +0000 2018",
+        id: 999999999999999999,
+        id_str: "999999999999999999",
+        text: 'Here are the raw observations for the tornado reports today. {link}\n',
+        geoPoint: {
+            lat: 26.71903,
+            lng: -80.05049
+        },
+        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+        place:
+            { id: '4de072969805ac41',
+                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+                place_type: 'city',
+                name: 'West Palm Beach',
+                full_name: 'West Palm Beach, FL',
+                country_code: 'US',
+                country: 'United States',
+                bounding_box: { type: 'Polygon', coordinates: [Array] },
+                attributes: {} },
+    };
+    let mockIceTweet = {
+        created_at: "Mon Jan 1 00:00:00 +0000 2018",
+        id: 999999999999999999,
+        id_str: "999999999999999999",
+        text: 'Ice build-up from minor ice storm last week',
+        geoPoint: {
+            lat: 26.71903,
+            lng: -80.05049
+        },
+        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+        place:
+            { id: '4de072969805ac41',
+                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+                place_type: 'city',
+                name: 'West Palm Beach',
+                full_name: 'West Palm Beach, FL',
+                country_code: 'US',
+                country: 'United States',
+                bounding_box: { type: 'Polygon', coordinates: [Array] },
+                attributes: {} },
+    };
+    let mockFireTweet = {
+        created_at: "Mon Jan 1 00:00:00 +0000 2018",
+        id: 999999999999999999,
+        id_str: "999999999999999999",
+        text: 'Fire Weather Watch issued May 18 at 5:52AM CDT expiring May 19 at 9:00PM CDT by NWS Midland-Odessa {link}... {link}\n',
         geoPoint: {
             lat: 26.71903,
             lng: -80.05049
@@ -30,31 +162,254 @@ test( 'assert that weather tweets are classified correctly', done => {
                 attributes: {} },
     };
 
-    // mock callbacks
-    function dontAddToDB( tweet ) {}
-    function mockClientCallback( tweet ) {
+    // dummy database callback
+    function dummyAddToDB( tweet ) {}
 
-        /*
-        console.log('\\********************************************************\\\n' +
+    function logFail( label, entity, text ) {
+        console.log(
+            '******* NLU Top Label *******\n' +
+            label + '\n' +
+            '******* WKS-NLU Entities *******\n' +
+            entity + '\n' +
+
+            '/******* Tweet Text *******\n' +
+            text + '\n\n'
+        );
+    }
+    function logPass( label, entity, text ) {
+        console.log(
+            '\\********************************************************\\\n' +
             '\\************************************************\\\n\n' +
-            //console.log('\n' + JSON.stringify(response, null, 2) + '\n') +
-            tweet.NLULabel + '\n' +
-            tweet.NLUEntity + '\n' +
-            tweet.text + '\n\n' +
+
+            '******* NLU Top Label *******\n' +
+            label + '\n\n' +
+
+            '******* WKS-NLU Entities *******\n' +
+            entity+ '\n' +
+
+            '/******* Tweet Text *******\n' +
+            text + '\n\n' +
             '\\************************************************\\\n' +
-            '\\********************************************************\\');
-        */
-
-        expect( tweet ).toBe( mockTweet );
-
-        let isWeatherLabel = nlu.isWeather( tweet.NLULabel );
-        expect( isWeatherLabel ).toBe( true );
-
-        done();
+            '\\********************************************************\\\n'
+        );
     }
 
-    // test getClassification
-    nlu.classify( mockTweet, dontAddToDB, mockClientCallback);
+    test( 'assert that INCLEMENT_WEATHER tweets are classified correctly', done => {
+
+        /**
+         * printInfo mock
+         */
+        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
+            expect( weather ).toBe( true );
+            expect( inclement ).toBe( true );
+
+            let label = tweet.NLULabel;
+            let entity = tweet.NLUEntity;
+            expect( entity ).toBe( 'INCLEMENT_WEATHER' );
+
+            let text = tweet.text;
+
+            if ( !weather || !inclement ) {
+                logFail( label, entity, text );
+                done();
+            } else {
+                logPass( label, entity, text );
+            }
+        });
+
+        function dummyClientCallback( tweet ) {
+            done();
+        }
+
+        // test getClassification
+        nlu.classify( mockInclementTweet, dummyAddToDB, dummyClientCallback);
+    });
+
+    test( 'assert that RAIN tweets are classified correctly', done => {
+
+        /**
+         * printInfo mock
+         */
+        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
+            expect( weather ).toBe( true );
+            expect( inclement ).toBe( true );
+
+            let label = tweet.NLULabel;
+            let entity = tweet.NLUEntity;
+            expect( entity ).toBe( 'RAIN' );
+
+            let text = tweet.text;
+
+            if ( !weather || !inclement ) {
+                logFail( label, entity, text );
+                done();
+            } else {
+                logPass( label, entity, text );
+            }
+        });
+
+        function dummyClientCallback( tweet ) {
+            done();
+        }
+
+        // test getClassification
+        nlu.classify( mockRainTweet, dummyAddToDB, dummyClientCallback);
+    });
+
+    test( 'assert that SNOW tweets are classified correctly', done => {
+
+        /**
+         * printInfo mock
+         */
+        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
+            expect( weather ).toBe( true );
+            expect( inclement ).toBe( true );
+
+            let label = tweet.NLULabel;
+            let entity = tweet.NLUEntity;
+            expect( entity ).toBe( 'SNOW' );
+
+            let text = tweet.text;
+
+            if ( !weather || !inclement ) {
+                logFail( label, entity, text );
+                done();
+            } else {
+                logPass( label, entity, text );
+            }
+        });
+
+        function dummyClientCallback( tweet ) {
+            done();
+        }
+
+        // test getClassification
+        nlu.classify( mockSnowTweet, dummyAddToDB, dummyClientCallback);
+    });
+
+    test( 'assert that HAIL tweets are classified correctly', done => {
+
+        /**
+         * printInfo mock
+         */
+        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
+            expect( weather ).toBe( true );
+            expect( inclement ).toBe( true );
+
+            let label = tweet.NLULabel;
+            let entity = tweet.NLUEntity;
+            expect( entity ).toBe( 'HAIL' );
+
+            let text = tweet.text;
+
+            if ( !weather || !inclement ) {
+                logFail( label, entity, text );
+                done();
+            } else {
+                logPass( label, entity, text );
+            }
+        });
+
+        function dummyClientCallback( tweet ) {
+            done();
+        }
+
+        // test getClassification
+        nlu.classify( mockHailTweet, dummyAddToDB, dummyClientCallback);
+    });
+
+    test( 'assert that WIND tweets are classified correctly', done => {
+
+        /**
+         * printInfo mock
+         */
+        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
+            expect( weather ).toBe( true );
+            expect( inclement ).toBe( true );
+
+            let label = tweet.NLULabel;
+            let entity = tweet.NLUEntity;
+            expect( entity ).toBe( 'WIND' );
+
+            let text = tweet.text;
+
+            if ( !weather || !inclement ) {
+                logFail( label, entity, text );
+                done();
+            } else {
+                logPass( label, entity, text );
+            }
+        });
+
+        function dummyClientCallback( tweet ) {
+            done();
+        }
+
+        // test getClassification
+        nlu.classify( mockWindTweet, dummyAddToDB, dummyClientCallback);
+    });
+
+    test( 'assert that ICE tweets are classified correctly', done => {
+
+        /**
+         * printInfo mock
+         */
+        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
+            expect( weather ).toBe( true );
+            expect( inclement ).toBe( true );
+
+            let label = tweet.NLULabel;
+            let entity = tweet.NLUEntity;
+            expect( entity ).toBe( 'ICE' );
+
+            let text = tweet.text;
+
+            if ( !weather || !inclement ) {
+                logFail( label, entity, text );
+                done();
+            } else {
+                logPass( label, entity, text );
+            }
+        });
+
+        function dummyClientCallback( tweet ) {
+            done();
+        }
+
+        // test getClassification
+        nlu.classify( mockIceTweet, dummyAddToDB, dummyClientCallback);
+    });
+
+    test( 'assert that FIRE tweets are classified correctly', done => {
+
+        /**
+         * printInfo mock
+         */
+        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
+            expect( weather ).toBe( true );
+            expect( inclement ).toBe( true );
+
+            let label = tweet.NLULabel;
+            let entity = tweet.NLUEntity;
+            expect( entity ).toBe( 'FIRE' );
+
+            let text = tweet.text;
+
+            if ( !weather || !inclement ) {
+                logFail( label, entity, text );
+                done();
+            } else {
+                logPass( label, entity, text );
+            }
+        });
+
+        function dummyClientCallback( tweet ) {
+            done();
+        }
+
+        // test getClassification
+        nlu.classify( mockFireTweet, dummyAddToDB, dummyClientCallback);
+    });
 });
 
 test( 'assert that non-weather tweets are classified correctly', done => {

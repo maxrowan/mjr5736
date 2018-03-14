@@ -17,6 +17,9 @@
   "presets": [
     "env"
   ],
+  "env": {
+    "jest": true
+  },
   "author": "Max Rowan",
   "license": "ISC",
   "bugs": {

@@ -33,17 +33,39 @@ let T = new Twit(secret);
 let stream;
 startStream();
 
-
 /**
  * starts twitter stream
  */
 function startStream() {
-    let us = [ -124.7844079,    // west long (left)
-        -66.9513812,            // south lat (bottom)
-        -66.9513812,            // esat long (right)
-        49.3457868              // north lat (top)
+    //let us = [
+    //    -124.7844079,           // west long (left)
+    //    -66.9513812,            // south lat (bottom)
+    //    -66.9513812,            // east long (right)
+    //    49.3457868              // north lat (top)
+    //];
+    /**
+     * state bounding boxes ( data from "https://boundingbox.klokantech.com" )
+     * @type {[number,number,number,number]}
+     */
+    let PA = [
+        -80.519895,
+        39.7197989,
+        -74.6895018,
+        42.516072
     ];
-    stream = T.stream('statuses/filter', {/*locations: us, */track: 'thunderstorm,storm,rain,snow,sleet,hail', language: 'en'});
+    let NY = [
+        -79.7625901,
+        40.4773991,
+        -71.777491,
+        45.015865
+    ];
+    let OH = [
+        -84.8203049,    // west long (left)
+        38.4034229,     // south lat (bottom)
+        -80.5182,       // east long (right)
+        42.327132       // north lat (top)
+    ];
+    stream = T.stream('statuses/filter', {locations: [ PA, NY, OH ], /*track: 'thunderstorm,storm,rain,snow,sleet,hail',*/ language: 'en'});
 
     /**
      * stream functions
@@ -68,6 +90,13 @@ function onTweet( tweet ) {
         tweet.geoPoint = getCoords( tweet );
         nlu.classify( tweet, db.addTweetToDB, sendToClient );
     }
+}
+
+/**
+ * sends multiple tweets to client from the database
+ */
+function sendTweets( result ) {
+    io.emit( 'getAllTweets', result );
 }
 
 /**
@@ -114,6 +143,27 @@ function sendToClient( tweet ) {
 function displayMessage ( msg ) {
     console.log( msg );
 }
+
+/**
+ * socket functions
+ */
+io.on( 'connection', function( socket ) {
+
+    socket.on( 'stopStream', function() {
+        stream.stop();
+    });
+
+    socket.on( 'startStream', function() {
+        stream.start();
+    });
+
+    /**
+     * retrieveFromDB event -> get all tweets from the DB
+     */
+    socket.on( 'retrieveAll', function () {
+        db.getAllTweetsFromDB( sendTweets );
+    });
+});
 
 /**
  * connect

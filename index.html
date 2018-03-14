@@ -91,30 +91,36 @@
         <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">☰</a>
             <div id="accordion">
-              <div class="card">
-                <div class="card-header">
-                  <a class="card-link" data-toggle="collapse" data-parent="#accordion" href="#collapseOne">
-                    Tweets
-                  </a>
+                <div class="card" id="tweetContainer">
+
+                    <div class="card-header">
+                        <a class="card-link" data-toggle="collapse" data-parent="#accordion" href="#collapseRT">
+                            Tweets
+                        </a>
+                    </div>
+                    <div id="collapseRT" class="collapse">
+                        <div class="card-body pre-scrollable" id="cardRT">
+                            <!--This is where the Tweets will appear-->
+                        </div>
+                    </div>
                 </div>
-                <div id="collapseOne" class="collapse">
-                  <div class="card-body pre-scrollable" id="cardOne">
-                      <!--This is where the Tweets will appear-->
-                  </div>
+                <div class="card" id="searchContainer">
+                    <div class="card-header">
+                        <a class="collapsed card-link" data-toggle="collapse" data-parent="#accordion" href="#collapseSearch">
+                            Search
+                        </a>
+                    </div>
+                    <div id="collapseSearch" class="collapse">
+                        <div class="card-body pre-scrollable" id="cardSearch">
+                            This is where the options for multifaceted searches will be.
+                        </div>
+                    </div>
                 </div>
-              </div>
-              <div class="card">
-                <div class="card-header">
-                  <a class="collapsed card-link" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo">
-                  Search
-                </a>
+                <div>
+                    <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
+                    <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
+                    <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
                 </div>
-                <div id="collapseTwo" class="collapse">
-                  <div class="card-body">
-                    This is where the options for multifaceted searches will be.
-                  </div>
-                </div>
-              </div>
             </div>
         </div>
 

@@ -20,10 +20,10 @@ function classify ( tweet, addTweetToDB, clientCallback) {
         'text': tweet.text,
         'features': {
             'entities': {
-                "model": "10:bfa6aa14-6fb6-4bc0-8e94-0c44020b680c"
+                "model": "10:da673431-7600-4f4e-9828-50da0e39756f"
             },
             'categories': {
-                "model": "10:bfa6aa14-6fb6-4bc0-8e94-0c44020b680c"
+                "model": "10:da673431-7600-4f4e-9828-50da0e39756f"
             }
         }
     };
@@ -34,7 +34,7 @@ function classify ( tweet, addTweetToDB, clientCallback) {
             console.log( 'error:', err );
         else {
             try {
-                let label = response.categories[0].label.toString();
+                let label = getLabel( response.categories );
                 let entity = getEntity( response.entities );
 
                 let isAWeatherTweet = ex.isWeather( label );
@@ -43,7 +43,7 @@ function classify ( tweet, addTweetToDB, clientCallback) {
                 // add highest matching label and most specific entity to tweet
                 tweet.NLULabel = label;
                 tweet.NLUEntity = entity;
-                printInfo( tweet, isAWeatherTweet, isAnInclementTweet );
+                ex.printInfo( tweet, isAWeatherTweet, isAnInclementTweet );
 
                 if ( isAWeatherTweet && isAnInclementTweet ) {
                     // add tweet to database
@@ -85,6 +85,19 @@ function isInclement( entity ) {
         entity === "ICE" ||
         entity === "FIRE"
     );
+}
+
+/**
+ * returns primary category label
+ * @param categories
+ * @returns {string}
+ */
+function getLabel ( categories ) {
+    let label = '';
+    if ( categories !== undefined ) {
+        label = categories[0].label.toString();
+    }
+    return label;
 }
 
 /**
@@ -158,4 +171,5 @@ function printInfo( tweet, weather, inclement ) {
 ex.classify = classify;
 ex.isWeather = isWeather;
 ex.isInclement = isInclement;
+ex.printInfo = printInfo;
 

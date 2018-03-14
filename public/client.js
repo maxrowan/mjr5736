@@ -2,7 +2,6 @@ let map;
 let inclementTweets,    // rgba( 0, 255, 0, 1)
     rainTweets,         // rgba( 255, 165, 0, 1)
     snowTweets,         // rgba( 0, 255, 255, 1)
-    sleetTweets,        // rgba( 123, 104, 238, 1)
     hailTweets,         // rgba( 219, 112, 147, 1)
     windTweets,         // rgba( 255, 20, 147, 1)
     iceTweets,          // rgba( 139, 0, 139, 1)
@@ -10,21 +9,19 @@ let inclementTweets,    // rgba( 0, 255, 0, 1)
 let inclementHeatmap,
     rainHeatmap,
     snowHeatmap,
-    sleetHeatmap,
     hailHeatmap,
     windHeatmap,
     iceHeatmap,
     fireHeatmap;
-let tweetCount = 0;
 
 // initialize map
 function initMap() {
 
     /* google map */
-    let behrend = {lat: 42.119308, lng: -79.983714};
+    let erieInsurance = { lat: 42.130601, lng: -80.083889 };
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 4,
-        center: behrend
+        zoom: 6,
+        center: erieInsurance
     });
 
     /* Heat maps */
@@ -55,13 +52,6 @@ function initMap() {
     snowTweets = new google.maps.MVCArray();
     snowHeatmap = new google.maps.visualization.HeatmapLayer({
         data: snowTweets,
-        map: map,
-        radius: 16
-    });
-
-    sleetTweets = new google.maps.MVCArray();
-    sleetHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: sleetTweets,
         map: map,
         radius: 16,
         gradient: [
@@ -126,16 +116,19 @@ let socket = io();
  * add point to array and show it on map when it's received from the server
  */
 socket.on('tweetEvent', function( tweet ) {
+    console.log( tweet.text );
+    showTweet( tweet, 'cardRT' );
+});
 
-    tweetCount++;
-    let geoPoint = tweet.geoPoint;
-    let text = tweet.text;
-    let key = geoPoint.lat.toFixed(5) + ' ' + geoPoint.lng.toFixed(5);
-    console.log('tweet #' + tweetCount + ': ' + text
-        + '\n\n' + key);
-    let marker = new google.maps.LatLng(geoPoint.lat, geoPoint.lng);
+socket.on( 'getAllTweets', function( tweets ) {
 
-    /* put tweet in according heatmap */
+    for ( let i = 0; i < tweets.length; i++ ) {
+        showTweet( tweets[i], 'cardSearch' );
+    }
+
+});
+
+function addToMap( tweet, marker ) {
     switch ( tweet.NLUEntity ) {
         case "INCLEMENT_WEATHER":
             inclementTweets.push( marker );
@@ -145,9 +138,6 @@ socket.on('tweetEvent', function( tweet ) {
             break;
         case "SNOW" :
             snowTweets.push( marker );
-            break;
-        case "SLEET" :
-            sleetTweets.push( marker );
             break;
         case "HAIL" :
             hailTweets.push( marker );
@@ -162,17 +152,56 @@ socket.on('tweetEvent', function( tweet ) {
             fireTweets.push( marker );
             break;
     }
+}
+
+function addToSidebar( text, id ) {
+    let p = document.createElement( 'p' );
+    p.innerHTML = text;
+    document.getElementById( id ).appendChild( p );
 
     // sets timeout for markers (they're only visible for 5 minutes (300000 ms))
     //setTimeout(function () {
-    //    mainTweets.removeAt(0);
+    //    tweets.removeAt(0);
     //}, 300000);
+}
 
-    // add tweet to sidebar feed
-    let p = document.createElement("P");
-    p.innerHTML = text;
-    p.id = key;
+function showTweet( tweet, id ) {
 
+    let marker = new google.maps.LatLng(
+        tweet.geoPoint.lat,
+        tweet.geoPoint.lng
+    );
 
-    document.getElementById("cardOne").appendChild(p);
-});
+    addToMap( tweet, marker );
+    addToSidebar( tweet.text, id );
+}
+
+function stopStream() {
+    socket.emit( 'stopStream' );
+}
+
+function startStream() {
+    socket.emit( 'startStream' );
+}
+
+function retrieveFromDB () {
+
+    // remove data from real-time sidebar
+    document.getElementById( 'cardRT' ).innerHTML = '';
+
+    // remove data from all heatmaps
+    clearHeatmaps();
+
+    // tell server to retrieve and send all tweets from DB
+    socket.emit( 'retrieveAll' );
+}
+
+function clearHeatmaps() {
+    inclementTweets.clear();
+    rainTweets.clear();
+    snowTweets.clear();
+    hailTweets.clear();
+    windTweets.clear();
+    iceTweets.clear();
+    fireTweets.clear();
+}
