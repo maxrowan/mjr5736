@@ -1,7 +1,7 @@
 /**
  * Functions for the Natural Language Understanding service
  */
-
+let format = require( 'string-format' );
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 const natural_language_understanding = new NaturalLanguageUnderstandingV1({
     'username': '8860f42b-746f-4caf-a8f1-644e818edff1',
@@ -9,76 +9,167 @@ const natural_language_understanding = new NaturalLanguageUnderstandingV1({
     'version_date': '2017-02-27'
 });
 
-
-
+let ex = module.exports = {};
 
 /**
  * check with the natural language understanding to see if the tweet's text is weather-related
  */
-var nluFunctions = {
-    getClassification: function ( data, dbCallback, clientCallback) {
+function classify ( tweet, addTweetToDB, clientCallback) {
 
-        var tweet = data.tweet;
-        var text = tweet.text;
-        var geoPoint = data.geoPoint;
-
-        var parameters = {
-            'text': text,
-            'features': {
-                'entities': {
-                    "model": "10:3f2420ec-329d-49d9-bfb2-6ed7a54337ed"
-                },
-                'categories': {
-                    "model": "10:3f2420ec-329d-49d9-bfb2-6ed7a54337ed"
-                }
+    let parameters = {
+        'text': tweet.text,
+        'features': {
+            'entities': {
+                "model": "10:da673431-7600-4f4e-9828-50da0e39756f"
+            },
+            'categories': {
+                "model": "10:da673431-7600-4f4e-9828-50da0e39756f"
             }
-        };
-
-
-        natural_language_understanding.analyze(parameters, function (err, response) {
-            if (err)
-                console.log('error:', err);
-            else {
-                try {
-                    //console.log(JSON.stringify(response, null, 2));
-                    var label = response.categories[0].label.toString();
-                    //var entity = response.entities[0].label.toString();
-
-                    if ( isWeather( label )) {
-
-                        console.log( '\n\\********************************************************\\\n' );
-                        console.log( '\n' + JSON.stringify(response, null, 2) + '\n' );
-                        console.log( '\n' + label + '\n' );
-                        console.log( '\n' + parameters.text + '\n' );
-                        console.log( '\n\\********************************************************\\\n' );
-
-                        // add tweet to database
-                        dbCallback( tweet );
-
-                        // send data to client
-                        clientCallback( geoPoint, tweet );
-
-                    } else {
-                        console.log(label);
-                    }
-                } catch (err) {
-                    console.log(err);
-                }
-            }
-        });
-    }
-};
-
-function isWeather (label) {
-    var labels = label.split('/');
-
-    for (var i = 0; i < labels.length; i++) {
-        if (labels[i] === 'weather') {
-            return true;
         }
-    }
-    return false;
+    };
+
+    natural_language_understanding.analyze(parameters, function ( err, response ) {
+
+        if ( err )
+            console.log( 'error:', err );
+        else {
+            try {
+                let label = getLabel( response.categories );
+                let entity = getEntity( response.entities );
+
+                let isAWeatherTweet = ex.isWeather( label );
+                let isAnInclementTweet = ex.isInclement( entity );
+
+                // add highest matching label and most specific entity to tweet
+                tweet.NLULabel = label;
+                tweet.NLUEntity = entity;
+                ex.printInfo( tweet, isAWeatherTweet, isAnInclementTweet );
+
+                if ( isAWeatherTweet && isAnInclementTweet ) {
+                    // add tweet to database
+                    addTweetToDB( tweet );
+
+                    // send data to client
+                    clientCallback( tweet );
+                }
+            } catch ( err ) {
+                console.log( err );
+            }
+        }
+    });
 }
 
-module.exports = nluFunctions;
+/**
+ * split the label that's returned by understanding to see if a category is weather
+ * @param label
+ * @returns {boolean}
+ */
+function isWeather ( label ) {
+    let labels = label.split('/');
+    return labels.includes( 'weather' );
+}
+
+/**
+ * determins if the weather is an inclement subtype or not
+ * @param entity
+ * @returns {boolean}
+ */
+function isInclement( entity ) {
+    return (
+        entity === "INCLEMENT_WEATHER" ||
+        entity === "RAIN" ||
+        entity === "SNOW" ||
+        entity === "SLEET" ||
+        entity === "HAIL" ||
+        entity === "WIND" ||
+        entity === "ICE" ||
+        entity === "FIRE"
+    );
+}
+
+/**
+ * returns primary category label
+ * @param categories
+ * @returns {string}
+ */
+function getLabel ( categories ) {
+    let label = '';
+    if ( categories !== undefined ) {
+        label = categories[0].label.toString();
+    }
+    return label;
+}
+
+/**
+ * returns primary entity type or subtype of first weather entity encountered
+ * @param entities
+ * @returns {*}
+ */
+function getEntity( entities ) {
+
+    let entity = ' Could not Classify';
+
+    if ( entities.length > 0 ) {
+
+        entity = entities[0].type;
+
+        for (let i = 0; i < entities.length; i++) {
+
+            let type = entities[i].type;
+            let subtype =  entities[i].disambiguation.subtype[0];
+
+            if ( type === 'WEATHER' ) {
+                if ( subtype ) {
+                    return subtype;
+                }
+            }
+        }
+    }
+    return entity;
+}
+
+/**
+ * prints info about the returned NLU JSON object and corresponding tweet
+ */
+function printInfo( tweet, weather, inclement ) {
+
+    let label = tweet.NLULabel;
+    let entity = tweet.NLUEntity;
+    let text = tweet.text;
+
+    if ( !weather || !inclement ) {
+        console.log(
+            '******* NLU Top Label *******\n' +
+            label + '\n' +
+            '******* WKS-NLU Entities *******\n' +
+            entity + '\n' +
+
+            '/******* Tweet Text *******\n' +
+            text + '\n\n'
+        );
+    } else {
+        console.log(
+            '\\********************************************************\\\n' +
+            '\\************************************************\\\n\n' +
+            //'******* Response from NLU *******\n' +
+            //JSON.stringify(response, null, 2) + '\n\n' +
+
+            '******* NLU Top Label *******\n' +
+            label + '\n\n' +
+
+            '******* WKS-NLU Entities *******\n' +
+            entity+ '\n' +
+
+            '/******* Tweet Text *******\n' +
+            text + '\n\n' +
+            '\\************************************************\\\n' +
+            '\\********************************************************\\\n'
+        );
+    }
+}
+
+ex.classify = classify;
+ex.isWeather = isWeather;
+ex.isInclement = isInclement;
+ex.printInfo = printInfo;
 
