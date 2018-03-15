@@ -32,7 +32,9 @@ function initMap() {
         radius: 16,
         gradient: [
             'rgba( 0, 255, 0, 0)',
-            'rgba( 0, 255, 0, 0.6)',
+            'rgba( 0, 255, 0, 1)',
+            'rgba( 0, 255, 0, 1)',
+            'rgba( 0, 255, 0, 1)',
             'rgba( 0, 255, 0, 1)'
         ]
     });
@@ -44,7 +46,9 @@ function initMap() {
         radius: 16,
         gradient: [
             'rgba( 255, 165, 0, 0)',
-            'rgba( 255, 165, 0, 0.6)',
+            'rgba( 255, 165, 0, 1)',
+            'rgba( 255, 165, 0, 1)',
+            'rgba( 255, 165, 0, 1)',
             'rgba( 255, 165, 0, 1)'
         ]
     });
@@ -56,7 +60,9 @@ function initMap() {
         radius: 16,
         gradient: [
             'rgba( 0, 255, 255, 0)',
-            'rgba( 0, 255, 255, 0.6)',
+            'rgba( 0, 255, 255, 1)',
+            'rgba( 0, 255, 255, 1)',
+            'rgba( 0, 255, 255, 1)',
             'rgba( 0, 255, 255, 1)'
         ]
     });
@@ -68,7 +74,9 @@ function initMap() {
         radius: 16,
         gradient: [
             'rgba( 219, 112, 147, 0)',
-            'rgba( 219, 112, 147, 0.6)',
+            'rgba( 219, 112, 147, 1)',
+            'rgba( 219, 112, 147, 1)',
+            'rgba( 219, 112, 147, 1)',
             'rgba( 219, 112, 147, 1)'
         ]
     });
@@ -80,7 +88,9 @@ function initMap() {
         radius: 16,
         gradient: [
             'rgba( 255, 20, 147, 0)',
-            'rgba( 255, 20, 147, 0.6)',
+            'rgba( 255, 20, 147, 1)',
+            'rgba( 255, 20, 147, 1)',
+            'rgba( 255, 20, 147, 1)',
             'rgba( 255, 20, 147, 1)'
         ]
     });
@@ -92,7 +102,9 @@ function initMap() {
         radius: 16,
         gradient: [
             'rgba( 139, 0, 139, 0)',
-            'rgba( 139, 0, 139, 0.6)',
+            'rgba( 139, 0, 139, 1)',
+            'rgba( 139, 0, 139, 1)',
+            'rgba( 139, 0, 139, 1)',
             'rgba( 139, 0, 139, 1)'
         ]
     });
@@ -104,7 +116,9 @@ function initMap() {
         radius: 16,
         gradient: [
             'rgba( 233, 150, 122, 0)',
-            'rgba( 233, 150, 122, 0.6)',
+            'rgba( 233, 150, 122, 1)',
+            'rgba( 233, 150, 122, 1)',
+            'rgba( 233, 150, 122, 1)',
             'rgba( 233, 150, 122, 1)'
         ]
     });
@@ -194,6 +208,13 @@ function retrieveFromDB () {
 
     // tell server to retrieve and send all tweets from DB
     socket.emit( 'retrieveAll' );
+}
+
+function clearAllTweets() {
+    document.getElementById( 'cardRT' ).innerHTML = '';
+    document.getElementById( 'cardSearch' ).innerHTML = '';
+
+    clearHeatmaps();
 }
 
 function clearHeatmaps() {
