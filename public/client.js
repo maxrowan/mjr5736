@@ -6,13 +6,13 @@ let inclementTweets,    // rgba( 0, 255, 0, 1)
     windTweets,         // rgba( 255, 20, 147, 1)
     iceTweets,          // rgba( 139, 0, 139, 1)
     fireTweets;         // rgba( 233, 150, 122, 1)
-let inclementHeatmap,
-    rainHeatmap,
-    snowHeatmap,
-    hailHeatmap,
-    windHeatmap,
-    iceHeatmap,
-    fireHeatmap;
+//let inclementHeatmap,
+//    rainHeatmap,
+//    snowHeatmap,
+//    hailHeatmap,
+//    windHeatmap,
+//    iceHeatmap,
+//    fireHeatmap;
 
 // initialize map
 function initMap() {
@@ -20,11 +20,11 @@ function initMap() {
     /* google map */
     let erieInsurance = { lat: 42.130601, lng: -80.083889 };
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 6,
+        zoom: 5,
         center: erieInsurance
     });
 
-    /* Heat maps */
+    /* Heat maps
     inclementTweets = new google.maps.MVCArray();
     inclementHeatmap = new google.maps.visualization.HeatmapLayer({
         data: inclementTweets,
@@ -121,7 +121,7 @@ function initMap() {
             'rgba( 233, 150, 122, 1)',
             'rgba( 233, 150, 122, 1)'
         ]
-    });
+    });*/
 }
 
 let socket = io();
@@ -131,18 +131,24 @@ let socket = io();
  */
 socket.on('tweetEvent', function( tweet ) {
     console.log( tweet.text );
-    showTweet( tweet, 'cardRT' );
+    showTweet( tweet, 'cardTweet' );
 });
 
 socket.on( 'getAllTweets', function( tweets ) {
 
     for ( let i = 0; i < tweets.length; i++ ) {
-        showTweet( tweets[i], 'cardSearch' );
+        showTweet( tweets[i], 'cardTweet' );
     }
 
 });
 
-function addToMap( tweet, marker ) {
+function addToMap( tweet ) {
+
+    let marker = new google.maps.LatLng(
+        tweet.geoPoint.lat,
+        tweet.geoPoint.lng
+    );
+
     switch ( tweet.NLUEntity ) {
         case "INCLEMENT_WEATHER":
             inclementTweets.push( marker );
@@ -181,12 +187,7 @@ function addToSidebar( text, id ) {
 
 function showTweet( tweet, id ) {
 
-    let marker = new google.maps.LatLng(
-        tweet.geoPoint.lat,
-        tweet.geoPoint.lng
-    );
-
-    addToMap( tweet, marker );
+    addToMap( tweet );
     addToSidebar( tweet.text, id );
 }
 
@@ -201,7 +202,7 @@ function startStream() {
 function retrieveFromDB () {
 
     // remove data from real-time sidebar
-    document.getElementById( 'cardRT' ).innerHTML = '';
+    document.getElementById( 'cardTweet' ).innerHTML = '';
 
     // remove data from all heatmaps
     clearHeatmaps();
@@ -211,8 +212,7 @@ function retrieveFromDB () {
 }
 
 function clearAllTweets() {
-    document.getElementById( 'cardRT' ).innerHTML = '';
-    document.getElementById( 'cardSearch' ).innerHTML = '';
+    document.getElementById( 'cardTweet' ).innerHTML = '';
 
     clearHeatmaps();
 }
