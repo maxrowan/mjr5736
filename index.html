@@ -3,113 +3,73 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Test App</title>
-        <style>
-
-            html, body {
-                height:             100%;
-                margin:             0;
-                padding:            0;
-            }
-
-            #map {
-                height:             100%;
-                width:              100%;
-            }
-
-            /* menu button for sidebar */
-            #menuBtn {
-                position:           absolute;
-                display:            table-cell;
-                vertical-align:     middle;
-                text-align:         center;
-                top:                40px;
-                right:              14px;
-                width:              25px;
-                height:             24px;
-                font-size:          18px;
-                color:              black;
-                background-color:   white;
-                cursor:             pointer;
-            }
-
-            /* sidebar styles */
-            .sidenav {
-                height:             100%;
-                width:              0px;
-                position:           fixed;
-                z-index:            1;
-                top:                0;
-                right:              0;
-                background-color:   WhiteSmoke;
-                overflow-x:         hidden;
-                transition:         0.5s;
-                padding-top:        60px;
-            }
-
-            .sidenav a {
-                padding:            8px 8px 8px 32px;
-                text-decoration:    none;
-                font-size:          25px;
-                color:              #818181;
-                display:            block;
-                transition:         0.3s;
-            }
-
-            .sidenav a:hover {
-                color:              #f1f1f1;
-            }
-
-            .sidenav .closebtn {
-                position:           absolute;
-                top:                0;
-                right:              25px;
-                font-size:          36px;
-                margin-left:        50px;
-            }
-
-            @media screen and (max-height: 450px) {
-                .sidenav {padding-top: 15px;}
-                .sidenav a {font-size: 18px;}
-            }
-        </style>
+        <title>Weather App</title>
+        <link rel="stylesheet" href="custom.css">
 
         <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <!-- Scrollbar Custom CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     </head>
     <body>
         <script src="/socket.io/socket.io.js"></script>
-        <div id="map"></div>
-        <script src="client.js"></script>
 
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
 
-        <!---sidenav-->
+        <div class="wrapper">
+            <!-- Sidebar -->
+            <nav id="sidebar">
+
+                <!-- Sidebar Header -->
+                <div class="sidebar-header">
+                    <h3>Tweets</h3>
+                </div>
+
+                <!-- Tweet Content -->
+                <div class="active" id="tweet-content">
+                </div>
+
+                <!-- test buttons -->
+                <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
+                <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
+                <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
+                <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
+            </nav>
+
+            <!-- Page Content -->
+            <div id="content">
+                <div id="map">
+                    <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
+                        <i class="glyphicon glyphicon-align-left"></i>
+                        Toggle Sidebar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+
+
+
+
+
+
+
+
+        <!---old sidenav
         <div id="mySidenav" class="sidenav">
             <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">☰</a>
-            <div id="accordion">
-                <div class="card" id="tweetContainer">
+            <div class="card" id="tweetContainer">
+                <div class="card-header" id="tweet_title">
+                    Tweets
+                </div>
+                <div class="card-body pre-scrollable" id="cardTweet">
 
-                    <div class="card-header">
-                        <a class="card-link" data-toggle="collapse" data-parent="#accordion" href="#collapseRT">
-                            Tweets
-                        </a>
-                    </div>
-                    <div id="collapseRT" class="collapse">
-                        <div class="card-body pre-scrollable" id="cardTweet">
-                            <!--This is where tweets will appear-->
-                        </div>
-                    </div>
                 </div>
-                <div>
-                    <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
-                    <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
-                    <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
-                    <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
-                </div>
+            </div>
+            <div>
+                <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
+                <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
+                <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
+                <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
             </div>
         </div>
 
@@ -124,6 +84,22 @@
             function closeNav() {
                 document.getElementById("mySidenav").style.width = "0";
             }
+        </script>-->
+
+
+
+        <script src="client.js"></script>
+        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
+
+
+        <script type="text/javascript">
+            //$(document).ready(function () {
+            //    $('#sidebarCollapse').on('click', function () {
+            //        $('#sidebar').toggleClass('active');
+            //    });
+            //});
         </script>
     </body>
 </html>

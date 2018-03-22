@@ -1,18 +1,11 @@
 let map;
-let inclementTweets,    // rgba( 0, 255, 0, 1)
-    rainTweets,         // rgba( 255, 165, 0, 1)
-    snowTweets,         // rgba( 0, 255, 255, 1)
-    hailTweets,         // rgba( 219, 112, 147, 1)
-    windTweets,         // rgba( 255, 20, 147, 1)
-    iceTweets,          // rgba( 139, 0, 139, 1)
-    fireTweets;         // rgba( 233, 150, 122, 1)
-//let inclementHeatmap,
-//    rainHeatmap,
-//    snowHeatmap,
-//    hailHeatmap,
-//    windHeatmap,
-//    iceHeatmap,
-//    fireHeatmap;
+let inclementTweets = [],    // rgba( 0, 255, 0, 1)
+    rainTweets = [],         // rgba( 255, 165, 0, 1)
+    snowTweets = [],         // rgba( 0, 255, 255, 1)
+    hailTweets = [],         // rgba( 219, 112, 147, 1)
+    windTweets = [],         // rgba( 255, 20, 147, 1)
+    iceTweets = [],          // rgba( 139, 0, 139, 1)
+    fireTweets = [];         // rgba( 233, 150, 122, 1)
 
 // initialize map
 function initMap() {
@@ -23,105 +16,6 @@ function initMap() {
         zoom: 5,
         center: erieInsurance
     });
-
-    /* Heat maps
-    inclementTweets = new google.maps.MVCArray();
-    inclementHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: inclementTweets,
-        map: map,
-        radius: 16,
-        gradient: [
-            'rgba( 0, 255, 0, 0)',
-            'rgba( 0, 255, 0, 1)',
-            'rgba( 0, 255, 0, 1)',
-            'rgba( 0, 255, 0, 1)',
-            'rgba( 0, 255, 0, 1)'
-        ]
-    });
-
-    rainTweets = new google.maps.MVCArray();
-    rainHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: rainTweets,
-        map: map,
-        radius: 16,
-        gradient: [
-            'rgba( 255, 165, 0, 0)',
-            'rgba( 255, 165, 0, 1)',
-            'rgba( 255, 165, 0, 1)',
-            'rgba( 255, 165, 0, 1)',
-            'rgba( 255, 165, 0, 1)'
-        ]
-    });
-
-    snowTweets = new google.maps.MVCArray();
-    snowHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: snowTweets,
-        map: map,
-        radius: 16,
-        gradient: [
-            'rgba( 0, 255, 255, 0)',
-            'rgba( 0, 255, 255, 1)',
-            'rgba( 0, 255, 255, 1)',
-            'rgba( 0, 255, 255, 1)',
-            'rgba( 0, 255, 255, 1)'
-        ]
-    });
-
-    hailTweets = new google.maps.MVCArray();
-    hailHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: hailTweets,
-        map: map,
-        radius: 16,
-        gradient: [
-            'rgba( 219, 112, 147, 0)',
-            'rgba( 219, 112, 147, 1)',
-            'rgba( 219, 112, 147, 1)',
-            'rgba( 219, 112, 147, 1)',
-            'rgba( 219, 112, 147, 1)'
-        ]
-    });
-
-    windTweets = new google.maps.MVCArray();
-    windHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: windTweets,
-        map: map,
-        radius: 16,
-        gradient: [
-            'rgba( 255, 20, 147, 0)',
-            'rgba( 255, 20, 147, 1)',
-            'rgba( 255, 20, 147, 1)',
-            'rgba( 255, 20, 147, 1)',
-            'rgba( 255, 20, 147, 1)'
-        ]
-    });
-
-    iceTweets = new google.maps.MVCArray();
-    iceHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: iceTweets,
-        map: map,
-        radius: 16,
-        gradient: [
-            'rgba( 139, 0, 139, 0)',
-            'rgba( 139, 0, 139, 1)',
-            'rgba( 139, 0, 139, 1)',
-            'rgba( 139, 0, 139, 1)',
-            'rgba( 139, 0, 139, 1)'
-        ]
-    });
-
-    fireTweets = new google.maps.MVCArray();
-    fireHeatmap = new google.maps.visualization.HeatmapLayer({
-        data: fireTweets,
-        map: map,
-        radius: 16,
-        gradient: [
-            'rgba( 233, 150, 122, 0)',
-            'rgba( 233, 150, 122, 1)',
-            'rgba( 233, 150, 122, 1)',
-            'rgba( 233, 150, 122, 1)',
-            'rgba( 233, 150, 122, 1)'
-        ]
-    });*/
 }
 
 let socket = io();
@@ -131,47 +25,74 @@ let socket = io();
  */
 socket.on('tweetEvent', function( tweet ) {
     console.log( tweet.text );
-    showTweet( tweet, 'cardTweet' );
+    showTweet( tweet, 'tweet-content' );
 });
 
 socket.on( 'getAllTweets', function( tweets ) {
 
     for ( let i = 0; i < tweets.length; i++ ) {
-        showTweet( tweets[i], 'cardTweet' );
+        showTweet( tweets[i], 'tweet-content' );
     }
 
 });
 
 function addToMap( tweet ) {
 
-    let marker = new google.maps.LatLng(
-        tweet.geoPoint.lat,
-        tweet.geoPoint.lng
-    );
+    let marker;
+
+    console.log('setting marker');
 
     switch ( tweet.NLUEntity ) {
         case "INCLEMENT_WEATHER":
-            inclementTweets.push( marker );
+            marker = setMarker( 'lime', tweet );
+            inclementTweets.setMap(map);
             break;
         case "RAIN" :
+            marker = setMarker( 'orange', tweet );
             rainTweets.push( marker );
             break;
         case "SNOW" :
+            marker = setMarker( 'aqua', tweet );
             snowTweets.push( marker );
             break;
         case "HAIL" :
+            marker = setMarker( 'MediumVioletRed', tweet );
             hailTweets.push( marker );
             break;
         case "WIND" :
+            marker = setMarker( 'DeepPink ', tweet );
             windTweets.push( marker );
             break;
         case "ICE" :
+            marker = setMarker( 'DarkMagenta ', tweet );
             iceTweets.push( marker );
             break;
         case "FIRE":
+            marker = setMarker( 'DarkSalmon', tweet );
             fireTweets.push( marker );
             break;
     }
+}
+
+function setMarker( color, tweet ) {
+
+    let mapIcon = {
+        path: google.maps.SymbolPath.CIRCLE,
+        fillColor: color,
+        fillOpacity: 0.6,
+        scale: 10,
+        strokeColor: 'white',
+        strokeWeight: 1
+    };
+
+    return new google.maps.Marker({
+        position: {
+            lat: tweet.geoPoint.lat,
+            lng: tweet.geoPoint.lng
+        },
+        icon: mapIcon,
+        map: map
+    });
 }
 
 function addToSidebar( text, id ) {
@@ -186,7 +107,6 @@ function addToSidebar( text, id ) {
 }
 
 function showTweet( tweet, id ) {
-
     addToMap( tweet );
     addToSidebar( tweet.text, id );
 }
@@ -202,27 +122,34 @@ function startStream() {
 function retrieveFromDB () {
 
     // remove data from real-time sidebar
-    document.getElementById( 'cardTweet' ).innerHTML = '';
+    document.getElementById( 'tweet-content' ).innerHTML = '';
 
     // remove data from all heatmaps
-    clearHeatmaps();
+    clearMarkers();
 
     // tell server to retrieve and send all tweets from DB
     socket.emit( 'retrieveAll' );
 }
 
 function clearAllTweets() {
-    document.getElementById( 'cardTweet' ).innerHTML = '';
+    document.getElementById( 'tweet-content' ).innerHTML = '';
 
     clearHeatmaps();
 }
 
-function clearHeatmaps() {
-    inclementTweets.clear();
-    rainTweets.clear();
-    snowTweets.clear();
-    hailTweets.clear();
-    windTweets.clear();
-    iceTweets.clear();
-    fireTweets.clear();
+function clearMarkers() {
+    setMap( inclementTweets, null );
+    setMap( rainTweets, null );
+    setMap( snowTweets, null );
+    setMap( hailTweets, null );
+    setMap( windTweets, null );
+    setMap( iceTweets, null );
+    setMap( fireTweets, null );
 }
+
+function setMap(markers, map) {
+    for ( let i = 0; i < markers.length; i++) {
+        markers[i].setMap( map );
+    }
+}
+
