@@ -14,7 +14,8 @@ function initMap() {
     let erieInsurance = { lat: 42.130601, lng: -80.083889 };
     map = new google.maps.Map(document.getElementById('map'), {
         zoom: 5,
-        center: erieInsurance
+        center: erieInsurance,
+        gestureHandling: 'greedy'
     });
 }
 
@@ -25,13 +26,13 @@ let socket = io();
  */
 socket.on('tweetEvent', function( tweet ) {
     console.log( tweet.text );
-    showTweet( tweet, 'tweet-content' );
+    showTweet( tweet, 'tweet-content-body' );
 });
 
 socket.on( 'getAllTweets', function( tweets ) {
 
     for ( let i = 0; i < tweets.length; i++ ) {
-        showTweet( tweets[i], 'tweet-content' );
+        showTweet( tweets[i], 'tweet-content-body' );
     }
 
 });
@@ -79,7 +80,7 @@ function setMarker( color, tweet ) {
     let mapIcon = {
         path: google.maps.SymbolPath.CIRCLE,
         fillColor: color,
-        fillOpacity: 0.6,
+        fillOpacity: 0.5,
         scale: 10,
         strokeColor: 'white',
         strokeWeight: 1
@@ -122,7 +123,7 @@ function startStream() {
 function retrieveFromDB () {
 
     // remove data from real-time sidebar
-    document.getElementById( 'tweet-content' ).innerHTML = '';
+    document.getElementById( 'tweet-content-body' ).innerHTML = '';
 
     // remove data from all heatmaps
     clearMarkers();
@@ -132,7 +133,7 @@ function retrieveFromDB () {
 }
 
 function clearAllTweets() {
-    document.getElementById( 'tweet-content' ).innerHTML = '';
+    document.getElementById( 'tweet-content-body' ).innerHTML = '';
 
     clearHeatmaps();
 }

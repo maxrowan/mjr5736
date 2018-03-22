@@ -15,9 +15,9 @@
         <script src="/socket.io/socket.io.js"></script>
 
 
-        <div class="wrapper">
+        <div class="row">
             <!-- Sidebar -->
-            <nav id="sidebar">
+            <nav id="sidebar" class="active col-md-3">
 
                 <!-- Sidebar Header -->
                 <div class="sidebar-header">
@@ -25,8 +25,15 @@
                 </div>
 
                 <!-- Tweet Content -->
-                <div class="active" id="tweet-content">
+                <div class="card tweet-content scrollbar-grey bordered-grey thin">
+                    <div class="card-body">
+                        <div id="tweet-content-body">
+                            <!-- Tweets Go Here -->
+                        </div>
+                    </div>
                 </div>
+
+
 
                 <!-- test buttons -->
                 <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
@@ -36,7 +43,7 @@
             </nav>
 
             <!-- Page Content -->
-            <div id="content">
+            <div id="content" class="col-md-9">
                 <div id="map">
                     <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
                         <i class="glyphicon glyphicon-align-left"></i>
