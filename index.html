@@ -15,43 +15,41 @@
         <script src="/socket.io/socket.io.js"></script>
 
 
-        <div class="row">
-            <!-- Sidebar -->
-            <div id="sidebar" class="active col-md-3 nopadding">
 
-                <!-- Sidebar Header -->
-                <div class="sidebar-header">
-                    <h3>Tweets</h3>
-                </div>
+        <div class="container-fluid">
+            <div class="row">
+                <!-- Sidebar -->
+                <div id="sidebar" class="col-sm-3">
 
-                <!-- Tweet Content -->
-                <div class="card tweet-content scrollbar-grey bordered-grey thin">
-                    <div class="card-body">
-                        <div id="tweet-content-body">
-                            <!-- Tweets Go Here -->
+                    <!-- Sidebar Header -->
+                    <div class="sidebar-header">
+                        <h3>Tweets</h3>
+                    </div>
+
+                    <!-- Tweet Content -->
+                    <div class="card tweet-content scrollbar-grey bordered-grey thin">
+                        <div class="card-body">
+                            <div id="tweet-content-body">
+                                <!-- Tweets Go Here -->
+                            </div>
                         </div>
                     </div>
+
+
+
+                    <!-- test buttons -->
+                    <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
+                    <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
+                    <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
+                    <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
                 </div>
 
-
-
-                <!-- test buttons -->
-                <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
-                <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
-                <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
-                <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
-            </div>
-
-            <!-- Page Content -->
-            <div id="content" class="col-md-9">
-                <div id="map">
-                    <button type="button" id="sidebarCollapse" class="btn btn-info navbar-btn">
-                        <i class="glyphicon glyphicon-align-left"></i>
-                        Toggle Sidebar
-                    </button>
+                <!-- Page Content -->
+                <div id="map" class="col-sm-9">
                 </div>
             </div>
         </div>
+
 
 
 
@@ -101,12 +99,12 @@
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
 
 
-        <script type="text/javascript">
-            //$(document).ready(function () {
-            //    $('#sidebarCollapse').on('click', function () {
-            //        $('#sidebar').toggleClass('active');
-            //    });
-            //});
-        </script>
+        <!--<script type="text/javascript">
+            $(document).ready(function () {
+                $('#sidebarCollapse').on('click', function () {
+                    $('#sidebar').toggleClass('active');
+                });
+            });
+        </script>-->
     </body>
 </html>
