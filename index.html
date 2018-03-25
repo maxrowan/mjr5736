@@ -19,18 +19,19 @@
     </head>
     <body>
         <!-- Scripts and CDN Scripts -->
-        <script src="/socket.io/socket.io.js"></script>
-        <!-- JQuery -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <!-- Bootstrap tooltips -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
-        <!-- Bootstrap core JavaScript -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
-        <!-- MDB core JavaScript -->
-        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/js/mdb.min.js"></script>
-        <!-- My Scripts -->
-        <script src="client.js"></script>
-
+        <div id="my-scripts">
+            <script src="/socket.io/socket.io.js"></script>
+            <!-- JQuery -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <!-- Bootstrap tooltips -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+            <!-- Bootstrap core JavaScript -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
+            <!-- MDB core JavaScript -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/js/mdb.min.js"></script>
+            <!-- My Scripts -->
+            <script src="client.js"></script>
+        </div>
 
         <!-- Page Content -->
         <div class="container-fluid">
@@ -47,7 +48,7 @@
 
                         <!-- Sidebar Title -->
                         <span id="sidebar-title" class="col-sm-6 p-3">
-                            Tweets  <i class="fa fa-twitter"></i>
+                            <h3>Tweets  <i class="fa fa-twitter"></i></h3>
                         </span>
 
                         <!-- Live Button -->
@@ -80,14 +81,28 @@
 
                     <!-- Options Menu -->
                     <div id="options-menu" class="collapse">
-                        <div class="m-4">
+                        <div class="btn-group-vertical m-4">
                             <!-- INCLEMENT_WEATHER Toggle -->
+                            <button id="inclement-toggle" type="button" class="btn btn-sm">Inclement</button>
+
                             <!-- RAIN Toggle -->
+                            <button id="rain-toggle" type="button" class="btn btn-sm">Rain</button>
+
                             <!-- SNOW Toggle -->
+                            <button id="snow-toggle" type="button" class="btn btn-sm">Snow</button>
+
                             <!-- HAIL Toggle -->
+                            <button id="hail-toggle" type="button" class="btn btn-sm">Hail</button>
+
                             <!-- WIND Toggle -->
+                            <button id="wind-toggle" type="button" class="btn btn-sm">Wind</button>
+
                             <!-- ICE Toggle -->
+                            <button id="ice-toggle" type="button" class="btn btn-sm">Ice</button>
+
                             <!-- FIRE Toggle -->
+                            <button id="fire-toggle" type="button" class="btn btn-sm">Fire</button>
+
                         </div>
                     </div>
                 </div>
@@ -98,6 +113,7 @@
         <script>
             $("#live-btn").click(function() {
                 $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
+                $(this).toggleClass( 'line-through' );
             });
         </script>
 

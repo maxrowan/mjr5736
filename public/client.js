@@ -70,11 +70,7 @@ function setMarker( geoPoint, color ) {
 function addToSidebar( text, color ) {
     let li = document.createElement( 'li' );
     li.classList.add( 'list-group-item' );
-
-    // TODO add left border to tweet with color to indicate type
     li.style.borderLeft = '4px solid ' + color;
-
-
     li.innerHTML = text;
     document.getElementById( 'tweet-list' ).appendChild( li );
 
@@ -87,19 +83,19 @@ function addToSidebar( text, color ) {
 function getColor( tweet ) {
     switch ( tweet.NLUEntity ) {
         case "INCLEMENT_WEATHER":
-            return 'lime';
+            return '#76ff03';
         case "RAIN" :
-            return 'orange';
+            return '#ff9800';
         case "SNOW" :
-            return 'aqua';
+            return '#2962ff';
         case "HAIL" :
-            return 'MediumVioletRed';
+            return '#9c27b0';
         case "WIND" :
-            return 'DeepPink';
+            return '#ffff00';
         case "ICE" :
-            return 'DarkMagenta ';
+            return '#18ffff';
         case "FIRE":
-            return 'DarkSalmon';
+            return '#f44336';
     }
 }
 
