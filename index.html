@@ -18,6 +18,16 @@
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     </head>
     <body>
+        <!-- Scripts and CDN Scripts -->
+        <script src="client.js"></script>
+        <!-- JQuery -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <!-- Bootstrap tooltips -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+        <!-- Bootstrap core JavaScript -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
+        <!-- MDB core JavaScript -->
+        <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/js/mdb.min.js"></script>
         <script src="/socket.io/socket.io.js"></script>
 
         <!-- Page Content -->
@@ -45,51 +55,50 @@
                     </div>
 
                     <!-- Tweet Content -->
-                    <div id="tweet-content" class="card scrollbar square scrollbar-grey thin">
-                        <div class="card-body force-overflow">
+                    <div id="tweet-content" class="card scrollbar square scrollbar-blue-grey thin">
+                        <div class="card-body force-overflow p-2">
                             <ul id="tweet-list" class="list-group list-group-flush">
                                 <!-- Tweets Go Here -->
-                                    <!-- TODO add left border to tweet with color to indicate type -->
                             </ul>
                         </div>
                     </div>
-                    <!-- test buttons -->
-                    <!-- <div>
+
+                    <!-- test buttons
+                    <div>
                     <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
                     <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
                     <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
                     <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
-                    </div> -->
+                    </div>-->
 
                     <!-- Options Button -->
                     <div id="options-button">
-                        <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options <i class="fa fa-chevron-up"></i></button>
+                        <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i class="fa fa-chevron-up"></i></button>
                     </div>
 
                     <!-- Options Menu -->
                     <div id="options-menu" class="collapse">
-                        <div class="m-3">
-                            Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. Nihil anim keffiyeh helvetica,
-                            craft beer labore wes anderson cred nesciunt sapiente ea proident.
+                        <div class="m-4">
+                            <!-- INCLEMENT_WEATHER Toggle -->
+                            <!-- RAIN Toggle -->
+                            <!-- SNOW Toggle -->
+                            <!-- HAIL Toggle -->
+                            <!-- WIND Toggle -->
+                            <!-- ICE Toggle -->
+                            <!-- FIRE Toggle -->
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-        <!-- Scripts and CDN Scripts -->
-        <div id="script-links">
-            <script src="client.js"></script>
-            <!-- JQuery -->
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-            <!-- Bootstrap tooltips -->
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
-            <!-- Bootstrap core JavaScript -->
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
-            <!-- MDB core JavaScript -->
-            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/js/mdb.min.js"></script>
+        <script>
+            $("#live-btn").click(function() {
+                $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
+            });
+        </script>
 
-            <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
-        </div>
+
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
     </body>
 </html>

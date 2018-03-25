@@ -17,6 +17,8 @@ function initMap() {
         center: erieInsurance,
         gestureHandling: 'greedy'
     });
+
+    retrieveFromDB();
 }
 
 let socket = io();
@@ -30,12 +32,14 @@ socket.on('tweetEvent', function( tweet ) {
 });
 
 socket.on( 'getAllTweets', function( tweets ) {
+    getAllTweets( tweets );
+});
 
+function getAllTweets( tweets ) {
     for ( let i = 0; i < tweets.length; i++ ) {
         showTweet( tweets[i], 'tweet-content-body' );
     }
-
-});
+}
 
 function addToMap( tweet ) {
 
@@ -96,10 +100,14 @@ function setMarker( color, tweet ) {
     });
 }
 
-function addToSidebar( text, id ) {
-    let p = document.createElement( 'p' );
-    p.innerHTML = text;
-    document.getElementById( id ).appendChild( p );
+function addToSidebar( text ) {
+    let li = document.createElement( 'li' );
+    li.classList.add( 'list-group-item' );
+
+    // TODO add left border to tweet with color to indicate type
+
+    li.innerHTML = text;
+    document.getElementById( 'tweet-list' ).appendChild( li );
 
     // sets timeout for markers (they're only visible for 5 minutes (300000 ms))
     //setTimeout(function () {
@@ -107,9 +115,9 @@ function addToSidebar( text, id ) {
     //}, 300000);
 }
 
-function showTweet( tweet, id ) {
+function showTweet( tweet ) {
     addToMap( tweet );
-    addToSidebar( tweet.text, id );
+    addToSidebar( tweet.text );
 }
 
 function stopStream() {
@@ -123,7 +131,7 @@ function startStream() {
 function retrieveFromDB () {
 
     // remove data from real-time sidebar
-    document.getElementById( 'tweet-content-body' ).innerHTML = '';
+    document.getElementById( 'tweet-list' ).innerHTML = '';
 
     // remove data from all heatmaps
     clearMarkers();
@@ -133,9 +141,9 @@ function retrieveFromDB () {
 }
 
 function clearAllTweets() {
-    document.getElementById( 'tweet-content-body' ).innerHTML = '';
+    document.getElementById( 'tweet-list' ).innerHTML = '';
 
-    clearHeatmaps();
+    clearMarkers();
 }
 
 function clearMarkers() {
@@ -153,4 +161,5 @@ function setMap(markers, map) {
         markers[i].setMap( map );
     }
 }
+
 

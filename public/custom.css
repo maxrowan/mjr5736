@@ -1,16 +1,20 @@
-/* tweet content scrollbar styles*/
-.scrollbar-grey::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-    background-color: #cfd8dc  ;
-    border-radius: 10px;
-}
+/*** tweet content scrollbar styles ***/
+.scrollbar {
+    position: relative;
+    overflow-y: scroll;
+    height: 200px; }
 
-.scrollbar-grey::-webkit-scrollbar {
+.scrollbar-blue-grey::-webkit-scrollbar {
     width: 12px;
     background-color: #cfd8dc;
 }
 
-.scrollbar-grey::-webkit-scrollbar-thumb {
+.scrollbar-blue-grey::-webkit-scrollbar-track {
+    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
+    background-color: #cfd8dc  ;
+    border-radius: 10px;
+}
+.scrollbar-blue-grey::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
     background-color: #90a4ae ;
@@ -27,8 +31,8 @@
 .thin::-webkit-scrollbar {
     width: 6px;
 }
+/*** *** ***/
 
-/***************************************/
 body {
     overflow: hidden;
 }
@@ -37,6 +41,8 @@ body {
     box-shadow: none !important;
     border-radius: 0 !important;
 }
+
+/*** sidebar styles ***/
 
 #sidebar {
     display: flex;
@@ -84,7 +90,7 @@ body {
 }
 
 
-/****************************************/
+/*** *** ***/
 
 /* map styles */
 #map {
