@@ -6,105 +6,82 @@
         <title>Weather App</title>
         <link rel="stylesheet" href="custom.css">
 
-        <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Bootstrap core CSS -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Material Design Bootstrap -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/css/mdb.min.css" rel="stylesheet">
+
         <!-- Scrollbar Custom CSS -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     </head>
     <body>
         <script src="/socket.io/socket.io.js"></script>
 
-
-
+        <!-- Page Content -->
         <div class="container-fluid">
             <div class="row">
-                <!-- Sidebar -->
-                <div id="sidebar" class="col-sm-3">
 
-                    <!-- Sidebar Header -->
-                    <div class="sidebar-header">
-                        <h3>Tweets</h3>
+                <!-- Map -->
+                <div id="map" class="col-md-9 p-0"></div>
+
+                <!-- Sidebar -->
+                <div id="sidebar" class="col-sm-3 p-0">
+
+                    <!-- Sidebar Header Row -->
+                    <div id="sidebar-header" class="row m-0">
+
+                        <!-- Sidebar Title -->
+                        <span id="sidebar-title" class="col-sm-6 p-3">
+                            <h3>Tweets  <i class="fa fa-twitter"></i></h3>
+                        </span>
+
+                        <!-- Live Button -->
+                        <span class="col-sm-6 p-0">
+                            <button type="button" id="live-btn" class="btn btn-outline-blue-grey btn-lg btn-block">Live</button>
+                        </span>
                     </div>
 
                     <!-- Tweet Content -->
-                    <div class="card tweet-content scrollbar-grey bordered-grey thin">
-                        <div class="card-body">
-                            <div id="tweet-content-body">
+                    <div id="tweet-content" class="card scrollbar square scrollbar-grey thin">
+                        <div class="card-body force-overflow">
+                            <ul id="tweet-list" class="list-group list-group-flush">
                                 <!-- Tweets Go Here -->
-                            </div>
+                                    <!-- TODO add left border to tweet with color to indicate type -->
+                            </ul>
                         </div>
                     </div>
-
-
-
                     <!-- test buttons -->
+                    <!-- <div>
                     <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
                     <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
                     <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
                     <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
-                </div>
+                    </div> -->
 
-                <!-- Page Content -->
-                <div id="map" class="col-sm-9">
+                    <!-- Options Button -->
+                    <div id="options-button">
+                        <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom">Options <i class="fa fa-chevron-up"></i></button>
+                    </div>
                 </div>
             </div>
         </div>
 
+        <!-- Scripts and CDN Scripts -->
+        <div id="script-links">
+            <script src="client.js"></script>
+            <!-- JQuery -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <!-- Bootstrap tooltips -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+            <!-- Bootstrap core JavaScript -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
+            <!-- MDB core JavaScript -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/js/mdb.min.js"></script>
 
-
-
-
-
-
-
-
-
-        <!---old sidenav
-        <div id="mySidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">☰</a>
-            <div class="card" id="tweetContainer">
-                <div class="card-header" id="tweet_title">
-                    Tweets
-                </div>
-                <div class="card-body pre-scrollable" id="cardTweet">
-
-                </div>
-            </div>
-            <div>
-                <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
-                <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
-                <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
-                <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
-            </div>
+            <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
         </div>
-
-
-        <span id="menuBtn" onclick="openNav()">☰</span>
-
-        <script>
-            function openNav() {
-                document.getElementById("mySidenav").style.width = "400px";
-            }
-
-            function closeNav() {
-                document.getElementById("mySidenav").style.width = "0";
-            }
-        </script>-->
-
-
-
-        <script src="client.js"></script>
-        <script src="https://code.jquery.com/jquery-1.12.0.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
-
-
-        <!--<script type="text/javascript">
-            $(document).ready(function () {
-                $('#sidebarCollapse').on('click', function () {
-                    $('#sidebar').toggleClass('active');
-                });
-            });
-        </script>-->
     </body>
 </html>

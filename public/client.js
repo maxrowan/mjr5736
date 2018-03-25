@@ -46,7 +46,7 @@ function addToMap( tweet ) {
     switch ( tweet.NLUEntity ) {
         case "INCLEMENT_WEATHER":
             marker = setMarker( 'lime', tweet );
-            inclementTweets.setMap(map);
+            inclementTweets.push( marker );
             break;
         case "RAIN" :
             marker = setMarker( 'orange', tweet );

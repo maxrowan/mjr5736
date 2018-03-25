@@ -1,4 +1,4 @@
-/* tweet content sidebar styles*/
+/* tweet content scrollbar styles*/
 .scrollbar-grey::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
     background-color: #F5F5F5;
@@ -16,31 +16,63 @@
     background-color: grey;
 }
 
-.bordered-grey::-webkit-scrollbar-track {
-    -webkit-box-shadow: none;
-    border: 1px solid grey;
+.square::-webkit-scrollbar-track {
+    border-radius: 0 !important;
 }
 
-.bordered-grey::-webkit-scrollbar-thumb {
-    -webkit-box-shadow: none;
+.square::-webkit-scrollbar-thumb {
+    border-radius: 0 !important;
 }
 
 .thin::-webkit-scrollbar {
     width: 6px;
 }
-
-.tweet-content {
-    position: relative;
-    overflow-y: scroll;
-    height: 85%;
+/***************************************/
+body {
+    overflow: hidden;
 }
 
+.btn {
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
 
 #sidebar {
-    padding-right: 0;
-    margin-right: 0;
-    height: 100vh;
+    display: flex;
+    flex-direction: column;
 }
+
+#tweet-content {
+    flex: 1;
+}
+
+#sidebar-title {
+    color: #78909c;
+    border-style: solid;
+    border-right: 1px;
+    border-width: 2px;
+    border-color: #78909c;
+
+    text-align: center;
+    font-family: 'Helvetica', 'Arial', sans-serif;
+}
+
+#live-btn {
+    height: 100%;
+}
+
+#tweet-content {
+    box-shadow: none !important;
+    position: relative;
+    overflow-y: scroll;
+}
+
+#options-button {
+    width: 100%;
+    bottom: 0;
+}
+
+
 /****************************************/
 
 /* map styles */
