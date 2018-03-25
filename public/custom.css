@@ -1,19 +1,19 @@
 /* tweet content scrollbar styles*/
 .scrollbar-grey::-webkit-scrollbar-track {
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-    background-color: #F5F5F5;
+    background-color: #cfd8dc  ;
     border-radius: 10px;
 }
 
 .scrollbar-grey::-webkit-scrollbar {
     width: 12px;
-    background-color: #F5F5F5;
+    background-color: #cfd8dc;
 }
 
 .scrollbar-grey::-webkit-scrollbar-thumb {
     border-radius: 10px;
     -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.1);
-    background-color: grey;
+    background-color: #90a4ae ;
 }
 
 .square::-webkit-scrollbar-track {
@@ -27,6 +27,7 @@
 .thin::-webkit-scrollbar {
     width: 6px;
 }
+
 /***************************************/
 body {
     overflow: hidden;
@@ -44,14 +45,13 @@ body {
 
 #tweet-content {
     flex: 1;
+    background-color: #eceff1;
 }
 
 #sidebar-title {
     color: #78909c;
-    border-style: solid;
-    border-right: 1px;
-    border-width: 2px;
-    border-color: #78909c;
+    border-left: 2px solid #78909c;
+    border-radius: 0 !important;
 
     text-align: center;
     font-family: 'Helvetica', 'Arial', sans-serif;
@@ -59,17 +59,28 @@ body {
 
 #live-btn {
     height: 100%;
+    /*text-decoration: line-through !important;*/
 }
 
 #tweet-content {
     box-shadow: none !important;
     position: relative;
     overflow-y: scroll;
+
+    border-left: 2px solid #78909c;
+    border-radius: 0 !important;
 }
 
 #options-button {
     width: 100%;
+}
+
+#options-menu {
+    width: 100%;
     bottom: 0;
+
+    border-left: 2px solid #78909c;
+    border-radius: 0 !important;
 }
 
 
