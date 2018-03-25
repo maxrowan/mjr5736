@@ -41,45 +41,12 @@ function getAllTweets( tweets ) {
     }
 }
 
-function addToMap( tweet ) {
-
-    let marker;
-
-    console.log('setting marker');
-
-    switch ( tweet.NLUEntity ) {
-        case "INCLEMENT_WEATHER":
-            marker = setMarker( 'lime', tweet );
-            inclementTweets.push( marker );
-            break;
-        case "RAIN" :
-            marker = setMarker( 'orange', tweet );
-            rainTweets.push( marker );
-            break;
-        case "SNOW" :
-            marker = setMarker( 'aqua', tweet );
-            snowTweets.push( marker );
-            break;
-        case "HAIL" :
-            marker = setMarker( 'MediumVioletRed', tweet );
-            hailTweets.push( marker );
-            break;
-        case "WIND" :
-            marker = setMarker( 'DeepPink ', tweet );
-            windTweets.push( marker );
-            break;
-        case "ICE" :
-            marker = setMarker( 'DarkMagenta ', tweet );
-            iceTweets.push( marker );
-            break;
-        case "FIRE":
-            marker = setMarker( 'DarkSalmon', tweet );
-            fireTweets.push( marker );
-            break;
-    }
+function addToMap( tweet, color ) {
+    let marker = setMarker( tweet.geoPoint, color );
+    inclementTweets.push( marker );
 }
 
-function setMarker( color, tweet ) {
+function setMarker( geoPoint, color ) {
 
     let mapIcon = {
         path: google.maps.SymbolPath.CIRCLE,
@@ -92,19 +59,21 @@ function setMarker( color, tweet ) {
 
     return new google.maps.Marker({
         position: {
-            lat: tweet.geoPoint.lat,
-            lng: tweet.geoPoint.lng
+            lat: geoPoint.lat,
+            lng: geoPoint.lng
         },
         icon: mapIcon,
         map: map
     });
 }
 
-function addToSidebar( text ) {
+function addToSidebar( text, color ) {
     let li = document.createElement( 'li' );
     li.classList.add( 'list-group-item' );
 
     // TODO add left border to tweet with color to indicate type
+    li.style.borderLeft = '4px solid ' + color;
+
 
     li.innerHTML = text;
     document.getElementById( 'tweet-list' ).appendChild( li );
@@ -115,9 +84,29 @@ function addToSidebar( text ) {
     //}, 300000);
 }
 
+function getColor( tweet ) {
+    switch ( tweet.NLUEntity ) {
+        case "INCLEMENT_WEATHER":
+            return 'lime';
+        case "RAIN" :
+            return 'orange';
+        case "SNOW" :
+            return 'aqua';
+        case "HAIL" :
+            return 'MediumVioletRed';
+        case "WIND" :
+            return 'DeepPink';
+        case "ICE" :
+            return 'DarkMagenta ';
+        case "FIRE":
+            return 'DarkSalmon';
+    }
+}
+
 function showTweet( tweet ) {
-    addToMap( tweet );
-    addToSidebar( tweet.text );
+    let color = getColor( tweet );
+    addToMap( tweet, color );
+    addToSidebar( tweet.text, color );
 }
 
 function stopStream() {
@@ -161,5 +150,3 @@ function setMap(markers, map) {
         markers[i].setMap( map );
     }
 }
-
-
