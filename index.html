@@ -38,10 +38,10 @@
             <div class="row">
 
                 <!-- Map -->
-                <div id="map" class="col-md-9 p-0"></div>
+                <div id="map" class="col-sm-6 col-md-9 p-0"></div>
 
                 <!-- Sidebar -->
-                <div id="sidebar" class="col-sm-3 p-0">
+                <div id="sidebar" class="col-sm-6 col-md-3 p-0">
 
                     <!-- Sidebar Header Row -->
                     <div id="sidebar-header" class="row m-0">
@@ -59,7 +59,7 @@
 
                     <!-- Tweet Content -->
                     <div id="tweet-content" class="card scrollbar square scrollbar-blue-grey thin">
-                        <div class="card-body force-overflow p-2">
+                        <div class="card-body force-overflow p-0">
                             <ul id="tweet-list" class="list-group list-group-flush">
                                 <!-- Tweets Go Here -->
                             </ul>
@@ -74,46 +74,111 @@
                     <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
                     </div>-->
 
-                    <!-- Options Button -->
-                    <div id="options-button">
-                        <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i class="fa fa-chevron-up"></i></button>
-                    </div>
+                    <!-- Options -->
+                    <div>
+                        <!-- Options Button -->
+                        <div id="options-button">
+                            <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button>
+                        </div>
 
-                    <!-- Options Menu -->
-                    <div id="options-menu" class="collapse">
-                        <div class="btn-group-vertical m-4">
-                            <!-- INCLEMENT_WEATHER Toggle -->
-                            <button id="inclement-toggle" type="button" class="btn btn-sm">Inclement</button>
+                        <!-- Options Menu -->
+                        <div id="options-menu" class="collapse">
+                            <div class="btn-group-vertical m-4 ml-5">
 
-                            <!-- RAIN Toggle -->
-                            <button id="rain-toggle" type="button" class="btn btn-sm">Rain</button>
+                                <!-- INCLEMENT_WEATHER Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="inclement-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="inclement-toggle" type="button" class="btn m-0 toggle-holder">Inclement</button>
+                                    </div>
+                                </div>
 
-                            <!-- SNOW Toggle -->
-                            <button id="snow-toggle" type="button" class="btn btn-sm">Snow</button>
+                                <!-- RAIN Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="rain-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="rain-toggle" type="button" class="btn m-0 toggle-holder">Rain</button>
+                                    </div>
+                                </div>
 
-                            <!-- HAIL Toggle -->
-                            <button id="hail-toggle" type="button" class="btn btn-sm">Hail</button>
+                                <!-- SNOW Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="snow-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="snow-toggle" type="button" class="btn m-0 toggle-holder">Snow</button>
+                                    </div>
+                                </div>
 
-                            <!-- WIND Toggle -->
-                            <button id="wind-toggle" type="button" class="btn btn-sm">Wind</button>
 
-                            <!-- ICE Toggle -->
-                            <button id="ice-toggle" type="button" class="btn btn-sm">Ice</button>
+                                <!-- HAIL Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="hail-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="hail-toggle" type="button" class="btn m-0 toggle-holder">Hail</button>
+                                    </div>
+                                </div>
 
-                            <!-- FIRE Toggle -->
-                            <button id="fire-toggle" type="button" class="btn btn-sm">Fire</button>
+                                <!-- WIND Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="wind-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="wind-toggle" type="button" class="btn m-0 toggle-holder">Wind</button>
+                                    </div>
+                                </div>
 
+                                <!-- ICE Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="ice-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="ice-toggle" type="button" class="btn m-0 toggle-holder">Ice</button>
+                                    </div>
+                                </div>
+
+                                <!-- FIRE Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="fire-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="fire-toggle" type="button" class="btn m-0 toggle-holder">Fire</button>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
 
-
         <script>
             $("#live-btn").click(function() {
                 $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
                 $(this).toggleClass( 'line-through' );
+            });
+
+            $("#options-button").click( function() {
+                $("#options-icon").toggleClass( 'fa-chevron-up fa-chevron-down' );
+            });
+
+            /* toggles */
+            $('#inclement-toggle').click( function() {
+                $('#inclement-box').toggleClass( 'empty' );
+            });
+            $('#rain-toggle').click( function() {
+                $('#rain-box').toggleClass( 'empty' );
+            });
+            $('#snow-toggle').click( function() {
+                $('#snow-box').toggleClass( 'empty' );
+            });
+            $('#hail-toggle').click( function() {
+                $('#hail-box').toggleClass( 'empty' );
+            });
+            $('#wind-toggle').click( function() {
+                $('#wind-box').toggleClass( 'empty' );
+            });
+            $('#ice-toggle').click( function() {
+                $('#ice-box').toggleClass( 'empty' );
+            });
+            $('#fire-toggle').click( function() {
+                $('#fire-box').toggleClass( 'empty' );
             });
         </script>
 
