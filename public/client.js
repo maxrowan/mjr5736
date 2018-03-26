@@ -6,6 +6,7 @@ let inclementTweets = [],    // rgba( 0, 255, 0, 1)
     windTweets = [],         // rgba( 255, 20, 147, 1)
     iceTweets = [],          // rgba( 139, 0, 139, 1)
     fireTweets = [];         // rgba( 233, 150, 122, 1)
+let live = true;
 
 // initialize map
 function initMap() {
@@ -27,8 +28,8 @@ let socket = io();
  * add point to array and show it on map when it's received from the server
  */
 socket.on('tweetEvent', function( tweet ) {
-    console.log( tweet.text );
-    showTweet( tweet, 'tweet-content-body' );
+    if ( live )
+        showTweet( tweet, 'tweet-content-body' );
 });
 
 socket.on( 'getAllTweets', function( tweets ) {
@@ -145,4 +146,10 @@ function setMap(markers, map) {
     for ( let i = 0; i < markers.length; i++) {
         markers[i].setMap( map );
     }
+}
+
+/** button functions **/
+function setLive() {
+    live = !live;
+    console.log( live );
 }
