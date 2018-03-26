@@ -3,127 +3,184 @@
     <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Test App</title>
-        <style>
+        <title>Weather App</title>
+        <link rel="stylesheet" href="custom.css">
 
-            html, body {
-                height:             100%;
-                margin:             0;
-                padding:            0;
-            }
 
-            #map {
-                height:             100%;
-                width:              100%;
-            }
+        <!-- Font Awesome -->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+        <!-- Bootstrap core CSS -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Material Design Bootstrap -->
+        <link href="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/css/mdb.min.css" rel="stylesheet">
 
-            /* menu button for sidebar */
-            #menuBtn {
-                position:           absolute;
-                display:            table-cell;
-                vertical-align:     middle;
-                text-align:         center;
-                top:                40px;
-                right:              14px;
-                width:              25px;
-                height:             24px;
-                font-size:          18px;
-                color:              black;
-                background-color:   white;
-                cursor:             pointer;
-            }
-
-            /* sidebar styles */
-            .sidenav {
-                height:             100%;
-                width:              0px;
-                position:           fixed;
-                z-index:            1;
-                top:                0;
-                right:              0;
-                background-color:   WhiteSmoke;
-                overflow-x:         hidden;
-                transition:         0.5s;
-                padding-top:        60px;
-            }
-
-            .sidenav a {
-                padding:            8px 8px 8px 32px;
-                text-decoration:    none;
-                font-size:          25px;
-                color:              #818181;
-                display:            block;
-                transition:         0.3s;
-            }
-
-            .sidenav a:hover {
-                color:              #f1f1f1;
-            }
-
-            .sidenav .closebtn {
-                position:           absolute;
-                top:                0;
-                right:              25px;
-                font-size:          36px;
-                margin-left:        50px;
-            }
-
-            @media screen and (max-height: 450px) {
-                .sidenav {padding-top: 15px;}
-                .sidenav a {font-size: 18px;}
-            }
-        </style>
-
-        <!-- Bootstrap -->
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.6/umd/popper.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js"></script>
+        <!-- Scrollbar Custom CSS -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.min.css">
     </head>
     <body>
-        <script src="/socket.io/socket.io.js"></script>
-        <div id="map"></div>
-        <script src="client.js"></script>
+        <!-- Scripts and CDN Scripts -->
+        <div id="my-scripts">
+            <script src="/socket.io/socket.io.js"></script>
+            <!-- JQuery -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+            <!-- Bootstrap tooltips -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.13.0/umd/popper.min.js"></script>
+            <!-- Bootstrap core JavaScript -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/js/bootstrap.min.js"></script>
+            <!-- MDB core JavaScript -->
+            <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mdbootstrap/4.5.0/js/mdb.min.js"></script>
+            <!-- My Scripts -->
+            <script src="client.js"></script>
+        </div>
 
-        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
+        <!-- Page Content -->
+        <div class="container-fluid">
+            <div class="row">
 
-        <!---sidenav-->
-        <div id="mySidenav" class="sidenav">
-            <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">☰</a>
-            <div id="accordion">
-                <div class="card" id="tweetContainer">
+                <!-- Map -->
+                <div id="map" class="col-sm-6 col-md-9 p-0"></div>
 
-                    <div class="card-header">
-                        <a class="card-link" data-toggle="collapse" data-parent="#accordion" href="#collapseRT">
-                            Tweets
-                        </a>
+                <!-- Sidebar -->
+                <div id="sidebar" class="col-sm-6 col-md-3 p-0">
+
+                    <!-- Sidebar Header Row -->
+                    <div id="sidebar-header" class="row m-0">
+
+                        <!-- Sidebar Title -->
+                        <span id="sidebar-title" class="col-sm-6 p-3">
+                            <h3>Tweets  <i class="fa fa-twitter"></i></h3>
+                        </span>
+
+                        <!-- Live Button -->
+                        <span class="col-sm-6 p-0">
+                            <button type="button" id="live-btn" class="btn btn-blue-grey btn-lg btn-block" onclick="setLive()">Live</button>
+                        </span>
                     </div>
-                    <div id="collapseRT" class="collapse">
-                        <div class="card-body pre-scrollable" id="cardTweet">
-                            <!--This is where tweets will appear-->
+
+                    <!-- Tweet Content -->
+                    <div id="tweet-content" class="card scrollbar square scrollbar-blue-grey thin">
+                        <div class="card-body force-overflow p-0">
+                            <ul id="tweet-list" class="list-group list-group-flush">
+                                <!-- Tweets Go Here -->
+                            </ul>
                         </div>
                     </div>
-                </div>
-                <div>
+
+                    <!-- test buttons
+                    <div>
                     <button id="stopStreamBtn" onclick="stopStream()">Stop Stream</button>
                     <button id="dbBtn" onclick="retrieveFromDB()">Get all Tweets</button>
                     <button id="startStreamBtn" onclick="startStream()">Start Stream</button>
                     <button id="clearMapBtn" onclick="clearAllTweets()">ClearAll</button>
+                    </div>-->
+
+                    <!-- Options -->
+                    <div>
+                        <!-- Options Button -->
+                        <div id="options-button">
+                            <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button>
+                        </div>
+
+                        <!-- Options Menu -->
+                        <div id="options-menu" class="collapse">
+                            <div class="btn-group-vertical m-4 ml-5">
+
+                                <!-- INCLEMENT_WEATHER Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="inclement-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="inclement-toggle" type="button" class="btn m-0 toggle-holder" onclick="setInclement()">Inclement</button>
+                                    </div>
+                                </div>
+
+                                <!-- RAIN Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="rain-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="rain-toggle" type="button" class="btn m-0 toggle-holder" onclick="setRain()">Rain</button>
+                                    </div>
+                                </div>
+
+                                <!-- SNOW Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="snow-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="snow-toggle" type="button" class="btn m-0 toggle-holder" onclick="setSnow()">Snow</button>
+                                    </div>
+                                </div>
+
+                                <!-- HAIL Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="hail-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="hail-toggle" type="button" class="btn m-0 toggle-holder" onclick="setHail()">Hail</button>
+                                    </div>
+                                </div>
+
+                                <!-- WIND Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="wind-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="wind-toggle" type="button" class="btn m-0 toggle-holder" onclick="setWind()">Wind</button>
+                                    </div>
+                                </div>
+
+                                <!-- ICE Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="ice-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="ice-toggle" type="button" class="btn m-0 toggle-holder" onclick="setIce()">Ice</button>
+                                    </div>
+                                </div>
+
+                                <!-- FIRE Toggle -->
+                                <div class="row p-0 mb-2">
+                                    <div id="fire-box" class="col m-0 p-0"></div>
+                                    <div class="col m-0 p-0">
+                                        <button id="fire-toggle" type="button" class="btn m-0 toggle-holder" onclick="setFire()">Fire</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-
-        <span id="menuBtn" onclick="openNav()">☰</span>
-
         <script>
-            function openNav() {
-                document.getElementById("mySidenav").style.width = "400px";
-            }
+            $("#live-btn").click(function() {
+                $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
+                $(this).toggleClass( 'line-through' );
+            });
 
-            function closeNav() {
-                document.getElementById("mySidenav").style.width = "0";
-            }
+            $("#options-button").click( function() {
+                $("#options-icon").toggleClass( 'fa-chevron-up fa-chevron-down' );
+            });
+
+            /* toggles */
+            $('#inclement-toggle').click( function() {
+                $('#inclement-box').toggleClass( 'empty' );
+            });
+            $('#rain-toggle').click( function() {
+                $('#rain-box').toggleClass( 'empty' );
+            });
+            $('#snow-toggle').click( function() {
+                $('#snow-box').toggleClass( 'empty' );
+            });
+            $('#hail-toggle').click( function() {
+                $('#hail-box').toggleClass( 'empty' );
+            });
+            $('#wind-toggle').click( function() {
+                $('#wind-box').toggleClass( 'empty' );
+            });
+            $('#ice-toggle').click( function() {
+                $('#ice-box').toggleClass( 'empty' );
+            });
+            $('#fire-toggle').click( function() {
+                $('#fire-box').toggleClass( 'empty' );
+            });
         </script>
+
+        <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
     </body>
 </html>
