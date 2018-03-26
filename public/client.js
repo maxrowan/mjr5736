@@ -6,7 +6,14 @@ let inclementTweets = [],    // rgba( 0, 255, 0, 1)
     windTweets = [],         // rgba( 255, 20, 147, 1)
     iceTweets = [],          // rgba( 139, 0, 139, 1)
     fireTweets = [];         // rgba( 233, 150, 122, 1)
-let live = true;
+let live = true,
+    inclement = true,
+    rain = true,
+    snow = true,
+    hail = true,
+    wind = true,
+    ice = true,
+    fire = true;
 
 // initialize map
 function initMap() {
@@ -44,7 +51,32 @@ function getAllTweets( tweets ) {
 
 function addToMap( tweet, color ) {
     let marker = setMarker( tweet.geoPoint, color );
-    inclementTweets.push( marker );
+    addToList( tweet.NLUEntity, marker );
+}
+
+function addToList( entity, marker ) {
+    switch ( entity ) {
+        case "INCLEMENT_WEATHER":
+            inclementTweets.push( marker );
+            break;
+        case "RAIN" :
+            rainTweets.push( marker );
+            break;
+        case "SNOW" :
+            snowTweets.push( marker );
+            break;
+        case "HAIL" :
+            hailTweets.push( marker );
+            break;
+        case "WIND" :
+            windTweets.push( marker );
+            break;
+        case "ICE" :
+            iceTweets.push( marker );
+            break;
+        case "FIRE":
+            fireTweets.push( marker );
+    }
 }
 
 function setMarker( geoPoint, color ) {
@@ -81,8 +113,8 @@ function addToSidebar( text, color ) {
     //}, 300000);
 }
 
-function getColor( tweet ) {
-    switch ( tweet.NLUEntity ) {
+function getColor( entity ) {
+    switch ( entity ) {
         case "INCLEMENT_WEATHER":
             return '#76ff03';
         case "RAIN" :
@@ -101,7 +133,7 @@ function getColor( tweet ) {
 }
 
 function showTweet( tweet ) {
-    let color = getColor( tweet );
+    let color = getColor( tweet.NLUEntity );
     addToMap( tweet, color );
     addToSidebar( tweet.text, color );
 }
@@ -142,7 +174,7 @@ function clearMarkers() {
     setMap( fireTweets, null );
 }
 
-function setMap(markers, map) {
+function setMap( markers, map) {
     for ( let i = 0; i < markers.length; i++) {
         markers[i].setMap( map );
     }
@@ -151,5 +183,33 @@ function setMap(markers, map) {
 /** button functions **/
 function setLive() {
     live = !live;
-    console.log( live );
+}
+
+function setInclement() {
+    inclement = !inclement;
+    setMap( inclementTweets, inclement ? map : null );
+}
+function setRain() {
+    rain = !rain;
+    setMap( rainTweets, rain ? map : null );
+}
+function setSnow() {
+    snow = !snow;
+    setMap( snowTweets, snow ? map : null );
+}
+function setHail() {
+    hail = !hail;
+    setMap( hailTweets, hail ? map : null );
+}
+function setWind() {
+    wind = !wind;
+    setMap( windTweets, wind ? map : null );
+}
+function setIce() {
+    ice = !ice;
+    setMap( iceTweets, ice ? map : null );
+}
+function setFire() {
+    fire = !fire;
+    setMap( fireTweets, fire ? map : null );
 }
