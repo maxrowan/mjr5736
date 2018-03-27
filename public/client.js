@@ -21,7 +21,7 @@ function initMap() {
     /* google map */
     let erieInsurance = { lat: 42.130601, lng: -80.083889 };
     map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 5,
+        zoom: 6,
         center: erieInsurance,
         gestureHandling: 'greedy'
     });
@@ -100,17 +100,54 @@ function setMarker( geoPoint, color ) {
     });
 }
 
-function addToSidebar( text, color ) {
-    let li = document.createElement( 'li' );
-    li.classList.add( 'list-group-item' );
-    li.style.borderLeft = '4px solid ' + color;
-    li.innerHTML = text;
-    document.getElementById( 'tweet-list' ).appendChild( li );
+function addToSidebar( tweet, color ) {
 
-    // sets timeout for markers (they're only visible for 5 minutes (300000 ms))
-    //setTimeout(function () {
-    //    tweets.removeAt(0);
-    //}, 300000);
+    let image = addImage( tweet );
+    let user = tweet.user;
+
+    let profilePic = user.profile_image_url;
+    let name = user.name;
+    let handle = user.screen_name;
+    let header = addHeader( profilePic, name, handle );
+
+    let text = tweet.text;
+
+    document.getElementById( 'tweet-list' ).innerHTML +=
+        '<li class="list-group-item p-0">' +
+        '<div class="card" style="border-left: 4px solid' + color +'">' +
+
+            <!-- Tweet Image -->
+            image +
+
+            <!-- Tweet Text Content -->
+            '<div class="card-body">' +
+                <!-- Header -->
+                header +
+                <!--Text-->
+                '<p class="card-text">' + text + ' </p>' +
+                '</div>' +
+            '</div>' +
+        '</li>';
+}
+
+function addImage() {
+    return '';//'<img class="img-fluid" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">';
+}
+
+function addHeader( profilePic, name, handle ) {
+
+    let header =
+        '<div class="card-title">' +
+            '<div class="row pl-3">' +
+                '<img src="' + profilePic + '" onerror="this.src=\'https://abs.twimg.com/sticky/default_profile_images/default_profile_bigger.png\';" alt class="profile-pic mr-2" >' +
+                '<div>' +
+                    '<div class="twitter-name mb-0"><strong>' + name + '</strong></div>' +
+                    '<div class="twitter-handle">' + '@' + handle + '</div>' +
+                '</div>' +
+            '</div>' +
+        '</div>';
+
+    return header;
 }
 
 function getColor( entity ) {
@@ -135,7 +172,7 @@ function getColor( entity ) {
 function showTweet( tweet ) {
     let color = getColor( tweet.NLUEntity );
     addToMap( tweet, color );
-    addToSidebar( tweet.text, color );
+    addToSidebar( tweet, color );
 }
 
 function stopStream() {
