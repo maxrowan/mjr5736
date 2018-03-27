@@ -40,10 +40,10 @@ socket.on('tweetEvent', function( tweet ) {
 });
 
 socket.on( 'getAllTweets', function( tweets ) {
-    getAllTweets( tweets );
+    showAllTweets( tweets );
 });
 
-function getAllTweets( tweets ) {
+function showAllTweets( tweets ) {
     for ( let i = 0; i < tweets.length; i++ ) {
         showTweet( tweets[i], 'tweet-content-body' );
     }
@@ -113,8 +113,8 @@ function addToSidebar( tweet, color ) {
     let text = tweet.text;
 
     document.getElementById( 'tweet-list' ).innerHTML +=
-        '<li class="list-group-item p-0">' +
-        '<div class="card" style="border-left: 4px solid' + color +'">' +
+        '<li class="list-group-item p-0 unhighlighted onclick=highlight(this)">' +
+            '<div class="card" style="border-left: 4px solid' + color +'">' +
 
             <!-- Tweet Image -->
             image +
@@ -221,7 +221,6 @@ function setMap( markers, map) {
 function setLive() {
     live = !live;
 }
-
 function setInclement() {
     inclement = !inclement;
     setMap( inclementTweets, inclement ? map : null );
