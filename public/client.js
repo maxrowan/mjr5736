@@ -26,6 +26,9 @@ function initMap() {
         gestureHandling: 'greedy'
     });
 
+    let legend = document.getElementById( 'legend' );
+    map.controls[ google.maps.ControlPosition.RIGHT_BOTTOM ].push( legend );
+
     retrieveFromDB();
 }
 
@@ -114,7 +117,7 @@ function addToSidebar( tweet, color ) {
 
     document.getElementById( 'tweet-list' ).innerHTML +=
         '<li class="list-group-item p-0 unhighlighted onclick=highlight(this)">' +
-            '<div class="card" style="border-left: 4px solid' + color +'">' +
+            '<div class="card" style="border-left: 6px solid' + color +'">' +
 
             <!-- Tweet Image -->
             image +
