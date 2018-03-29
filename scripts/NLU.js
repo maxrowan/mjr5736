@@ -4,8 +4,8 @@
 let format = require( 'string-format' );
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 const natural_language_understanding = new NaturalLanguageUnderstandingV1({
-    'username': '8860f42b-746f-4caf-a8f1-644e818edff1',
-    'password': 'YcyrpHN1hyw6',
+    'username': 'b22e0db9-f773-4197-b896-7009d5bf780e',
+    'password': 'eabltsmZd72C',
     'version_date': '2017-02-27'
 });
 
@@ -20,10 +20,10 @@ function classify ( tweet, addTweetToDB, clientCallback) {
         'text': tweet.text,
         'features': {
             'entities': {
-                "model": "10:da673431-7600-4f4e-9828-50da0e39756f"
+                "model": "10:8f8d5555-93c2-4b3a-97fb-27f76e705302"
             },
             'categories': {
-                "model": "10:da673431-7600-4f4e-9828-50da0e39756f"
+                "model": "10:8f8d5555-93c2-4b3a-97fb-27f76e705302"
             }
         }
     };
@@ -94,7 +94,7 @@ function isInclement( entity ) {
  */
 function getLabel ( categories ) {
     let label = '';
-    if ( categories !== undefined ) {
+    if ( categories.length > 0 ) {
         label = categories[0].label.toString();
     }
     return label;
@@ -109,7 +109,7 @@ function getEntity( entities ) {
 
     let entity = ' Could not Classify';
 
-    if ( entities.length > 0 ) {
+    if ( entities[0] != undefined) {
 
         entity = entities[0].type;
 

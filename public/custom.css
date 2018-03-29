@@ -221,3 +221,37 @@ body {
 #map {
     height: 100vh;
 }
+
+#legend {
+    background-color: #fff;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 2px;
+}
+
+#legend > .list-group-item {
+    padding: 0;
+    border-right: 0 solid grey !important;
+}
+
+#inclement-map-key {
+     border-left: 6px solid #76ff03;
+ }
+#rain-map-key {
+    border-left: 6px solid #ff9800;
+}
+#snow-map-key {
+    border-left: 6px solid #2962ff;
+}
+#hail-map-key {
+    border-left: 6px solid #9c27b0;
+}
+#wind-map-key {
+    border-left: 6px solid #ffff00;
+}
+#ice-map-key {
+    border-left: 6px solid #18ffff;
+}
+#fire-map-key {
+    border-left: 6px solid #f44336;
+}
