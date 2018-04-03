@@ -37,7 +37,7 @@ body {
     overflow: hidden;
 }
 
-.btn {
+#sidebar .btn {
     box-shadow: none !important;
     border-radius: 0 !important;
 }
@@ -197,9 +197,6 @@ body {
 /** ** **/
 /*** *** ***/
 
-.line-through {
-    text-decoration: line-through !important;
-}
 
 /*** map styles ***/
 #map {
@@ -207,14 +204,41 @@ body {
 }
 
 /** Search Styles **/
-.input-group.md-form.form-sm input {
-    border: 1px solid #bdbdbd;
-    border-top-left-radius: 0.25rem;
-    border-bottom-left-radius: 0.25rem;
+#search-bar.input-group.md-form.form-sm .mid {
+    border-radius: 0;
 }
-.input-group.md-form.form-sm input[type=text]:focus:not([readonly]).purple-border  {
-    border: 1px solid #ce93d8;
+/** Inputs **/
+#search-bar.input-group.md-form.form-sm {
+    width: auto;
+}
+#search-bar.input-group.md-form.form-sm input {
+    background-color: #fff;
+    border: 1px solid #78909c;
+}
+#search-bar.input-group.md-form.form-sm input:focus.blue-border  {
+    border: 1px solid #90caf9;
     box-shadow: none;
+}
+/** ** **/
+
+/** Buttons **/
+#search-bar.input-group.md-form.form-sm .btn-outline-blue-grey {
+    background-color: #fff !important;
+    box-shadow: none !important;
+}
+.input-group-btn .dropdown-menu .active {
+    background-color: #78909c;
+}
+
+/* State Button */
+.input-group-btn .dropdown-menu .dropdown-item:active {
+    background-color: #b0bec5;
+}
+/* * */
+
+#search-button {
+    border-bottom-left-radius: 0 !important;
+    border-top-left-radius: 0 !important;
 }
 
 

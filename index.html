@@ -65,12 +65,26 @@
 
                 <!-- Search Bar -->
                 <div id="search-bar" class="input-group md-form form-sm mt-2">
-                    <input type="search" class="form-control" placeholder="keyword">
-                    <input type="search" class="form-control" placeholder="search2">
+                    <input id="user-search" type="text" class="form-control blue-border" placeholder="User">
+                    <input id="keyword-search" type="text" class="form-control blue-border mid" placeholder="Keywords">
+                    <input type="text" class="form-control blue-border mid" placeholder="City">
 
+                    <!-- State Dropdown -->
                     <div class="input-group-btn">
-                        <button id="search-button" onclick="search()" class="btn btn-outline-blue-grey">Search</button>
+                        <button id="state-btn" type="button" class="btn btn-outline-blue-grey dropdown-toggle mid h-100 m-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            State
+                        </button>
+                        <div class="dropdown-menu p-0">
+                            <div id="dropdown-pa" class="dropdown-item active">PA</div>
+                            <div id="dropdown-ny" class="dropdown-item active">NY</div>
+                            <div id="dropdown-oh" class="dropdown-item active">OH</div>
+                        </div>
                     </div>
+
+                    <!-- Search Button -->
+                    <span class="input-group-btn">
+                        <button id="search-button" onclick="search()" class="btn btn-outline-blue-grey h-100 m-0">Search</button>
+                    </span>
                 </div>
 
                 <!-- Sidebar -->
@@ -180,6 +194,16 @@
                 } else {
                     $(this).text("Live");
                 }
+            });
+
+            $("#dropdown-pa").click( function() {
+                $(this).toggleClass( 'active' );
+            });
+            $("#dropdown-ny").click( function() {
+                $(this).toggleClass( 'active' );
+            });
+            $("#dropdown-oh").click( function() {
+                $(this).toggleClass( 'active' );
             });
 
             $("#options-button").click( function() {

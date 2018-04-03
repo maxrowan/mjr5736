@@ -51,7 +51,7 @@ socket.on( 'getTweets', function( tweets ) {
 });
 
 function search() {
-    let searchVar = document.getElementById( 'left-search' ).innerHTML;
+    let searchVar = document.getElementById( 'keyword-search' ).innerHTML;
 
     clearAllTweets();
     socket.emit( 'searchEvent', searchVar );
