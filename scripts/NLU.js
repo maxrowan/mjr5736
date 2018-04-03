@@ -1,7 +1,6 @@
 /**
  * Functions for the Natural Language Understanding service
  */
-let format = require( 'string-format' );
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 const natural_language_understanding = new NaturalLanguageUnderstandingV1({
     'username': 'b22e0db9-f773-4197-b896-7009d5bf780e',
@@ -20,10 +19,10 @@ function classify ( tweet, addTweetToDB, clientCallback) {
         'text': tweet.text,
         'features': {
             'entities': {
-                "model": "10:8f8d5555-93c2-4b3a-97fb-27f76e705302"
+                "model": "10:07931556-1624-49b9-89ca-3e95ad1cfdf1"
             },
             'categories': {
-                "model": "10:8f8d5555-93c2-4b3a-97fb-27f76e705302"
+                "model": "10:07931556-1624-49b9-89ca-3e95ad1cfdf1"
             }
         }
     };
@@ -82,8 +81,7 @@ function isInclement( entity ) {
         entity === "SLEET" ||
         entity === "HAIL" ||
         entity === "WIND" ||
-        entity === "ICE" ||
-        entity === "FIRE"
+        entity === "ICE"
     );
 }
 
@@ -109,7 +107,7 @@ function getEntity( entities ) {
 
     let entity = ' Could not Classify';
 
-    if ( entities[0] != undefined) {
+    if ( entities[0] !== undefined) {
 
         entity = entities[0].type;
 

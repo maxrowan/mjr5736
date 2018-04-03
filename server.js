@@ -35,7 +35,7 @@ let stream;
 /**
  * TODO startStream() needs to be enabled for app to function properly!
  */
-//startStream();
+startStream();
 
 /**
  * starts twitter stream

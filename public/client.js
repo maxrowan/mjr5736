@@ -4,16 +4,14 @@ let inclementTweets = [],    // rgba( 0, 255, 0, 1)
     snowTweets = [],         // rgba( 0, 255, 255, 1)
     hailTweets = [],         // rgba( 219, 112, 147, 1)
     windTweets = [],         // rgba( 255, 20, 147, 1)
-    iceTweets = [],          // rgba( 139, 0, 139, 1)
-    fireTweets = [];         // rgba( 233, 150, 122, 1)
+    iceTweets = [];          // rgba( 139, 0, 139, 1)
 let live = true,
     inclement = true,
     rain = true,
     snow = true,
     hail = true,
     wind = true,
-    ice = true,
-    fire = true;
+    ice = true;
 
 // initialize map
 function initMap() {
@@ -26,8 +24,13 @@ function initMap() {
         gestureHandling: 'greedy'
     });
 
+    /* legend */
     let legend = document.getElementById( 'legend' );
     map.controls[ google.maps.ControlPosition.RIGHT_BOTTOM ].push( legend );
+
+    /* search bar */
+    let searchBar = document.getElementById( 'search-bar' );
+    map.controls[ google.maps.ControlPosition.TOP ].push( searchBar );
 
     retrieveFromDB();
 }
@@ -77,8 +80,6 @@ function addToList( entity, marker ) {
         case "ICE" :
             iceTweets.push( marker );
             break;
-        case "FIRE":
-            fireTweets.push( marker );
     }
 }
 
@@ -115,7 +116,10 @@ function addToSidebar( tweet, color ) {
 
     let text = tweet.text;
 
-    document.getElementById( 'tweet-list' ).innerHTML +=
+    let tweetContent = document.getElementById( 'tweet-content' );
+    let tweetList = document.getElementById( 'tweet-list' );
+
+    tweetList.innerHTML +=
         '<li class="list-group-item p-0 unhighlighted onclick=highlight(this)">' +
             '<div class="card" style="border-left: 6px solid' + color +'">' +
 
@@ -131,6 +135,8 @@ function addToSidebar( tweet, color ) {
                 '</div>' +
             '</div>' +
         '</li>';
+
+    tweetContent.scrollTop = tweetContent.scrollHeight;
 }
 
 function addImage() {
@@ -139,7 +145,7 @@ function addImage() {
 
 function addHeader( profilePic, name, handle ) {
 
-    let header =
+    return (
         '<div class="card-title">' +
             '<div class="row pl-3">' +
                 '<img src="' + profilePic + '" onerror="this.src=\'https://abs.twimg.com/sticky/default_profile_images/default_profile_bigger.png\';" alt class="profile-pic mr-2" >' +
@@ -148,9 +154,8 @@ function addHeader( profilePic, name, handle ) {
                     '<div class="twitter-handle">' + '@' + handle + '</div>' +
                 '</div>' +
             '</div>' +
-        '</div>';
-
-    return header;
+        '</div>'
+    );
 }
 
 function getColor( entity ) {
@@ -167,8 +172,6 @@ function getColor( entity ) {
             return '#ffff00';
         case "ICE" :
             return '#18ffff';
-        case "FIRE":
-            return '#f44336';
     }
 }
 
@@ -211,7 +214,6 @@ function clearMarkers() {
     setMap( hailTweets, null );
     setMap( windTweets, null );
     setMap( iceTweets, null );
-    setMap( fireTweets, null );
 }
 
 function setMap( markers, map) {
@@ -247,8 +249,4 @@ function setWind() {
 function setIce() {
     ice = !ice;
     setMap( iceTweets, ice ? map : null );
-}
-function setFire() {
-    fire = !fire;
-    setMap( fireTweets, fire ? map : null );
 }

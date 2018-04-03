@@ -35,15 +35,14 @@
 
         <!-- Page Content -->
         <div class="container-fluid">
-            <div class="row">
+            <div class="row mt-2">
 
                 <!-- Map -->
                 <div id="map" class="col-sm-6 col-md-9 p-0">
-
                 </div>
 
                 <!-- Legend -->
-                <ul id="legend">
+                <ul id="legend" class="m-0 p-1">
                     <li id="inclement-map-key" class="list-group-item">
                         &nbsp;inclement&nbsp;
                     </li>
@@ -62,10 +61,15 @@
                     <li id="ice-map-key" class="list-group-item">
                         &nbsp;ice&nbsp;
                     </li>
-                    <li id="fire-map-key" class="list-group-item">
-                        &nbsp;fire&nbsp;
-                    </li>
                 </ul>
+
+                <!-- Search Bar -->
+                <div id="search-bar" class="row">
+                    <div class="col-xs-12 form-inline">
+                        <input id="left-search" type="text" class="form-control input-sm search m-0 p-0" placeholder="keyword">
+                        <input id="right-search" type="text" class="form-control input-sm search m-0 p-0" placeholder="search2">
+                    </div>
+                </div>
 
                 <!-- Sidebar -->
                 <div id="sidebar" class="col-sm-6 col-md-3 p-0">
@@ -109,65 +113,57 @@
                         </div>
 
                         <!-- Options Menu -->
-                        <div id="options-menu" class="collapse">
-                            <div class="btn-group-vertical m-4 ml-5">
+                        <div id="options-menu" class="collapse p-4 pl-5 pr-5">
+                            <table id="options-button-table" class="w-100">
 
                                 <!-- INCLEMENT_WEATHER Toggle -->
-                                <div class="row p-0 mb-2">
-                                    <div id="inclement-box" class="col m-0 p-0"></div>
-                                    <div class="col m-0 p-0">
-                                        <button id="inclement-toggle" type="button" class="btn m-0 toggle-holder" onclick="setInclement()">Inclement</button>
-                                    </div>
-                                </div>
+                                <tr class="row p-0 mb-2">
+                                    <td id="inclement-box" class="col-2 m-0 p-0"></td>
+                                    <td class="col-10 m-0 p-0">
+                                        <button id="inclement-toggle" type="button" class="btn btn-block m-0" onclick="setInclement()">Inclement</button>
+                                    </td>
+                                </tr>
 
                                 <!-- RAIN Toggle -->
-                                <div class="row p-0 mb-2">
-                                    <div id="rain-box" class="col m-0 p-0"></div>
-                                    <div class="col m-0 p-0">
-                                        <button id="rain-toggle" type="button" class="btn m-0 toggle-holder" onclick="setRain()">Rain</button>
-                                    </div>
-                                </div>
+                                <tr class="row p-0 mb-2">
+                                    <td id="rain-box" class="col-2 m-0 p-0"></td>
+                                    <td class="col-10 m-0 p-0">
+                                        <button id="rain-toggle" type="button" class="btn btn-block m-0" onclick="setRain()">Rain</button>
+                                    </td>
+                                </tr>
 
                                 <!-- SNOW Toggle -->
-                                <div class="row p-0 mb-2">
-                                    <div id="snow-box" class="col m-0 p-0"></div>
-                                    <div class="col m-0 p-0">
-                                        <button id="snow-toggle" type="button" class="btn m-0 toggle-holder" onclick="setSnow()">Snow</button>
-                                    </div>
-                                </div>
+                                <tr class="row p-0 mb-2">
+                                    <td id="snow-box" class="col-2 m-0 p-0"></td>
+                                    <td class="col-10 m-0 p-0">
+                                        <button id="snow-toggle" type="button" class="btn btn-block m-0" onclick="setSnow()">Snow</button>
+                                    </td>
+                                </tr>
 
                                 <!-- HAIL Toggle -->
-                                <div class="row p-0 mb-2">
-                                    <div id="hail-box" class="col m-0 p-0"></div>
-                                    <div class="col m-0 p-0">
-                                        <button id="hail-toggle" type="button" class="btn m-0 toggle-holder" onclick="setHail()">Hail</button>
-                                    </div>
-                                </div>
+                                <tr class="row p-0 mb-2">
+                                    <td id="hail-box" class="col-2 m-0 p-0"></td>
+                                    <td class="col-10 m-0 p-0">
+                                        <button id="hail-toggle" type="button" class="btn btn-block m-0" onclick="setHail()">Hail</button>
+                                    </td>
+                                </tr>
 
                                 <!-- WIND Toggle -->
-                                <div class="row p-0 mb-2">
-                                    <div id="wind-box" class="col m-0 p-0"></div>
-                                    <div class="col m-0 p-0">
-                                        <button id="wind-toggle" type="button" class="btn m-0 toggle-holder" onclick="setWind()">Wind</button>
-                                    </div>
-                                </div>
+                                <tr class="row p-0 mb-2">
+                                    <td id="wind-box" class="col-2 m-0 p-0"></td>
+                                    <td class="col-10 m-0 p-0">
+                                        <button id="wind-toggle" type="button" class="btn btn-block m-0" onclick="setWind()">Wind</button>
+                                    </td>
+                                </tr>
 
                                 <!-- ICE Toggle -->
-                                <div class="row p-0 mb-2">
-                                    <div id="ice-box" class="col m-0 p-0"></div>
-                                    <div class="col m-0 p-0">
-                                        <button id="ice-toggle" type="button" class="btn m-0 toggle-holder" onclick="setIce()">Ice</button>
-                                    </div>
-                                </div>
-
-                                <!-- FIRE Toggle -->
-                                <div class="row p-0 mb-2">
-                                    <div id="fire-box" class="col m-0 p-0"></div>
-                                    <div class="col m-0 p-0">
-                                        <button id="fire-toggle" type="button" class="btn m-0 toggle-holder" onclick="setFire()">Fire</button>
-                                    </div>
-                                </div>
-                            </div>
+                                <tr class="row p-0 mb-2">
+                                    <td id="ice-box" class="col-2 m-0 p-0"></td>
+                                    <td class="col-10 m-0 p-0">
+                                        <button id="ice-toggle" type="button" class="btn btn-block m-0" onclick="setIce()">Ice</button>
+                                    </td>
+                                </tr>
+                            </table>
                         </div>
                     </div>
                 </div>
@@ -177,11 +173,17 @@
         <script>
             $("#live-btn").click(function() {
                 $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
-                $(this).toggleClass( 'line-through' );
+                if ( $(this).text() === "Live" ) {
+                    $(this).text("Historical");
+                } else {
+                    $(this).text("Live");
+                }
             });
 
             $("#options-button").click( function() {
                 $("#options-icon").toggleClass( 'fa-chevron-up fa-chevron-down' );
+                let tweetContent = $("#tweet-content");
+                tweetContent.scrollTop( tweetContent.height() );
             });
 
             /* toggles */
@@ -202,9 +204,6 @@
             });
             $('#ice-toggle').click( function() {
                 $('#ice-box').toggleClass( 'empty' );
-            });
-            $('#fire-toggle').click( function() {
-                $('#fire-box').toggleClass( 'empty' );
             });
         </script>
 
