@@ -34,5 +34,22 @@ function getAllTweetsFromDB( sendTweets ) {
     });
 }
 
+function getSearchResults( search, sendTweets ) {
+
+    console.log( '\n\n' + search + '\n\n' );
+
+    MongoClient.connect(uri, function (err, db) {
+        if (err) throw err;
+
+        let database = db.db("test");
+        let collection = database.collection("test");
+        collection.find( {id: 980938515910406100} ).toArray( function( err, result ) {
+            sendTweets( result );
+            db.close();
+        });
+    });
+}
+
 ex.addTweetToDB = addTweetToDB;
 ex.getAllTweetsFromDB = getAllTweetsFromDB;
+ex.getSearchResults = getSearchResults;

@@ -31,10 +31,6 @@ let T = new Twit(secret);
  * filter public stream by the lat/long bounded box of Pennsylvania and by the English language
  */
 let stream;
-
-/**
- * TODO startStream() needs to be enabled for app to function properly!
- */
 startStream();
 
 /**
@@ -100,7 +96,7 @@ function onTweet( tweet ) {
  * sends multiple tweets to client from the database
  */
 function sendTweets( result ) {
-    io.emit( 'getAllTweets', result );
+    io.emit( 'getTweets', result );
 }
 
 /**
@@ -159,6 +155,10 @@ io.on( 'connection', function( socket ) {
 
     socket.on( 'startStream', function() {
         stream.start();
+    });
+
+    socket.on( 'searchEvent', function( searchVar ) {
+        db.getSearchResults( searchVar, sendTweets );
     });
 
     /**

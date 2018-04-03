@@ -45,11 +45,19 @@ socket.on('tweetEvent', function( tweet ) {
         showTweet( tweet, 'tweet-content-body' );
 });
 
-socket.on( 'getAllTweets', function( tweets ) {
-    showAllTweets( tweets );
+socket.on( 'getTweets', function( tweets ) {
+    console.log( 'got tweet' );
+    showTweets( tweets );
 });
 
-function showAllTweets( tweets ) {
+function search() {
+    let searchVar = document.getElementById( 'left-search' ).innerHTML;
+
+    clearAllTweets();
+    socket.emit( 'searchEvent', searchVar );
+}
+
+function showTweets( tweets ) {
     for ( let i = 0; i < tweets.length; i++ ) {
         showTweet( tweets[i], 'tweet-content-body' );
     }

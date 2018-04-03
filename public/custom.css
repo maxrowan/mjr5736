@@ -201,23 +201,24 @@ body {
     text-decoration: line-through !important;
 }
 
-/* map styles */
+/*** map styles ***/
 #map {
     height: 100vh;
 }
 
-.search:focus {
-    outline: none !important;
+/** Search Styles **/
+.input-group.md-form.form-sm input {
+    border: 1px solid #bdbdbd;
+    border-top-left-radius: 0.25rem;
+    border-bottom-left-radius: 0.25rem;
 }
-#left-search {
-    border-top-right-radius: 0;
-    border-bottom-right-radius: 0;
-    outline: none !important;
+.input-group.md-form.form-sm input[type=text]:focus:not([readonly]).purple-border  {
+    border: 1px solid #ce93d8;
+    box-shadow: none;
 }
-#right-search {
-    border-top-left-radius: 0;
-    border-bottom-left-radius: 0;
-}
+
+
+/** ** **/
 
 #legend {
     background-color: #fff;
@@ -249,3 +250,4 @@ body {
 #ice-map-key {
     border-left: 6px solid #18ffff;
 }
+/***    ***/

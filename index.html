@@ -64,10 +64,12 @@
                 </ul>
 
                 <!-- Search Bar -->
-                <div id="search-bar" class="row">
-                    <div class="col-xs-12 form-inline">
-                        <input id="left-search" type="text" class="form-control input-sm search m-0 p-0" placeholder="keyword">
-                        <input id="right-search" type="text" class="form-control input-sm search m-0 p-0" placeholder="search2">
+                <div id="search-bar" class="input-group md-form form-sm mt-2">
+                    <input type="search" class="form-control" placeholder="keyword">
+                    <input type="search" class="form-control" placeholder="search2">
+
+                    <div class="input-group-btn">
+                        <button id="search-button" onclick="search()" class="btn btn-outline-blue-grey">Search</button>
                     </div>
                 </div>
 
