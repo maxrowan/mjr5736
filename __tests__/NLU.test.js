@@ -11,7 +11,7 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
         created_at: "Mon Jan 1 00:00:00 +0000 2018",
         id: 999999999999999999,
         id_str: "999999999999999999",
-        text: 'Severe Weather In Dallas Causes Flight Delays, Diversions In SA from KSAT - Local News',
+        text: 'When theres really bad weather and they start announcing all of the sports that are canceled over the loud speaker',
         geoPoint: {
             lat: 26.71903,
             lng: -80.05049
@@ -77,7 +77,7 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
         created_at: "Mon Jan 1 00:00:00 +0000 2018",
         id: 999999999999999999,
         id_str: "999999999999999999",
-        text: 'covered in hail like snow earlier tonight.',
+        text: 'covered in hail earlier tonight.',
         geoPoint: {
             lat: 26.71903,
             lng: -80.05049
@@ -99,7 +99,7 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
         created_at: "Mon Jan 1 00:00:00 +0000 2018",
         id: 999999999999999999,
         id_str: "999999999999999999",
-        text: 'Here are the raw observations for the tornado reports today. {link}\n',
+        text: 'It\'s super windy out today',
         geoPoint: {
             lat: 26.71903,
             lng: -80.05049
@@ -139,11 +139,11 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
                 bounding_box: { type: 'Polygon', coordinates: [Array] },
                 attributes: {} },
     };
-    let mockFireTweet = {
+    let mockStationTweet = {
         created_at: "Mon Jan 1 00:00:00 +0000 2018",
         id: 999999999999999999,
         id_str: "999999999999999999",
-        text: 'Fire Weather Watch issued May 18 at 5:52AM CDT expiring May 19 at 9:00PM CDT by NWS Midland-Odessa {link}... {link}\n',
+        text: '#WEATHER:  11:56 pm: 69.0F. Feels F. 29.69% Humidity. 5.8MPH South Wind.',
         geoPoint: {
             lat: 26.71903,
             lng: -80.05049
@@ -380,27 +380,18 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
         nlu.classify( mockIceTweet, dummyAddToDB, dummyClientCallback);
     });
 
-    test( 'assert that FIRE tweets are classified correctly', done => {
-
+    test( 'assert that STATION tweets are classified correctly', done => {
         /**
          * printInfo mock
          */
         nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
             expect( weather ).toBe( true );
-            expect( inclement ).toBe( true );
+            expect( inclement ).toBe( false );
 
-            let label = tweet.NLULabel;
             let entity = tweet.NLUEntity;
-            expect( entity ).toBe( 'FIRE' );
+            expect( entity ).toBe( 'STATION' );
 
-            let text = tweet.text;
-
-            if ( !weather || !inclement ) {
-                logFail( label, entity, text );
-                done();
-            } else {
-                logPass( label, entity, text );
-            }
+            done();
         });
 
         function dummyClientCallback( tweet ) {
@@ -408,54 +399,58 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
         }
 
         // test getClassification
-        nlu.classify( mockFireTweet, dummyAddToDB, dummyClientCallback);
+        nlu.classify( mockStationTweet, dummyAddToDB, dummyClientCallback);
     });
 });
 
-test( 'assert that non-weather tweets are classified correctly', done => {
+describe( 'Asserts that non-weather (or weather station tweets are classified correctly', () => {
 
-    // mock data
-    let mockTweet = {
-        created_at: "Mon Jan 1 00:00:00 +0000 2018",
-        id: 999999999999999999,
-        id_str: "999999999999999999",
-        text: 'I think I\'m going to go ice skating this weekend!',
-        geoPoint: {
-            lat: 26.71903,
-            lng: -80.05049
-        },
-        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
-        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
-        place:
-            { id: '4de072969805ac41',
-                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
-                place_type: 'city',
-                name: 'West Palm Beach',
-                full_name: 'West Palm Beach, FL',
-                country_code: 'US',
-                country: 'United States',
-                bounding_box: { type: 'Polygon', coordinates: [Array] },
-                attributes: {} },
-    };
 
-    // mock callbacks
-    function dontAddToDB( tweet ) {}
-    function mockClientCallback( tweet ) {
-        done();
-    }
 
-    // mock isWeather
-    nlu.isWeather = jest.fn().mockImplementation( ( label ) => {
+    test( 'assert that non-weather tweets are classified correctly', done => {
 
-        let labels = label.split('/');
-        let w = labels.includes( 'weather' );
+        // mock data
+        let mockTweet = {
+            created_at: "Mon Jan 1 00:00:00 +0000 2018",
+            id: 999999999999999999,
+            id_str: "999999999999999999",
+            text: 'I think I\'m going to go ice skating this weekend!',
+            geoPoint: {
+                lat: 26.71903,
+                lng: -80.05049
+            },
+            geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+            coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+            place:
+                { id: '4de072969805ac41',
+                    url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+                    place_type: 'city',
+                    name: 'West Palm Beach',
+                    full_name: 'West Palm Beach, FL',
+                    country_code: 'US',
+                    country: 'United States',
+                    bounding_box: { type: 'Polygon', coordinates: [Array] },
+                    attributes: {} },
+        };
 
-        expect( w ).toBe( false );
+        // mock callbacks
+        function dontAddToDB( tweet ) {}
+        function mockClientCallback( tweet ) {
+            done();
+        }
 
-        done();
+        // mock isWeather
+        nlu.isWeather = jest.fn().mockImplementation( ( label ) => {
+
+            let labels = label.split('/');
+            let w = labels.includes( 'weather' );
+
+            expect( w ).toBe( false );
+
+            done();
+        });
+
+        // test getClassification
+        nlu.classify( mockTweet, dontAddToDB, mockClientCallback);
     });
-
-    // test getClassification
-    nlu.classify( mockTweet, dontAddToDB, mockClientCallback);
 });
-
