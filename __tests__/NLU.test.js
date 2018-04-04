@@ -121,7 +121,7 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
         created_at: "Mon Jan 1 00:00:00 +0000 2018",
         id: 999999999999999999,
         id_str: "999999999999999999",
-        text: 'Ice build-up from minor ice storm last week',
+        text: 'Ice build-up from ice storm last week',
         geoPoint: {
             lat: 26.71903,
             lng: -80.05049
@@ -143,7 +143,7 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
         created_at: "Mon Jan 1 00:00:00 +0000 2018",
         id: 999999999999999999,
         id_str: "999999999999999999",
-        text: '#WEATHER:  11:56 pm: 69.0F. Feels F. 29.69% Humidity. 5.8MPH South Wind.',
+        text: 'Temp 66.3°F Wind Chill 66.3 °F RH 60% Wind 2.9 W Gust 11.0 W SLP 29.839 in Falling quickly Rain 0.08 in Solar 165 UV 1.2 #VAWX #SWVAWX #WVWX',
         geoPoint: {
             lat: 26.71903,
             lng: -80.05049

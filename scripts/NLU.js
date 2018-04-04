@@ -7,6 +7,7 @@ const natural_language_understanding = new NaturalLanguageUnderstandingV1({
     'password': 'eabltsmZd72C',
     'version_date': '2017-02-27'
 });
+const wks_model_id = '10:8a548c53-a489-456b-904d-bc8fc4912ab6';
 
 let ex = module.exports = {};
 
@@ -19,10 +20,10 @@ function classify ( tweet, addTweetToDB, clientCallback) {
         'text': tweet.text,
         'features': {
             'entities': {
-                "model": "10:07931556-1624-49b9-89ca-3e95ad1cfdf1"
+                "model": wks_model_id
             },
             'categories': {
-                "model": "10:07931556-1624-49b9-89ca-3e95ad1cfdf1"
+                "model": wks_model_id
             }
         }
     };
