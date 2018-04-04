@@ -34,7 +34,7 @@ function getAllTweetsFromDB( sendTweets ) {
     });
 }
 
-function getSearchResults( search, sendTweets ) {
+function getSearchResults( user, keywords, startDate, endDate, city, state, sendTweets ) {
 
     console.log( '\n\n' + search + '\n\n' );
 
