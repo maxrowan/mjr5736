@@ -35,14 +35,14 @@
 
         <!-- Page Content -->
         <div class="container-fluid">
-            <div class="row mt-2">
+            <div class="row">
 
                 <!-- Map -->
-                <div id="map" class="col-sm-6 col-md-9 p-0">
+                <div id="map" class="col-sm-6 col-md-9 p-0 m-0">
                 </div>
 
                 <!-- Legend -->
-                <ul id="legend" class="m-0 p-1">
+                <ul id="legend" class="ml-2 p-1">
                     <li id="inclement-map-key" class="list-group-item">
                         &nbsp;inclement&nbsp;
                     </li>
@@ -65,9 +65,9 @@
 
                 <!-- Search Bar -->
                 <div id="search-bar" class="input-group md-form form-sm mt-2">
-                    <input id="user-search" type="text" class="form-control blue-border" placeholder="User">
-                    <input id="keyword-search" type="text" class="form-control blue-border mid" placeholder="Keywords">
-                    <input type="text" class="form-control blue-border mid" placeholder="City">
+                    <input id="keyword-search" type="text" class="form-control blue-border left" placeholder="Keywords">
+                    <input id="city-search" type="text" class="form-control blue-border mid" placeholder="City">
+                    
 
                     <!-- State Dropdown -->
                     <div class="input-group-btn">
@@ -125,7 +125,7 @@
                     <div>
                         <!-- Options Button -->
                         <div id="options-button">
-                            <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button>
+                            <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" onclick="scrollToBottom()" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button>
                         </div>
 
                         <!-- Options Menu -->
@@ -204,12 +204,6 @@
             });
             $("#dropdown-oh").click( function() {
                 $(this).toggleClass( 'active' );
-            });
-
-            $("#options-button").click( function() {
-                $("#options-icon").toggleClass( 'fa-chevron-up fa-chevron-down' );
-                let tweetContent = $("#tweet-content");
-                tweetContent.scrollTop( tweetContent.height() );
             });
 
             /* toggles */

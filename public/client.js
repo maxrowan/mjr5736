@@ -32,7 +32,8 @@ function initMap() {
     let searchBar = document.getElementById( 'search-bar' );
     map.controls[ google.maps.ControlPosition.TOP ].push( searchBar );
 
-    retrieveFromDB();
+    // TODO: enable retrieve
+    //retrieveFromDB();
 }
 
 let socket = io();
@@ -50,12 +51,62 @@ socket.on( 'getTweets', function( tweets ) {
     showTweets( tweets );
 });
 
+/**
+ ***** search functions *****
+ */
 function search() {
-    let searchVar = document.getElementById( 'keyword-search' ).innerHTML;
+    let keywords = getKeywodrs();
+    let cities = getCities();
+    let states = getStates();
+
+    let searchVars = {
+        keywords: keywords,
+        cities: cities,
+        states: states
+    };
 
     clearAllTweets();
-    socket.emit( 'searchEvent', searchVar );
+    socket.emit( 'searchEvent', searchVars );
 }
+
+function getKeywodrs() {
+    let keywords = document.getElementById( 'keyword-search' ).value;
+    keywords.split( ' ' );
+
+    console.log( keywords.toString() );
+
+    return keywords;
+}
+
+function getCities() {
+    let cities = document.getElementById( 'city-search' ).value;
+    cities.split( ' ' );
+
+    console.log( cities.toString() );
+
+    return cities;
+}
+
+function getStates() {
+
+    let pa = document.getElementById( 'dropdown-pa' ).classList.contains( 'active' );
+    let ny = document.getElementById( 'dropdown-ny' ).classList.contains( 'active' );
+    let oh = document.getElementById( 'dropdown-oh' ).classList.contains( 'active' );
+
+    let states = [];
+
+    if ( pa )
+        states.push( 'pa' );
+    if ( ny )
+        states.push( 'ny' );
+    if ( oh )
+        states.push( 'oh' );
+
+    return states;
+}
+/**
+ ***** ***** *****
+ */
 
 function showTweets( tweets ) {
     for ( let i = 0; i < tweets.length; i++ ) {
@@ -144,6 +195,11 @@ function addToSidebar( tweet, color ) {
             '</div>' +
         '</li>';
 
+    scrollToBottom();
+}
+
+function scrollToBottom() {
+    let tweetContent = document.getElementById( 'tweet-content' );
     tweetContent.scrollTop = tweetContent.scrollHeight;
 }
 

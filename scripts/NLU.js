@@ -3,8 +3,8 @@
  */
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 const natural_language_understanding = new NaturalLanguageUnderstandingV1({
-    'username': 'b22e0db9-f773-4197-b896-7009d5bf780e',
-    'password': 'eabltsmZd72C',
+    'username': '6a943afa-8dcd-491a-9a1f-ecf8f82825e0',
+    'password': 'KXMf2XnJLDxu',
     'version_date': '2017-02-27'
 });
 const wks_model_id = '10:8a548c53-a489-456b-904d-bc8fc4912ab6';

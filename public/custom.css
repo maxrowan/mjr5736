@@ -201,9 +201,13 @@ body {
 /*** map styles ***/
 #map {
     height: 100vh;
+    overflow: hidden;
 }
 
 /** Search Styles **/
+#search-bar.input-group.md-form.form-sm .left {
+    border-radius: 2px 0 0 2px;
+}
 #search-bar.input-group.md-form.form-sm .mid {
     border-radius: 0;
 }
