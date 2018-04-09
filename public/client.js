@@ -55,21 +55,25 @@ socket.on( 'getTweets', function( tweets ) {
  ***** search functions *****
  */
 function search() {
-    let keywords = getKeywodrs();
+    let keywords = getKeywords();
     let cities = getCities();
     let states = getStates();
+    let startDate = getStartDate();
+    let endDate = getEndDate();
 
     let searchVars = {
         keywords: keywords,
         cities: cities,
-        states: states
+        states: states,
+        startDate: startDate,
+        endDate: endDate
     };
 
     clearAllTweets();
     socket.emit( 'searchEvent', searchVars );
 }
 
-function getKeywodrs() {
+function getKeywords() {
     let keywords = document.getElementById( 'keyword-search' ).value;
     keywords.split( ' ' );
 
@@ -103,6 +107,18 @@ function getStates() {
         states.push( 'oh' );
 
     return states;
+}
+
+function getStartDate() {
+    let date = document.getElementById( 'start-date-search' ).value;
+
+    return date;
+}
+
+function getEndDate() {
+    let date = document.getElementById( 'end-date-search' ).value;
+
+    return date;
 }
 /**
  ***** ***** *****

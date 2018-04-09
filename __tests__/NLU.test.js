@@ -121,7 +121,7 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
         created_at: "Mon Jan 1 00:00:00 +0000 2018",
         id: 999999999999999999,
         id_str: "999999999999999999",
-        text: 'Ice build-up from ice storm last week',
+        text: 'Careful, the roads are icy',
         geoPoint: {
             lat: 26.71903,
             lng: -80.05049

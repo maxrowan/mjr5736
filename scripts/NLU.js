@@ -7,7 +7,7 @@ const natural_language_understanding = new NaturalLanguageUnderstandingV1({
     'password': 'KXMf2XnJLDxu',
     'version_date': '2017-02-27'
 });
-const wks_model_id = '10:8a548c53-a489-456b-904d-bc8fc4912ab6';
+const wks_model_id = '10:f201a7ee-8102-4c3e-82fb-59ad13afab1e';
 
 let ex = module.exports = {};
 

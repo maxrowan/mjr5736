@@ -54,7 +54,9 @@ function printRes( searchVars ) {
 
     let keywords = searchVars.keywords,
         cities = searchVars.cities,
-        states = searchVars.states;
+        states = searchVars.states,
+        startDate = searchVars.startDate,
+        endDate = searchVars.endDate;
 
     let k = '',
         c = '',
@@ -78,7 +80,9 @@ function printRes( searchVars ) {
     console.log( '\n\n' +
         k.toString() + '\n' +
         c.toString() + '\n' +
-        s.toString() + '\n\n'
+        s.toString() + '\n' +
+        startDate.toString() + '\n' +
+        endDate.toString() + '\n\n'
     );
 }
 

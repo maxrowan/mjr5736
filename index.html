@@ -67,7 +67,8 @@
                 <div id="search-bar" class="input-group md-form form-sm mt-2">
                     <input id="keyword-search" type="text" class="form-control blue-border left" placeholder="Keywords">
                     <input id="city-search" type="text" class="form-control blue-border mid" placeholder="City">
-                    
+                    <input id="start-date-search" type="date" class="form-control blue-border mid">
+                    <input id="end-date-search" type="date" class="form-control blue-border mid">
 
                     <!-- State Dropdown -->
                     <div class="input-group-btn">
@@ -187,43 +188,46 @@
         </div>
 
         <script>
-            $("#live-btn").click(function() {
-                $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
-                if ( $(this).text() === "Live" ) {
-                    $(this).text("Historical");
-                } else {
-                    $(this).text("Live");
-                }
-            });
+            $(document).ready( function() {
+                $("#live-btn").click(function() {
+                    $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
+                    if ( $(this).text() === "Live" ) {
+                        $(this).text("Historical");
+                    } else {
+                        $(this).text("Live");
+                    }
+                });
 
-            $("#dropdown-pa").click( function() {
-                $(this).toggleClass( 'active' );
-            });
-            $("#dropdown-ny").click( function() {
-                $(this).toggleClass( 'active' );
-            });
-            $("#dropdown-oh").click( function() {
-                $(this).toggleClass( 'active' );
-            });
+                /* state drop-down toggles */
+                $("#dropdown-pa").click( function() {
+                    $(this).toggleClass( 'active' );
+                });
+                $("#dropdown-ny").click( function() {
+                    $(this).toggleClass( 'active' );
+                });
+                $("#dropdown-oh").click( function() {
+                    $(this).toggleClass( 'active' );
+                });
 
-            /* toggles */
-            $('#inclement-toggle').click( function() {
-                $('#inclement-box').toggleClass( 'empty' );
-            });
-            $('#rain-toggle').click( function() {
-                $('#rain-box').toggleClass( 'empty' );
-            });
-            $('#snow-toggle').click( function() {
-                $('#snow-box').toggleClass( 'empty' );
-            });
-            $('#hail-toggle').click( function() {
-                $('#hail-box').toggleClass( 'empty' );
-            });
-            $('#wind-toggle').click( function() {
-                $('#wind-box').toggleClass( 'empty' );
-            });
-            $('#ice-toggle').click( function() {
-                $('#ice-box').toggleClass( 'empty' );
+                /* entity type toggles */
+                $('#inclement-toggle').click( function() {
+                    $('#inclement-box').toggleClass( 'empty' );
+                });
+                $('#rain-toggle').click( function() {
+                    $('#rain-box').toggleClass( 'empty' );
+                });
+                $('#snow-toggle').click( function() {
+                    $('#snow-box').toggleClass( 'empty' );
+                });
+                $('#hail-toggle').click( function() {
+                    $('#hail-box').toggleClass( 'empty' );
+                });
+                $('#wind-toggle').click( function() {
+                    $('#wind-box').toggleClass( 'empty' );
+                });
+                $('#ice-toggle').click( function() {
+                    $('#ice-box').toggleClass( 'empty' );
+                });
             });
         </script>
 

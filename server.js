@@ -31,8 +31,7 @@ let T = new Twit(secret);
  * filter public stream by the lat/long bounded box of Pennsylvania and by the English language
  */
 let stream;
-// TODO: enable stream
-//startStream();
+startStream();
 
 /**
  * starts twitter stream
