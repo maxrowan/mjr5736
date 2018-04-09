@@ -37,12 +37,6 @@ startStream();
  * starts twitter stream
  */
 function startStream() {
-    //let us = [
-    //    -124.7844079,           // west long (left)
-    //    -66.9513812,            // south lat (bottom)
-    //    -66.9513812,            // east long (right)
-    //    49.3457868              // north lat (top)
-    //];
     /**
      * state bounding boxes ( data from "https://boundingbox.klokantech.com" )
      * @type {[number,number,number,number]}
@@ -157,8 +151,8 @@ io.on( 'connection', function( socket ) {
         stream.start();
     });
 
-    socket.on( 'searchEvent', function( searchVar ) {
-        db.getSearchResults( searchVar, sendTweets );
+    socket.on( 'searchEvent', function( searchVars ) {
+        db.getSearchResults( searchVars, sendTweets );
     });
 
     /**

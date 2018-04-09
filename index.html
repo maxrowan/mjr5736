@@ -35,14 +35,14 @@
 
         <!-- Page Content -->
         <div class="container-fluid">
-            <div class="row mt-2">
+            <div class="row">
 
                 <!-- Map -->
-                <div id="map" class="col-sm-6 col-md-9 p-0">
+                <div id="map" class="col-sm-6 col-md-9 p-0 m-0">
                 </div>
 
                 <!-- Legend -->
-                <ul id="legend" class="m-0 p-1">
+                <ul id="legend" class="ml-2 p-1">
                     <li id="inclement-map-key" class="list-group-item">
                         &nbsp;inclement&nbsp;
                     </li>
@@ -65,12 +65,27 @@
 
                 <!-- Search Bar -->
                 <div id="search-bar" class="input-group md-form form-sm mt-2">
-                    <input type="search" class="form-control" placeholder="keyword">
-                    <input type="search" class="form-control" placeholder="search2">
+                    <input id="keyword-search" type="text" class="form-control blue-border left" placeholder="Keywords">
+                    <input id="city-search" type="text" class="form-control blue-border mid" placeholder="City">
+                    <input id="start-date-search" type="date" class="form-control blue-border mid">
+                    <input id="end-date-search" type="date" class="form-control blue-border mid">
 
+                    <!-- State Dropdown -->
                     <div class="input-group-btn">
-                        <button id="search-button" onclick="search()" class="btn btn-outline-blue-grey">Search</button>
+                        <button id="state-btn" type="button" class="btn btn-outline-blue-grey dropdown-toggle mid h-100 m-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            State
+                        </button>
+                        <div class="dropdown-menu p-0">
+                            <div id="dropdown-pa" class="dropdown-item active">PA</div>
+                            <div id="dropdown-ny" class="dropdown-item active">NY</div>
+                            <div id="dropdown-oh" class="dropdown-item active">OH</div>
+                        </div>
                     </div>
+
+                    <!-- Search Button -->
+                    <span class="input-group-btn">
+                        <button id="search-button" onclick="search()" class="btn btn-outline-blue-grey h-100 m-0">Search</button>
+                    </span>
                 </div>
 
                 <!-- Sidebar -->
@@ -111,7 +126,7 @@
                     <div>
                         <!-- Options Button -->
                         <div id="options-button">
-                            <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button>
+                            <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" onclick="scrollToBottom()" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button>
                         </div>
 
                         <!-- Options Menu -->
@@ -173,39 +188,46 @@
         </div>
 
         <script>
-            $("#live-btn").click(function() {
-                $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
-                if ( $(this).text() === "Live" ) {
-                    $(this).text("Historical");
-                } else {
-                    $(this).text("Live");
-                }
-            });
+            $(document).ready( function() {
+                $("#live-btn").click(function() {
+                    $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
+                    if ( $(this).text() === "Live" ) {
+                        $(this).text("Historical");
+                    } else {
+                        $(this).text("Live");
+                    }
+                });
 
-            $("#options-button").click( function() {
-                $("#options-icon").toggleClass( 'fa-chevron-up fa-chevron-down' );
-                let tweetContent = $("#tweet-content");
-                tweetContent.scrollTop( tweetContent.height() );
-            });
+                /* state drop-down toggles */
+                $("#dropdown-pa").click( function() {
+                    $(this).toggleClass( 'active' );
+                });
+                $("#dropdown-ny").click( function() {
+                    $(this).toggleClass( 'active' );
+                });
+                $("#dropdown-oh").click( function() {
+                    $(this).toggleClass( 'active' );
+                });
 
-            /* toggles */
-            $('#inclement-toggle').click( function() {
-                $('#inclement-box').toggleClass( 'empty' );
-            });
-            $('#rain-toggle').click( function() {
-                $('#rain-box').toggleClass( 'empty' );
-            });
-            $('#snow-toggle').click( function() {
-                $('#snow-box').toggleClass( 'empty' );
-            });
-            $('#hail-toggle').click( function() {
-                $('#hail-box').toggleClass( 'empty' );
-            });
-            $('#wind-toggle').click( function() {
-                $('#wind-box').toggleClass( 'empty' );
-            });
-            $('#ice-toggle').click( function() {
-                $('#ice-box').toggleClass( 'empty' );
+                /* entity type toggles */
+                $('#inclement-toggle').click( function() {
+                    $('#inclement-box').toggleClass( 'empty' );
+                });
+                $('#rain-toggle').click( function() {
+                    $('#rain-box').toggleClass( 'empty' );
+                });
+                $('#snow-toggle').click( function() {
+                    $('#snow-box').toggleClass( 'empty' );
+                });
+                $('#hail-toggle').click( function() {
+                    $('#hail-box').toggleClass( 'empty' );
+                });
+                $('#wind-toggle').click( function() {
+                    $('#wind-box').toggleClass( 'empty' );
+                });
+                $('#ice-toggle').click( function() {
+                    $('#ice-box').toggleClass( 'empty' );
+                });
             });
         </script>
 

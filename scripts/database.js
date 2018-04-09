@@ -34,9 +34,9 @@ function getAllTweetsFromDB( sendTweets ) {
     });
 }
 
-function getSearchResults( search, sendTweets ) {
+function getSearchResults( searchVars, sendTweets ) {
 
-    console.log( '\n\n' + search + '\n\n' );
+    printRes( searchVars );
 
     MongoClient.connect(uri, function (err, db) {
         if (err) throw err;
@@ -48,6 +48,42 @@ function getSearchResults( search, sendTweets ) {
             db.close();
         });
     });
+}
+
+function printRes( searchVars ) {
+
+    let keywords = searchVars.keywords,
+        cities = searchVars.cities,
+        states = searchVars.states,
+        startDate = searchVars.startDate,
+        endDate = searchVars.endDate;
+
+    let k = '',
+        c = '',
+        s = '';
+
+    if ( keywords !== undefined )
+        k = keywords;
+    else
+        k = 'couldn\'t get keywords';
+
+    if ( cities !== undefined )
+        c = cities;
+    else
+        c = 'couldn\'t get cities';
+
+    if ( states !== undefined )
+        s = states;
+    else
+        s = 'couldn\'nt get states';
+
+    console.log( '\n\n' +
+        k.toString() + '\n' +
+        c.toString() + '\n' +
+        s.toString() + '\n' +
+        startDate.toString() + '\n' +
+        endDate.toString() + '\n\n'
+    );
 }
 
 ex.addTweetToDB = addTweetToDB;

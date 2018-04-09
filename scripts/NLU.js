@@ -3,10 +3,11 @@
  */
 const NaturalLanguageUnderstandingV1 = require('watson-developer-cloud/natural-language-understanding/v1.js');
 const natural_language_understanding = new NaturalLanguageUnderstandingV1({
-    'username': 'b22e0db9-f773-4197-b896-7009d5bf780e',
-    'password': 'eabltsmZd72C',
+    'username': '6a943afa-8dcd-491a-9a1f-ecf8f82825e0',
+    'password': 'KXMf2XnJLDxu',
     'version_date': '2017-02-27'
 });
+const wks_model_id = '10:f201a7ee-8102-4c3e-82fb-59ad13afab1e';
 
 let ex = module.exports = {};
 
@@ -19,10 +20,10 @@ function classify ( tweet, addTweetToDB, clientCallback) {
         'text': tweet.text,
         'features': {
             'entities': {
-                "model": "10:07931556-1624-49b9-89ca-3e95ad1cfdf1"
+                "model": wks_model_id
             },
             'categories': {
-                "model": "10:07931556-1624-49b9-89ca-3e95ad1cfdf1"
+                "model": wks_model_id
             }
         }
     };
