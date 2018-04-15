@@ -64,7 +64,7 @@
                 </ul>
 
                 <!-- Search Bar -->
-                <div id="search-bar" class="input-group md-form form-sm mt-2">
+                <div id="search-bar" class="col-10 input-group md-form form-sm mt-2">
                     <input id="keyword-search" type="text" class="form-control blue-border left" placeholder="Keywords">
                     <input id="city-search" type="text" class="form-control blue-border mid" placeholder="City">
                     <input id="start-date-search" type="date" class="form-control blue-border mid">
@@ -75,11 +75,11 @@
                         <button id="state-btn" type="button" class="btn btn-outline-blue-grey dropdown-toggle mid h-100 m-0" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             State
                         </button>
-                        <div class="dropdown-menu p-0">
-                            <div id="dropdown-pa" class="dropdown-item active">PA</div>
-                            <div id="dropdown-ny" class="dropdown-item active">NY</div>
-                            <div id="dropdown-oh" class="dropdown-item active">OH</div>
-                        </div>
+                        <ul class="dropdown-menu p-0">
+                            <li id="dropdown-pa" class="dropdown-item active">PA</li>
+                            <li id="dropdown-ny" class="dropdown-item active">NY</li>
+                            <li id="dropdown-oh" class="dropdown-item active">OH</li>
+                        </ul>
                     </div>
 
                     <!-- Search Button -->
@@ -126,7 +126,7 @@
                     <div>
                         <!-- Options Button -->
                         <div id="options-button">
-                            <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" onclick="scrollToBottom()" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button>
+                            <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" onclick="scrollToBottom()" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button><!-- TODO: toggle chevron up to down on click -->
                         </div>
 
                         <!-- Options Menu -->
@@ -137,7 +137,7 @@
                                 <tr class="row p-0 mb-2">
                                     <td id="inclement-box" class="col-2 m-0 p-0"></td>
                                     <td class="col-10 m-0 p-0">
-                                        <button id="inclement-toggle" type="button" class="btn btn-block m-0" onclick="setInclement()">Inclement</button>
+                                        <button id="inclement-toggle" type="button" class="btn btn-block m-0" onclick="hideInclement()">Inclement</button>
                                     </td>
                                 </tr>
 
@@ -145,7 +145,7 @@
                                 <tr class="row p-0 mb-2">
                                     <td id="rain-box" class="col-2 m-0 p-0"></td>
                                     <td class="col-10 m-0 p-0">
-                                        <button id="rain-toggle" type="button" class="btn btn-block m-0" onclick="setRain()">Rain</button>
+                                        <button id="rain-toggle" type="button" class="btn btn-block m-0" onclick="hideRain()">Rain</button>
                                     </td>
                                 </tr>
 
@@ -153,7 +153,7 @@
                                 <tr class="row p-0 mb-2">
                                     <td id="snow-box" class="col-2 m-0 p-0"></td>
                                     <td class="col-10 m-0 p-0">
-                                        <button id="snow-toggle" type="button" class="btn btn-block m-0" onclick="setSnow()">Snow</button>
+                                        <button id="snow-toggle" type="button" class="btn btn-block m-0" onclick="hideSnow()">Snow</button>
                                     </td>
                                 </tr>
 
@@ -161,7 +161,7 @@
                                 <tr class="row p-0 mb-2">
                                     <td id="hail-box" class="col-2 m-0 p-0"></td>
                                     <td class="col-10 m-0 p-0">
-                                        <button id="hail-toggle" type="button" class="btn btn-block m-0" onclick="setHail()">Hail</button>
+                                        <button id="hail-toggle" type="button" class="btn btn-block m-0" onclick="hideHail()">Hail</button>
                                     </td>
                                 </tr>
 
@@ -169,7 +169,7 @@
                                 <tr class="row p-0 mb-2">
                                     <td id="wind-box" class="col-2 m-0 p-0"></td>
                                     <td class="col-10 m-0 p-0">
-                                        <button id="wind-toggle" type="button" class="btn btn-block m-0" onclick="setWind()">Wind</button>
+                                        <button id="wind-toggle" type="button" class="btn btn-block m-0" onclick="hideWind()">Wind</button>
                                     </td>
                                 </tr>
 
@@ -177,7 +177,7 @@
                                 <tr class="row p-0 mb-2">
                                     <td id="ice-box" class="col-2 m-0 p-0"></td>
                                     <td class="col-10 m-0 p-0">
-                                        <button id="ice-toggle" type="button" class="btn btn-block m-0" onclick="setIce()">Ice</button>
+                                        <button id="ice-toggle" type="button" class="btn btn-block m-0" onclick="hideIce()">Ice</button>
                                     </td>
                                 </tr>
                             </table>
@@ -186,50 +186,6 @@
                 </div>
             </div>
         </div>
-
-        <script>
-            $(document).ready( function() {
-                $("#live-btn").click(function() {
-                    $(this).toggleClass( 'btn-blue-grey btn-outline-blue-grey');
-                    if ( $(this).text() === "Live" ) {
-                        $(this).text("Historical");
-                    } else {
-                        $(this).text("Live");
-                    }
-                });
-
-                /* state drop-down toggles */
-                $("#dropdown-pa").click( function() {
-                    $(this).toggleClass( 'active' );
-                });
-                $("#dropdown-ny").click( function() {
-                    $(this).toggleClass( 'active' );
-                });
-                $("#dropdown-oh").click( function() {
-                    $(this).toggleClass( 'active' );
-                });
-
-                /* entity type toggles */
-                $('#inclement-toggle').click( function() {
-                    $('#inclement-box').toggleClass( 'empty' );
-                });
-                $('#rain-toggle').click( function() {
-                    $('#rain-box').toggleClass( 'empty' );
-                });
-                $('#snow-toggle').click( function() {
-                    $('#snow-box').toggleClass( 'empty' );
-                });
-                $('#hail-toggle').click( function() {
-                    $('#hail-box').toggleClass( 'empty' );
-                });
-                $('#wind-toggle').click( function() {
-                    $('#wind-box').toggleClass( 'empty' );
-                });
-                $('#ice-toggle').click( function() {
-                    $('#ice-box').toggleClass( 'empty' );
-                });
-            });
-        </script>
 
         <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCzGR5wXQnCOVePY_Fk2M9t-X416Ubwjcc&libraries=visualization&callback=initMap"></script>
     </body>

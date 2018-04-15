@@ -93,6 +93,13 @@ body {
 .twitter-handle {
     font-size: 0.9em;
 }
+
+.hide_by_search {
+    display: none !important;
+}
+.hide_by_entity {
+    display: none !important;
+}
 /** ** **/
 
 #options-button {

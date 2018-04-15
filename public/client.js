@@ -1,28 +1,73 @@
 let map;
-let inclementTweets = [],    // rgba( 0, 255, 0, 1)
-    rainTweets = [],         // rgba( 255, 165, 0, 1)
-    snowTweets = [],         // rgba( 0, 255, 255, 1)
-    hailTweets = [],         // rgba( 219, 112, 147, 1)
-    windTweets = [],         // rgba( 255, 20, 147, 1)
-    iceTweets = [];          // rgba( 139, 0, 139, 1)
-let live = true,
-    inclement = true,
-    rain = true,
-    snow = true,
-    hail = true,
-    wind = true,
-    ice = true;
+
+let entityContainers = [
+    {
+        entityType: 'INCLEMENT_WEATHER',
+        color: '#76ff03',
+        markers: [],
+        idIndexMapping: []
+    },
+    {
+        entityType: 'RAIN',
+        color: '#ff9800',
+        markers: [],
+        idIndexMapping: []
+    },
+    {
+        entityType: 'SNOW',
+        color: '#2962ff',
+        markers: [],
+        idIndexMapping: []
+    },
+    {
+        entityType: 'HAIL',
+        color: '#9c27b0',
+        markers: [],
+        idIndexMapping: []
+    },
+    {
+        entityType: 'WIND',
+        color: '#ffff00',
+        markers: [],
+        idIndexMapping: []
+    },
+    {
+        entityType: 'ICE',
+        color: '#18ffff',
+        markers: [],
+        idIndexMapping: []
+    }
+];
+
+function getContainerByEntity( entity, callback ) {
+    for ( let i = 0; i < entityContainers.length; i++ ) {
+        if ( entityContainers[i].entityType === entity ) {
+            callback( entityContainers[i] );
+            return;
+        }
+    }
+}
+
+function getContainerMappingIndex( container, id, callback ) {
+    for ( let i = 0; i < container.idIndexMapping.length; i++ ) {
+        if ( container.idIndexMapping[i].id == id ) {
+            callback( container.idIndexMapping[i] );
+        }
+    }
+}
+
+let live = true;
 
 // initialize map
 function initMap() {
 
     /* google map */
     let erieInsurance = { lat: 42.130601, lng: -80.083889 };
-    map = new google.maps.Map(document.getElementById('map'), {
+    map = new google.maps.Map( document.getElementById( 'map' ), {
         zoom: 6,
         center: erieInsurance,
         gestureHandling: 'greedy'
-    });
+    } );
 
     /* legend */
     let legend = document.getElementById( 'legend' );
@@ -33,7 +78,7 @@ function initMap() {
     map.controls[ google.maps.ControlPosition.TOP ].push( searchBar );
 
     // TODO: enable retrieve
-    //retrieveFromDB();
+    retrieveFromDB();
 }
 
 let socket = io();
@@ -41,15 +86,15 @@ let socket = io();
 /**
  * add point to array and show it on map when it's received from the server
  */
-socket.on('tweetEvent', function( tweet ) {
+socket.on( 'tweetEvent', function ( tweet ) {
     if ( live )
         showTweet( tweet, 'tweet-content-body' );
-});
+} );
 
-socket.on( 'getTweets', function( tweets ) {
+socket.on( 'getTweets', function ( tweets ) {
     console.log( 'got tweet' );
     showTweets( tweets );
-});
+} );
 
 /**
  ***** search functions *****
@@ -69,30 +114,25 @@ function search() {
         endDate: endDate
     };
 
-    clearAllTweets();
-    socket.emit( 'searchEvent', searchVars );
+    if ( live ) {
+        liveSearch( keywords );
+    } else {
+        eraseAll();
+        socket.emit( 'searchEvent', searchVars );
+    }
 }
 
 function getKeywords() {
     let keywords = document.getElementById( 'keyword-search' ).value;
-    keywords.split( ' ' );
-
-    console.log( keywords.toString() );
-
-    return keywords;
+    return keywords.split( ' ' );
 }
 
 function getCities() {
     let cities = document.getElementById( 'city-search' ).value;
-    cities.split( ' ' );
-
-    console.log( cities.toString() );
-
-    return cities;
+    return cities.split( ' ' );
 }
 
 function getStates() {
-
     let pa = document.getElementById( 'dropdown-pa' ).classList.contains( 'active' );
     let ny = document.getElementById( 'dropdown-ny' ).classList.contains( 'active' );
     let oh = document.getElementById( 'dropdown-oh' ).classList.contains( 'active' );
@@ -110,55 +150,138 @@ function getStates() {
 }
 
 function getStartDate() {
-    let date = document.getElementById( 'start-date-search' ).value;
-
-    return date;
+    return document.getElementById( 'start-date-search' ).value;
 }
 
 function getEndDate() {
-    let date = document.getElementById( 'end-date-search' ).value;
-
-    return date;
+    return document.getElementById( 'end-date-search' ).value;
 }
+
+function liveSearch( keywords ) {
+    let ul = document.getElementById( 'tweet-list' );
+    let tweetItems = ul.getElementsByTagName( 'li' );
+
+    let expression = new RegExp( buildRegExpression( keywords ), 'i' );
+
+    for ( let i = 0; i < tweetItems.length; i++ ) {                             // for each tweet in the ul
+        let li = tweetItems[ i ];
+        let text = li.getElementsByClassName( 'card-text' )[ 0 ].innerHTML;
+
+        if ( !expression.test( text ) ) {                                       // if the text does not contain the keyword
+            let entity = getLiEntity( li );                                     // get entity type of id
+            hideBySearch( li, entity );                                         // hide list and map element
+        }
+    }
+
+    // TODO: reset lists
+    // TODO: add filter to incoming tweets
+}
+
+function buildRegExpression( keywords ) {
+    let expression = '';
+
+    for ( let i = 0; i < keywords.length; i++ ) {
+        if ( i === 0 ) {
+            expression += '(' + keywords[ i ];
+        } else {
+            expression += keywords[ i ];
+        }
+
+        try {
+            if ( keywords[ i + 1 ] !== undefined ) {
+                expression += '|'
+            }
+        } catch ( e ) {
+            console.error( 'regEx', e.message );
+        }
+
+        if ( i === keywords.length - 1 ) {
+            expression += ')';
+        }
+    }
+
+    return expression;
+}
+
+function getLiEntity( li ) {
+    let classes = li.classList;
+
+    for ( let i = 0; i < classes.length; i++) {
+        for ( let j = 0; j < entityContainers.length; j++ ) {
+            if ( classes[i] === entityContainers[j].entityType ) {
+                return classes[i];
+            }
+        }
+    }
+
+    return '';
+}
+
+function hideBySearch( li, entity ) {
+    let id = li.id;
+
+    hideTweetListItem( id );                                                    // set sidebar li with corresponding id to hidden
+
+    getContainerByEntity( entity, function( container ) {
+        getContainerMappingIndex( container, id, function( map ) {
+            hideMarker( container.markers[ map.index ] );
+            map.searchHidden = true;
+        } );
+    });
+}
+
+function hideMarker( marker ) {
+    marker.setMap( null );
+}
+
+function hideTweetListItem( id ) {
+    let li = document.getElementById( id );
+    if ( li.classList.contains( 'hide_by_search' ) ) {
+        li.classList.remove( 'hide_by_search' );
+    } else {
+        li.classList.add( 'hide_by_search' );
+    }
+}
+
 /**
  ***** ***** *****
  */
 
+
+/**
+ ***** post functions *****
+ */
 function showTweets( tweets ) {
     for ( let i = 0; i < tweets.length; i++ ) {
-        showTweet( tweets[i], 'tweet-content-body' );
+        showTweet( tweets[ i ] );
     }
 }
 
-function addToMap( tweet, color ) {
-    let marker = setMarker( tweet.geoPoint, color );
-    addToList( tweet.NLUEntity, marker );
+function showTweet( tweet ) {
+    getContainerByEntity( tweet.NLUEntity, function( container ) {
+        let color = container.color;
+        addToMap( tweet, container );
+        addToSidebar( tweet, color );
+    } );
 }
 
-function addToList( entity, marker ) {
-    switch ( entity ) {
-        case "INCLEMENT_WEATHER":
-            inclementTweets.push( marker );
-            break;
-        case "RAIN" :
-            rainTweets.push( marker );
-            break;
-        case "SNOW" :
-            snowTweets.push( marker );
-            break;
-        case "HAIL" :
-            hailTweets.push( marker );
-            break;
-        case "WIND" :
-            windTweets.push( marker );
-            break;
-        case "ICE" :
-            iceTweets.push( marker );
-            break;
-    }
+/**
+ *** post to map functions ***
+ */
+function addToMap( tweet, container ) {
+    let marker = createMarker( tweet.geoPoint, container.color );
+    container.markers.push( marker );
+
+    // maps tweet id (li id) to list position
+    container.idIndexMapping.push( {
+        id: tweet.id,
+        index: container.markers.indexOf( marker ),
+        searchHidden: false,
+        toggleHidden: false
+    } );
 }
 
-function setMarker( geoPoint, color ) {
+function createMarker( geoPoint, color ) {
 
     let mapIcon = {
         path: google.maps.SymbolPath.CIRCLE,
@@ -169,49 +292,122 @@ function setMarker( geoPoint, color ) {
         strokeWeight: 1
     };
 
-    return new google.maps.Marker({
+    return new google.maps.Marker( {
         position: {
             lat: geoPoint.lat,
             lng: geoPoint.lng
         },
         icon: mapIcon,
         map: map
-    });
+    } );
 }
+/**
+ *** *** ***
+ */
 
+
+/**
+ *** post to sidebar functions ***
+ */
 function addToSidebar( tweet, color ) {
 
-    let image = addImage( tweet );
+    let classEntity = tweet.NLUEntity;
+    let id = tweet.id;
+    let image = addImage( tweet.entities );
     let user = tweet.user;
-
     let profilePic = user.profile_image_url;
     let name = user.name;
     let handle = user.screen_name;
     let header = addHeader( profilePic, name, handle );
-
     let text = tweet.text;
+    let timestamp = getTimestamp( tweet.created_at );
 
-    let tweetContent = document.getElementById( 'tweet-content' );
     let tweetList = document.getElementById( 'tweet-list' );
 
     tweetList.innerHTML +=
-        '<li class="list-group-item p-0 unhighlighted onclick=highlight(this)">' +
-            '<div class="card" style="border-left: 6px solid' + color +'">' +
+        '<li id="' + id + '" class="list-group-item p-0 unhighlighted onclick=highlight(this) ' + classEntity + '">' +
+        '<div class="card" style="border-left: 6px solid' + color + '">' +
 
-            <!-- Tweet Image -->
-            image +
+        <!-- Tweet Image -->
+        image +
 
-            <!-- Tweet Text Content -->
-            '<div class="card-body">' +
-                <!-- Header -->
-                header +
-                <!--Text-->
-                '<p class="card-text">' + text + ' </p>' +
-                '</div>' +
-            '</div>' +
+        <!-- Tweet Text Content -->
+        '<div class="card-body">' +
+        <!-- Header -->
+        header +
+        <!--Text-->
+        '<p class="card-text">' + text + '</p>' +
+        // TODO: add Timestamp
+        '</div>' +
+        '</div>' +
         '</li>';
 
     scrollToBottom();
+}
+
+function addImage( entities ) {
+
+    let img = '';
+    if ( entities.media !== undefined ) {
+        img = '<img class="img-fluid" src="' + entities.media[ 0 ].media_url + '" alt="Card image cap">';
+    }
+    return img;
+}
+
+function addHeader( profilePic, name, handle ) {
+
+    return (
+        '<div class="card-title">' +
+        '<div class="row pl-3">' +
+        '<img src="' + profilePic + '" onerror="this.src=\'https://abs.twimg.com/sticky/default_profile_images/default_profile_bigger.png\';" alt class="profile-pic mr-2" >' +
+        '<div>' +
+        '<div class="twitter-name mb-0"><strong>' + name + '</strong></div>' +
+        '<div class="twitter-handle">' + '@' + handle + '</div>' +
+        '</div>' +
+        '</div>' +
+        '</div>'
+    );
+}
+
+function getTimestamp( date ) {
+    return (
+        '<div>' +
+        // TODO: finish Timestamp
+        '</div>'
+    );
+}
+/**
+ *** *** ***
+ ***** ***** *****
+ */
+
+function retrieveFromDB() {
+    eraseAll();                                             // remove all data
+
+    socket.emit( 'retrieveAll' );                           // tell server to retrieve and send all tweets from DB
+}
+
+function eraseAll() {
+    eraseMap();
+    eraseSidebar();
+}
+
+function eraseMap() {
+
+    for ( let i = 0; i < entityContainers.length; i++ ) {
+        setMap( entityContainers[i].markers, null );
+        entityContainers[i].markers = [];
+    }
+}
+
+function eraseSidebar() {
+    document.getElementById( 'tweet-list' ).innerHTML = '';
+}
+
+function setMap( markers, map ) {
+    for ( let i = 0; i < markers.length; i++ ) {
+        markers[ i ].setMap( map );
+    }
 }
 
 function scrollToBottom() {
@@ -219,48 +415,116 @@ function scrollToBottom() {
     tweetContent.scrollTop = tweetContent.scrollHeight;
 }
 
-function addImage() {
-    return '';//'<img class="img-fluid" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">';
+/**
+ ***** options menu functions *****
+ */
+function setLive() {
+    live = !live;
 }
 
-function addHeader( profilePic, name, handle ) {
-
-    return (
-        '<div class="card-title">' +
-            '<div class="row pl-3">' +
-                '<img src="' + profilePic + '" onerror="this.src=\'https://abs.twimg.com/sticky/default_profile_images/default_profile_bigger.png\';" alt class="profile-pic mr-2" >' +
-                '<div>' +
-                    '<div class="twitter-name mb-0"><strong>' + name + '</strong></div>' +
-                    '<div class="twitter-handle">' + '@' + handle + '</div>' +
-                '</div>' +
-            '</div>' +
-        '</div>'
-    );
+function hideInclement() {
+    toggleEntityHidden( 'INCLEMENT_WEATHER' );
 }
 
-function getColor( entity ) {
-    switch ( entity ) {
-        case "INCLEMENT_WEATHER":
-            return '#76ff03';
-        case "RAIN" :
-            return '#ff9800';
-        case "SNOW" :
-            return '#2962ff';
-        case "HAIL" :
-            return '#9c27b0';
-        case "WIND" :
-            return '#ffff00';
-        case "ICE" :
-            return '#18ffff';
+function hideRain() {
+    toggleEntityHidden( 'RAIN' );
+}
+
+function hideSnow() {
+    toggleEntityHidden( 'SNOW' );
+}
+
+function hideHail() {
+    toggleEntityHidden( 'HAIL' );
+}
+
+function hideWind() {
+    toggleEntityHidden( 'WIND' );
+}
+
+function hideIce() {
+    toggleEntityHidden( 'ICE' );
+}
+
+function toggleEntityHidden( entity ) {
+    getContainerByEntity( entity, function( container ) {
+        for ( let i = 0; i < container.idIndexMapping.length; i++ ) {
+            toggleMarker( container.markers, container.idIndexMapping[i] );
+        }
+    });
+}
+
+function toggleMarker( markers, mapping ) {
+    if ( !mapping.searchHidden ) {
+        if ( !mapping.toggleHidden ) {
+            markers[ mapping.index ].setMap( null );
+        } else {
+            markers[ mapping.index ].setMap( map );
+        }
+
+        mapping.toggleHidden = !mapping.toggleHidden;
     }
 }
 
-function showTweet( tweet ) {
-    let color = getColor( tweet.NLUEntity );
-    addToMap( tweet, color );
-    addToSidebar( tweet, color );
-}
+/**
+ ***** ***** *****
+ */
 
+$( document ).ready( function () {
+    $( "#live-btn" ).click( function () {
+        $( this ).toggleClass( 'btn-blue-grey btn-outline-blue-grey' );
+        if ( $( this ).text() === "Live" ) {
+            $( this ).text( "Historical" );
+        } else {
+            $( this ).text( "Live" );
+        }
+    } );
+
+    /* state drop-down toggles */
+    $( '.dropdown-menu' ).click( function ( e ) {
+        e.stopPropagation();
+    } );
+    $( "#dropdown-pa" ).click( function () {
+        $( this ).toggleClass( 'active' );
+    } );
+    $( "#dropdown-ny" ).click( function () {
+        $( this ).toggleClass( 'active' );
+    } );
+    $( "#dropdown-oh" ).click( function () {
+        $( this ).toggleClass( 'active' );
+    } );
+
+    /* entity type toggles */
+    $( '#inclement-toggle' ).click( function () {
+        $( '#inclement-box' ).toggleClass( 'empty' );
+        $( '.INCLEMENT_WEATHER' ).toggleClass( 'hide_by_entity' );
+    } );
+    $( '#rain-toggle' ).click( function () {
+        $( '#rain-box' ).toggleClass( 'empty' );
+        $( '.RAIN' ).toggleClass( 'hide_by_entity' );
+    } );
+    $( '#snow-toggle' ).click( function () {
+        $( '#snow-box' ).toggleClass( 'empty' );
+        $( '.SNOW' ).toggleClass( 'hide_by_entity' );
+    } );
+    $( '#hail-toggle' ).click( function () {
+        $( '#hail-box' ).toggleClass( 'empty' );
+        $( '.HAIL' ).toggleClass( 'hide_by_entity' );
+    } );
+    $( '#wind-toggle' ).click( function () {
+        $( '#wind-box' ).toggleClass( 'empty' );
+        $( '.WIND' ).toggleClass( 'hide_by_entity' );
+    } );
+    $( '#ice-toggle' ).click( function () {
+        $( '#ice-box' ).toggleClass( 'empty' );
+        $( '.ICE' ).toggleClass( 'hide_by_entity' );
+    } );
+} );
+
+
+/*******************
+ * ADMIN FUNCTIONS *
+ *******************/
 function stopStream() {
     socket.emit( 'stopStream' );
 }
@@ -269,64 +533,6 @@ function startStream() {
     socket.emit( 'startStream' );
 }
 
-function retrieveFromDB () {
-
-    // remove data from real-time sidebar
-    document.getElementById( 'tweet-list' ).innerHTML = '';
-
-    // remove data from all heatmaps
-    clearMarkers();
-
-    // tell server to retrieve and send all tweets from DB
-    socket.emit( 'retrieveAll' );
-}
-
-function clearAllTweets() {
-    document.getElementById( 'tweet-list' ).innerHTML = '';
-
-    clearMarkers();
-}
-
-function clearMarkers() {
-    setMap( inclementTweets, null );
-    setMap( rainTweets, null );
-    setMap( snowTweets, null );
-    setMap( hailTweets, null );
-    setMap( windTweets, null );
-    setMap( iceTweets, null );
-}
-
-function setMap( markers, map) {
-    for ( let i = 0; i < markers.length; i++) {
-        markers[i].setMap( map );
-    }
-}
-
-/** button functions **/
-function setLive() {
-    live = !live;
-}
-function setInclement() {
-    inclement = !inclement;
-    setMap( inclementTweets, inclement ? map : null );
-}
-function setRain() {
-    rain = !rain;
-    setMap( rainTweets, rain ? map : null );
-}
-function setSnow() {
-    snow = !snow;
-    setMap( snowTweets, snow ? map : null );
-}
-function setHail() {
-    hail = !hail;
-    setMap( hailTweets, hail ? map : null );
-}
-function setWind() {
-    wind = !wind;
-    setMap( windTweets, wind ? map : null );
-}
-function setIce() {
-    ice = !ice;
-    setMap( iceTweets, ice ? map : null );
-}
+/*******************
+ *******************
+ *******************/
