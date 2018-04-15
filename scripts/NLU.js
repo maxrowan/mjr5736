@@ -46,6 +46,8 @@ function classify ( tweet, addTweetToDB, clientCallback) {
                 ex.printInfo( tweet, isAWeatherTweet, isAnInclementTweet );
 
                 if ( isAWeatherTweet && isAnInclementTweet ) {
+                    // TODO: format date
+
                     // add tweet to database
                     addTweetToDB( tweet );
 

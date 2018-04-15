@@ -21,20 +21,20 @@ function addTweetToDB( tweet ) {
     });
 }
 
-function getAllTweetsFromDB( sendTweets ) {
+function getAllTweetsFromDB( sendTweets, socket ) {
     MongoClient.connect(uri, function (err, db) {
         if (err) throw err;
 
         let database = db.db("test");
         let collection = database.collection("test");
         collection.find().toArray( function( err, result ) {
-            sendTweets( result );
+            sendTweets( result, socket );
             db.close();
         });
     });
 }
 
-function getSearchResults( searchVars, sendTweets ) {
+function getSearchResults( searchVars, sendTweets, socket ) {
 
     printRes( searchVars );
 
@@ -44,7 +44,7 @@ function getSearchResults( searchVars, sendTweets ) {
         let database = db.db("test");
         let collection = database.collection("test");
         collection.find( {id: 980938515910406100} ).toArray( function( err, result ) {
-            sendTweets( result );
+            sendTweets( result, socket );
             db.close();
         });
     });
