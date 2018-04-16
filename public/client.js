@@ -151,7 +151,7 @@ function getStates() {
 
     return states;
 }
-
+''
 function getStartDate() {
     return document.getElementById( 'start-date-search' ).value;
 }
@@ -422,32 +422,24 @@ function setLive() {
     live = !live;
 }
 
-
-
 function toggleInclement() {
     toggleEntityHidden( 'INCLEMENT_WEATHER' );
 }
-
 function toggleRain() {
     toggleEntityHidden( 'RAIN' );
 }
-
 function toggleSnow() {
     toggleEntityHidden( 'SNOW' );
 }
-
 function toggleHail() {
     toggleEntityHidden( 'HAIL' );
 }
-
 function toggleWind() {
     toggleEntityHidden( 'WIND' );
 }
-
 function toggleIce() {
     toggleEntityHidden( 'ICE' );
 }
-
 function toggleEntityHidden( entity ) {
     getContainerByEntity( entity, function( container ) {
         forEachIdIndexMapping( container.idIndexMapping, function( mapping ) {
@@ -455,7 +447,6 @@ function toggleEntityHidden( entity ) {
         });
     });
 }
-
 function toggleHide( marker, mapping ) {
     let li = document.getElementById( mapping.id );
 
@@ -465,7 +456,6 @@ function toggleHide( marker, mapping ) {
         show( li, marker, mapping, true );
     }
 }
-
 /**
  ***** ***** *****
  */

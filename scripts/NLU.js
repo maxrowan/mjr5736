@@ -46,7 +46,8 @@ function classify ( tweet, addTweetToDB, clientCallback) {
                 ex.printInfo( tweet, isAWeatherTweet, isAnInclementTweet );
 
                 if ( isAWeatherTweet && isAnInclementTweet ) {
-                    // TODO: format date
+                    // convert to ISO date
+                    formatDate( tweet );
 
                     // add tweet to database
                     addTweetToDB( tweet );
@@ -167,6 +168,11 @@ function printInfo( tweet, weather, inclement ) {
             '\\********************************************************\\\n'
         );
     }
+}
+
+function formatDate( tweet ) {
+    let date = new Date( tweet.created_at );
+    tweet.created_at = date.toISOString();
 }
 
 ex.classify = classify;
