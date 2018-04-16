@@ -40,19 +40,22 @@ let entityContainers = [
 ];
 
 function getContainerByEntity( entity, callback ) {
-    for ( let i = 0; i < entityContainers.length; i++ ) {
-        if ( entityContainers[i].entityType === entity ) {
-            callback( entityContainers[i] );
-            return;
+    forEachContainer( function( container ) {
+        if ( container.entityType === entity ) {
+            callback( container );
         }
+    });
+}
+
+function forEachContainer( callback ) {
+    for ( let i = 0; i < entityContainers.length; i++ ) {
+        callback( entityContainers[i] );
     }
 }
 
-function getContainerMappingIndex( container, id, callback ) {
-    for ( let i = 0; i < container.idIndexMapping.length; i++ ) {
-        if ( container.idIndexMapping[i].id == id ) {
-            callback( container.idIndexMapping[i] );
-        }
+function forEachIdIndexMapping( mapping, callback ) {
+    for ( let i = 0; i < mapping.length; i++ ) {
+        callback( mapping[i] );
     }
 }
 
@@ -158,22 +161,28 @@ function getEndDate() {
 }
 
 function liveSearch( keywords ) {
-    let ul = document.getElementById( 'tweet-list' );
-    let tweetItems = ul.getElementsByTagName( 'li' );
 
     let expression = new RegExp( buildRegExpression( keywords ), 'i' );
 
-    for ( let i = 0; i < tweetItems.length; i++ ) {                             // for each tweet in the ul
-        let li = tweetItems[ i ];
-        let text = li.getElementsByClassName( 'card-text' )[ 0 ].innerHTML;
+    console.log( expression ); // TODO
 
-        if ( !expression.test( text ) ) {                                       // if the text does not contain the keyword
-            let entity = getLiEntity( li );                                     // get entity type of id
-            hideBySearch( li, entity );                                         // hide list and map element
-        }
-    }
+    forEachContainer( function( container ) {
+        forEachIdIndexMapping( container.idIndexMapping, function ( mapping ) {
+            let li = document.getElementById( mapping.id );
+            let text = li.getElementsByClassName( 'card-text' )[ 0 ].innerHTML;
 
-    // TODO: reset lists
+            if ( expression.test( text ) ) {
+                show( li, container.markers[ mapping.index ], mapping, false );
+                console.log( text ); // TODO
+            } else {                                                                 // if the tweet doesn't contain a keyword
+                hide( li, container.markers[ mapping.index ], mapping, false );
+            }
+        } );
+    });
+
+
+    scrollToBottom();
+
     // TODO: add filter to incoming tweets
 }
 
@@ -181,11 +190,7 @@ function buildRegExpression( keywords ) {
     let expression = '';
 
     for ( let i = 0; i < keywords.length; i++ ) {
-        if ( i === 0 ) {
-            expression += '(' + keywords[ i ];
-        } else {
-            expression += keywords[ i ];
-        }
+        expression += keywords[ i ];
 
         try {
             if ( keywords[ i + 1 ] !== undefined ) {
@@ -194,55 +199,50 @@ function buildRegExpression( keywords ) {
         } catch ( e ) {
             console.error( 'regEx', e.message );
         }
-
-        if ( i === keywords.length - 1 ) {
-            expression += ')';
-        }
     }
 
     return expression;
 }
 
-function getLiEntity( li ) {
-    let classes = li.classList;
-
-    for ( let i = 0; i < classes.length; i++) {
-        for ( let j = 0; j < entityContainers.length; j++ ) {
-            if ( classes[i] === entityContainers[j].entityType ) {
-                return classes[i];
-            }
-        }
+function hide( li, marker, mapping, toggle ) {
+    if ( toggle ) {
+        mapping.toggleHidden = true;
+    } else {
+        mapping.searchHidden = true;
     }
 
-    return '';
+    hideTweetListItem( li );
+    hideMarker( marker );
 }
-
-function hideBySearch( li, entity ) {
-    let id = li.id;
-
-    hideTweetListItem( id );                                                    // set sidebar li with corresponding id to hidden
-
-    getContainerByEntity( entity, function( container ) {
-        getContainerMappingIndex( container, id, function( map ) {
-            hideMarker( container.markers[ map.index ] );
-            map.searchHidden = true;
-        } );
-    });
+function hideTweetListItem( li ) {
+    if ( !li.classList.contains( 'hide' )) {
+        li.classList.add( 'hide' );
+    }
 }
-
 function hideMarker( marker ) {
     marker.setMap( null );
 }
 
-function hideTweetListItem( id ) {
-    let li = document.getElementById( id );
-    if ( li.classList.contains( 'hide_by_search' ) ) {
-        li.classList.remove( 'hide_by_search' );
+function show( li, marker, mapping, toggle ) {
+    if ( toggle ) {
+        mapping.toggleHidden = false;
     } else {
-        li.classList.add( 'hide_by_search' );
+        mapping.searchHidden = false;
+    }
+
+    if ( !mapping.toggleHidden && !mapping.searchHidden ) {
+        showTweetListItem( li );
+        showMarker( marker );
     }
 }
-
+function showTweetListItem( li ) {
+    if ( li.classList.contains( 'hide' )) {
+        li.classList.remove( 'hide' );
+    }
+}
+function showMarker( marker ) {
+    marker.setMap( map );
+}
 /**
  ***** ***** *****
  */
@@ -422,47 +422,47 @@ function setLive() {
     live = !live;
 }
 
-function hideInclement() {
+
+
+function toggleInclement() {
     toggleEntityHidden( 'INCLEMENT_WEATHER' );
 }
 
-function hideRain() {
+function toggleRain() {
     toggleEntityHidden( 'RAIN' );
 }
 
-function hideSnow() {
+function toggleSnow() {
     toggleEntityHidden( 'SNOW' );
 }
 
-function hideHail() {
+function toggleHail() {
     toggleEntityHidden( 'HAIL' );
 }
 
-function hideWind() {
+function toggleWind() {
     toggleEntityHidden( 'WIND' );
 }
 
-function hideIce() {
+function toggleIce() {
     toggleEntityHidden( 'ICE' );
 }
 
 function toggleEntityHidden( entity ) {
     getContainerByEntity( entity, function( container ) {
-        for ( let i = 0; i < container.idIndexMapping.length; i++ ) {
-            toggleMarker( container.markers, container.idIndexMapping[i] );
-        }
+        forEachIdIndexMapping( container.idIndexMapping, function( mapping ) {
+            toggleHide( container.markers[ mapping.index ], mapping );
+        });
     });
 }
 
-function toggleMarker( markers, mapping ) {
-    if ( !mapping.searchHidden ) {
-        if ( !mapping.toggleHidden ) {
-            markers[ mapping.index ].setMap( null );
-        } else {
-            markers[ mapping.index ].setMap( map );
-        }
+function toggleHide( marker, mapping ) {
+    let li = document.getElementById( mapping.id );
 
-        mapping.toggleHidden = !mapping.toggleHidden;
+    if ( !mapping.toggleHidden ) {
+        hide( li, marker, mapping, true );
+    } else {
+        show( li, marker, mapping, true );
     }
 }
 
@@ -497,27 +497,21 @@ $( document ).ready( function () {
     /* entity type toggles */
     $( '#inclement-toggle' ).click( function () {
         $( '#inclement-box' ).toggleClass( 'empty' );
-        $( '.INCLEMENT_WEATHER' ).toggleClass( 'hide_by_entity' );
     } );
     $( '#rain-toggle' ).click( function () {
         $( '#rain-box' ).toggleClass( 'empty' );
-        $( '.RAIN' ).toggleClass( 'hide_by_entity' );
     } );
     $( '#snow-toggle' ).click( function () {
         $( '#snow-box' ).toggleClass( 'empty' );
-        $( '.SNOW' ).toggleClass( 'hide_by_entity' );
     } );
     $( '#hail-toggle' ).click( function () {
         $( '#hail-box' ).toggleClass( 'empty' );
-        $( '.HAIL' ).toggleClass( 'hide_by_entity' );
     } );
     $( '#wind-toggle' ).click( function () {
         $( '#wind-box' ).toggleClass( 'empty' );
-        $( '.WIND' ).toggleClass( 'hide_by_entity' );
     } );
     $( '#ice-toggle' ).click( function () {
         $( '#ice-box' ).toggleClass( 'empty' );
-        $( '.ICE' ).toggleClass( 'hide_by_entity' );
     } );
 } );
 
