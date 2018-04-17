@@ -3,8 +3,10 @@
  */
 let MongoClient = require('mongodb').MongoClient;
 let uri = "mongodb://mjr5736:sen!0rDesign@seniordesign-shard-00-00-hiyas.mongodb.net:27017,seniordesign-shard-00-01-hiyas.mongodb.net:27017,seniordesign-shard-00-02-hiyas.mongodb.net:27017/test?ssl=true&replicaSet=SeniorDesign-shard-0&authSource=admin";
-
 let ex = module.exports = {};
+
+//Global Variable for ssearch
+let keyForDB, cityStateForDB,sDate,eDate;
 
 function addTweetToDB( tweet ) {
     MongoClient.connect(uri, function (err, db) {
@@ -37,17 +39,46 @@ function getAllTweetsFromDB( sendTweets ) {
 function getSearchResults( searchVars, sendTweets ) {
 
     printRes( searchVars );
-
+    console.log(keyForDB);
+    console.log(cityStateForDB);
+    var snow = keyForDB;
+    console.log(snow);
     MongoClient.connect(uri, function (err, db) {
+        
         if (err) throw err;
-
+        var any = ".*";
+        //var tempDate = new Date("Sun Apr 1 21:46:15 +0000 2017".toISOString())
         let database = db.db("test");
         let collection = database.collection("test");
-        collection.find( {id: 980938515910406100} ).toArray( function( err, result ) {
+        if(cityStateForDB == "")
+        cityStateForDB = any; 
+        console.log(keyForDB);
+        collection.find( 
+            //{"text":{$regex: "(.*snow*.|rain)"}},
+            
+            {$and:
+                [       // search for key word 
+                        //{"place.full_name":{$regex:any}},
+                         //text search regext snow or rain or fire 
+                        //{"text":{$regex: "(.*snow*.)"}},
+                        //{"place.place_type":{$regex:"city"}}
+                         
+                        // find place by its location 
+                        
+                        {"place.full_name":{$regex:cityStateForDB}},
+                        // text search regext snow or rain or fire 
+                        {"text":{$regex: snow}},
+                        {"place.place_type":{$regex:"city"}}
+                  ]
+ 
+            }
+        ).toArray( function( err, result ) {
+           //Wconsole.log(result);
             sendTweets( result );
             db.close();
         });
     });
+    keyForDB = "" , cityStateForDB ="";
 }
 
 function printRes( searchVars ) {
@@ -61,29 +92,85 @@ function printRes( searchVars ) {
     let k = '',
         c = '',
         s = '';
-
+    
     if ( keywords !== undefined )
+    {
         k = keywords;
+        keyForDB = splitWord(k , ' ');
+        console.log(keyForDB+ " Key For DB");
+    }
     else
         k = 'couldn\'t get keywords';
 
-    if ( cities !== undefined )
-        c = cities;
-    else
-        c = 'couldn\'t get cities';
+   
 
     if ( states !== undefined )
+    {
         s = states;
+        if(s.length != 0 )
+        cityStateForDB = splitWord(s , ',')
+    }
     else
+    {   
         s = 'couldn\'nt get states';
-
+    }
+    if ( cities !== undefined )
+    {
+        c = cities;
+        if(s.length != 0 )
+        cityStateForDB += "|" + c +")"; 
+        
+    }
+    else{
+        c = 'couldn\'t get cities';
+        if(s.length != 0 )
+        cityStateForDB += ")";
+    }/*
     console.log( '\n\n' +
         k.toString() + '\n' +
         c.toString() + '\n' +
         s.toString() + '\n' +
         startDate.toString() + '\n' +
         endDate.toString() + '\n\n'
-    );
+    );*/
+    return null; 
+}
+function splitWord(str, splitVal)
+{   var returnStr = "(";
+    
+    //for state 
+    if(splitVal == ',')
+    {var temparray = str;
+        temparray.forEach(function(e,i,array)
+        {  if(i == 0)
+            {   var temp = e.toUpperCase();
+                returnStr += e;
+                returnStr += "|" +temp
+            }
+            else
+            {   var temp = e.toUpperCase();
+                returnStr += "|"+e;
+                returnStr += "|" +temp
+            }
+        })
+    }
+    else if (splitVal == ' ')
+    {
+        console.log('hi')
+        var temparray = str.split(splitVal);
+    temparray.forEach(function(e,i,array)
+    {  if(i == 0)
+        {
+            returnStr += ".*"+e+"*.";
+        }
+        else
+        {
+            returnStr += "|.*"+e+"*.";
+        }
+         })
+         returnStr+= ")"
+    }
+    return returnStr;
 }
 
 ex.addTweetToDB = addTweetToDB;
