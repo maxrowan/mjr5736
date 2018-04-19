@@ -41,7 +41,11 @@ function getSearchResults( searchVars, sendTweets ) {
     printRes( searchVars );
     console.log(keyForDB);
     console.log(cityStateForDB);
-    var snow = keyForDB;
+    var key = keyForDB;
+    var city = cityStateForDB
+    var start = sDate;
+    var end = eDate;
+    
     console.log(snow);
     MongoClient.connect(uri, function (err, db) {
         
@@ -51,8 +55,13 @@ function getSearchResults( searchVars, sendTweets ) {
         let database = db.db("test");
         let collection = database.collection("test");
         if(cityStateForDB == "")
-        cityStateForDB = any; 
-        console.log(keyForDB);
+        city = any; 
+        if(keyForDB== "")
+        key = any;
+        if(sDate== "")
+        start = "2010-04-19T11:43:47.875Z"; 
+        if(eDate== "")
+        end = new Date().toISOString;  
         collection.find( 
             //{"text":{$regex: "(.*snow*.|rain)"}},
             
@@ -65,10 +74,14 @@ function getSearchResults( searchVars, sendTweets ) {
                          
                         // find place by its location 
                         
-                        {"place.full_name":{$regex:cityStateForDB}},
+                        {"place.full_name":{$regex:city}},
                         // text search regext snow or rain or fire 
-                        {"text":{$regex: snow}},
-                        {"place.place_type":{$regex:"city"}}
+                        {"text":{$regex: key}},
+                        {"place.place_type":{$regex:"city"}},
+                        {"created_at": {
+                            $gte: ISODate(start),
+                            $lt: ISODate(end)
+                        }}
                   ]
  
             }
@@ -78,7 +91,7 @@ function getSearchResults( searchVars, sendTweets ) {
             db.close();
         });
     });
-    keyForDB = "" , cityStateForDB ="";
+    keyForDB = "" , cityStateForDB ="",sDate0 ="", eDate;
 }
 
 function printRes( searchVars ) {
@@ -88,7 +101,8 @@ function printRes( searchVars ) {
         states = searchVars.states,
         startDate = searchVars.startDate,
         endDate = searchVars.endDate;
-
+    startDate = sDate;
+    endDate= eDate;
     let k = '',
         c = '',
         s = '';
