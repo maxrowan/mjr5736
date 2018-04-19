@@ -151,7 +151,7 @@ function getStates() {
 
     return states;
 }
-''
+
 function getStartDate() {
     return document.getElementById( 'start-date-search' ).value;
 }
