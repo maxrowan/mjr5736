@@ -37,7 +37,6 @@ function getAllTweetsFromDB( sendTweets, socket ) {
 	} );
 }
 
-
 function getSearchResults( searchVars, sendTweets ) {
 
 	printRes( searchVars );
