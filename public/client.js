@@ -198,9 +198,6 @@ function liveSearch( keywords ) {
 
 	filter = new RegExp( buildRegExpression( keywords ), 'i' );
 
-	// TODO
-	console.log( '\n' + filter );
-
 	forEachContainer( function ( container ) {
 		forEachTweet( container.tweets, function ( tweet ) {
 			if ( filter.test( tweet.text ) ) {
@@ -234,11 +231,7 @@ function buildRegExpression( keywords ) {
 
 function hide( container, tweet, search ) {
 	if ( search )
-		container.searchHidden = true;
-
-	// todo
-	console.log( '\n\n' + container.toggleHidden );
-	console.log( tweet.searchHidden + '\n\n' );
+		tweet.searchHidden = true;
 
 
 	hideTweetListItem( tweet.id );
@@ -258,11 +251,7 @@ function hideMarker( marker ) {
 function show( container, tweet, search ) {
 
 	if ( search )
-		container.searchHidden = false;
-
-	// todo
-	console.log( '\n\n' + container.toggleHidden );
-	console.log( tweet.searchHidden + '\n\n' );
+		tweet.searchHidden = false;
 
 	if ( !container.toggleHidden && !tweet.searchHidden ) {
 		showTweetListItem( tweet.id );
@@ -302,10 +291,6 @@ function addTweet( tweet ) {
 
 		let passFilter = filter.test( tweet.text );
 		let visible = (!(!passFilter || container.toggleHidden));
-
-		// TODO
-		console.log( passFilter );
-		console.log( visible );
 
 		addToContainer( tweet, container, passFilter, visible );
 		addToSidebar( tweet, color, visible );
