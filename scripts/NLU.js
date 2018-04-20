@@ -7,7 +7,7 @@ const natural_language_understanding = new NaturalLanguageUnderstandingV1( {
 	'password': 'fFdDZIwG2QUQ',
 	'version_date': '2017-02-27'
 } );
-const wks_model_id = '10:9a5e9388-da60-4029-814b-80b8220e5a94';
+const wks_model_id = '10:40ec8277-7949-49c9-8ffc-1f7b1a53e546';
 
 let ex = module.exports = {};
 
@@ -107,26 +107,45 @@ function getLabel( categories ) {
  * @returns {*}
  */
 function getEntity( entities ) {
-	// TODO: get most common entity
-	let entity = ' Could not Classify';
 
-	if ( entities !== undefined ) {
+	let entity = 'Could not Classify';
+
+	if ( entities !== undefined && entities[0] !== undefined ) {
+
+		// TODO: get most common entity
+
 
 		entity = entities[ 0 ].type;
 
+		let subtype = '';
+		let subtypes = [];
+
+		// create array of weather subtypes
 		for ( let i = 0; i < entities.length; i++ ) {
+			if ( isWeatherEntity( entities[ i ] ) ) {
+				subtype = entities[ i ].disambiguation.subtype[ 0 ];
 
-			let type = entities[ i ].type;
-			let subtype = entities[ i ].disambiguation.subtype[ 0 ];
-
-			if ( type === 'WEATHER' ) {
 				if ( subtype ) {
-					return subtype;
+					subtypes.push( subtype );
 				}
 			}
 		}
+
+		return getMostCommonSubtype( subtypes );
 	}
 	return entity;
+}
+
+function getMostCommonSubtype( subtypes ) {
+	return subtypes.sort( ( a, b ) =>
+		subtypes.filter( v => v === a ).length
+		- subtypes.filter( v => v === b ).length
+	).pop();
+}
+
+function isWeatherEntity( entity ) {
+	let type = entity.type;
+	return (type === 'WEATHER')
 }
 
 /**
@@ -152,7 +171,7 @@ function printInfo( tweet, entities, weather, inclement ) {
 		let ents = '';
 
 		for ( let i = 0; i < entities.length; i++ ) {
-			ents += entities[i].disambiguation.subtype[0] + '\n';
+			ents += entities[ i ].disambiguation.subtype[ 0 ] + '\n';
 		}
 
 

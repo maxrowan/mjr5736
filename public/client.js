@@ -1,43 +1,78 @@
 let map;
 
+/**
+ *
+ * Container = {
+ * 		entityType:
+ * 		color:
+ * 		tweets: [
+ * 			marker:
+ * 			id:
+ * 		 	text:
+ * 			searchHidden:
+ * 		]
+ * 		toggleHidden:
+ * 	}
+ *
+ */
+
 let entityContainers = [
     {
         entityType: 'INCLEMENT_WEATHER',
         color: '#76ff03',
-        markers: [],
-        idIndexMapping: []
+        tweets: [],
+		toggleHidden: false
     },
     {
         entityType: 'RAIN',
         color: '#ff9800',
-        markers: [],
-        idIndexMapping: []
+		tweets: [],
+		toggleHidden: false
     },
     {
         entityType: 'SNOW',
         color: '#2962ff',
-        markers: [],
-        idIndexMapping: []
+		tweets: [],
+		toggleHidden: false
     },
     {
         entityType: 'HAIL',
         color: '#9c27b0',
-        markers: [],
-        idIndexMapping: []
+		tweets: [],
+		toggleHidden: false
     },
     {
         entityType: 'WIND',
         color: '#ffff00',
-        markers: [],
-        idIndexMapping: []
+		tweets: [],
+		toggleHidden: false
     },
     {
         entityType: 'ICE',
         color: '#18ffff',
-        markers: [],
-        idIndexMapping: []
+		tweets: [],
+		toggleHidden: false
     }
 ];
+let PA_BB = [
+	-80.519895,
+	39.7197989,
+	-74.6895018,
+	42.516072
+],
+	NY_BB = [
+	-79.7625901,
+	40.4773991,
+	-71.777491,
+	45.015865
+],
+	OH_BB = [
+	-84.8203049,    // west long (left)
+	38.4034229,     // south lat (bottom)
+	-80.5182,       // east long (right)
+	42.327132       // north lat (top)
+];
+let filter = '';
 
 function getContainerByEntity( entity, callback ) {
     forEachContainer( function( container ) {
@@ -53,9 +88,9 @@ function forEachContainer( callback ) {
     }
 }
 
-function forEachIdIndexMapping( mapping, callback ) {
-    for ( let i = 0; i < mapping.length; i++ ) {
-        callback( mapping[i] );
+function forEachTweet( tweets, callback ) {
+    for ( let i = 0; i < tweets.length; i++ ) {
+        callback( tweets[i] );
     }
 }
 
@@ -91,12 +126,12 @@ let socket = io();
  */
 socket.on( 'tweetEvent', function ( tweet ) {
     if ( live )
-        showTweet( tweet, 'tweet-content-body' );
+        addTweet( tweet, 'tweet-content-body' );
 } );
 
 socket.on( 'getTweets', function ( tweets ) {
     console.log( 'got tweet' );
-    showTweets( tweets );
+    addTweets( tweets );
 } );
 
 /**
@@ -129,12 +164,10 @@ function getKeywords() {
     let keywords = document.getElementById( 'keyword-search' ).value;
     return keywords.split( ' ' );
 }
-
 function getCities() {
     let cities = document.getElementById( 'city-search' ).value;
     return cities.split( ' ' );
 }
-
 function getStates() {
     let pa = document.getElementById( 'dropdown-pa' ).classList.contains( 'active' );
     let ny = document.getElementById( 'dropdown-ny' ).classList.contains( 'active' );
@@ -151,39 +184,29 @@ function getStates() {
 
     return states;
 }
-
 function getStartDate() {
     return document.getElementById( 'start-date-search' ).value;
 }
-
 function getEndDate() {
     return document.getElementById( 'end-date-search' ).value;
 }
 
 function liveSearch( keywords ) {
 
-    let expression = new RegExp( buildRegExpression( keywords ), 'i' );
-
-    console.log( expression ); // TODO
+    filter = new RegExp( buildRegExpression( keywords ), 'i' );
 
     forEachContainer( function( container ) {
-        forEachIdIndexMapping( container.idIndexMapping, function ( mapping ) {
-            let li = document.getElementById( mapping.id );
-            let text = li.getElementsByClassName( 'card-text' )[ 0 ].innerHTML;
-
-            if ( expression.test( text ) ) {
-                show( li, container.markers[ mapping.index ], mapping, false );
-                console.log( text ); // TODO
+        forEachTweet( container.tweets, function ( tweet ) {
+            if ( filter.test( tweet.text ) ) {
+                show( container, tweet, false );
             } else {                                                                 // if the tweet doesn't contain a keyword
-                hide( li, container.markers[ mapping.index ], mapping, false );
+                hide( container, tweet, false );
             }
         } );
     });
 
 
     scrollToBottom();
-
-    // TODO: add filter to incoming tweets
 }
 
 function buildRegExpression( keywords ) {
@@ -204,38 +227,43 @@ function buildRegExpression( keywords ) {
     return expression;
 }
 
-function hide( li, marker, mapping, toggle ) {
+function hide( container, tweet, toggle ) {
     if ( toggle ) {
-        mapping.toggleHidden = true;
+        container.toggleHidden = true;
     } else {
-        mapping.searchHidden = true;
+        tweet.searchHidden = true;
     }
 
-    hideTweetListItem( li );
-    hideMarker( marker );
+    hideTweetListItem( tweet.id );
+    hideMarker( tweet.marker );
 }
-function hideTweetListItem( li ) {
+function hideTweetListItem( id ) {
+	let li = document.getElementById( id );
+
     if ( !li.classList.contains( 'hide' )) {
         li.classList.add( 'hide' );
     }
 }
 function hideMarker( marker ) {
-    marker.setMap( null );
+	marker.setMap( null );
 }
 
-function show( li, marker, mapping, toggle ) {
+function show( container, tweet, toggle ) {
+
     if ( toggle ) {
-        mapping.toggleHidden = false;
+        container.toggleHidden = false;
     } else {
-        mapping.searchHidden = false;
+        tweet.searchHidden = false;
     }
 
-    if ( !mapping.toggleHidden && !mapping.searchHidden ) {
-        showTweetListItem( li );
-        showMarker( marker );
+    if ( !container.toggleHidden && !tweet.searchHidden ) {
+        showTweetListItem( tweet.id );
+        showMarker( tweet.marker );
     }
 }
-function showTweetListItem( li ) {
+function showTweetListItem( id ) {
+	let li = document.getElementById( id );
+
     if ( li.classList.contains( 'hide' )) {
         li.classList.remove( 'hide' );
     }
@@ -249,39 +277,42 @@ function showMarker( marker ) {
 
 
 /**
- ***** post functions *****
+ ***** add functions *****
  */
-function showTweets( tweets ) {
+function addTweets( tweets ) {
     for ( let i = 0; i < tweets.length; i++ ) {
-        showTweet( tweets[ i ] );
+        addTweet( tweets[ i ] );
     }
 }
 
-function showTweet( tweet ) {
+function addTweet( tweet ) {
     getContainerByEntity( tweet.NLUEntity, function( container ) {
         let color = container.color;
-        addToMap( tweet, container );
-        addToSidebar( tweet, color );
+
+        let passFilter = filter.test( tweet.text );
+		let visible = (!(passFilter && !container.toggleHidden));
+
+        addToContainer( tweet, container, passFilter, visible );
+        addToSidebar( tweet, color, visible );
     } );
 }
 
 /**
- *** post to map functions ***
+ *** add to map functions ***
  */
-function addToMap( tweet, container ) {
-    let marker = createMarker( tweet.geoPoint, container.color );
-    container.markers.push( marker );
+function addToContainer( tweet, container, passFilter, visible ) {
+    let marker = createMarker( tweet.geoPoint, container.color, visible );
 
     // maps tweet id (li id) to list position
-    container.idIndexMapping.push( {
+    container.tweets.push( {
+		marker: marker,
         id: tweet.id,
-        index: container.markers.indexOf( marker ),
-        searchHidden: false,
-        toggleHidden: false
+		text: tweet.text,
+        searchHidden: !passFilter
     } );
 }
 
-function createMarker( geoPoint, color ) {
+function createMarker( geoPoint, color, visible ) {
 
     let mapIcon = {
         path: google.maps.SymbolPath.CIRCLE,
@@ -298,7 +329,7 @@ function createMarker( geoPoint, color ) {
             lng: geoPoint.lng
         },
         icon: mapIcon,
-        map: map
+        map: ( visible ? map : null )
     } );
 }
 /**
@@ -307,11 +338,11 @@ function createMarker( geoPoint, color ) {
 
 
 /**
- *** post to sidebar functions ***
+ *** add to sidebar functions ***
  */
-function addToSidebar( tweet, color ) {
+function addToSidebar( tweet, color, visible ) {
 
-    let classEntity = tweet.NLUEntity;
+    let hide = ( visible ? '' : '.hide' );
     let id = tweet.id;
     let image = addImage( tweet.entities );
     let user = tweet.user;
@@ -325,21 +356,24 @@ function addToSidebar( tweet, color ) {
     let tweetList = document.getElementById( 'tweet-list' );
 
     tweetList.innerHTML +=
-        '<li id="' + id + '" class="list-group-item p-0 unhighlighted onclick=highlight(this) ' + classEntity + '">' +
-        '<div class="card" style="border-left: 6px solid' + color + '">' +
+        '<li id="' + id + '" class="list-group-item p-0 unhighlighted onclick=highlight(this) ' + hide + '">' +
+        	'<div class="card" style="border-left: 6px solid' + color + '">' +
 
-        <!-- Tweet Image -->
-        image +
+        		<!-- Tweet Image -->
+        		image +
 
-        <!-- Tweet Text Content -->
-        '<div class="card-body">' +
-        <!-- Header -->
-        header +
-        <!--Text-->
-        '<p class="card-text">' + text + '</p>' +
-        // TODO: add Timestamp
-        '</div>' +
-        '</div>' +
+        		<!-- Tweet Text Content -->
+        		'<div class="card-body">' +
+
+        			<!-- Header -->
+        			header +
+
+        			<!--Text-->
+        			'<p class="card-text">' + text + '</p>' +
+
+        			// TODO: add Timestamp
+        		'</div>' +
+        	'</div>' +
         '</li>';
 
     scrollToBottom();
@@ -394,20 +428,16 @@ function eraseAll() {
 
 function eraseMap() {
 
-    for ( let i = 0; i < entityContainers.length; i++ ) {
-        setMap( entityContainers[i].markers, null );
-        entityContainers[i].markers = [];
-    }
+	forEachContainer( function( container ) {
+		forEachTweet( container.tweets, function( tweet ) {
+			hideMarker( tweet.marker );
+		});
+		container.tweets = [];
+	});
 }
 
 function eraseSidebar() {
     document.getElementById( 'tweet-list' ).innerHTML = '';
-}
-
-function setMap( markers, map ) {
-    for ( let i = 0; i < markers.length; i++ ) {
-        markers[ i ].setMap( map );
-    }
 }
 
 function scrollToBottom() {
@@ -442,18 +472,16 @@ function toggleIce() {
 }
 function toggleEntityHidden( entity ) {
     getContainerByEntity( entity, function( container ) {
-        forEachIdIndexMapping( container.idIndexMapping, function( mapping ) {
-            toggleHide( container.markers[ mapping.index ], mapping );
+        forEachTweet( container.tweets, function( tweet ) {
+            toggleHide( container, tweet );
         });
     });
 }
-function toggleHide( marker, mapping ) {
-    let li = document.getElementById( mapping.id );
-
-    if ( !mapping.toggleHidden ) {
-        hide( li, marker, mapping, true );
+function toggleHide(container, tweet ) {
+    if ( !container.toggleHidden ) {
+        hide( container, tweet, true );
     } else {
-        show( li, marker, mapping, true );
+        show( container, tweet, true );
     }
 }
 /**
