@@ -41,7 +41,7 @@ function getAllTweetsFromDB( sendTweets, socket ) {
 
 function getSearchResults( searchVars, sendTweets, socket ) {
 	printRes( searchVars );
-	let key = keyForDB;
+	var key = keyForDB;
 	let city = cityStateForDB
 	let start = sDate;
 	let end = eDate;
@@ -56,35 +56,22 @@ function getSearchResults( searchVars, sendTweets, socket ) {
 			city = any;
 		if ( key == "" )
 			key = any;
+		console.log(key);
 		collection.find(
 			//{"text":{$regex: "(.*snow*.|rain)"}},
 
 			{
 				$and:
-					[       // search for key word
-						//{"place.full_name":{$regex:any}},
-						//text search regext snow or rain or fire
-						//{"text":{$regex: "(.*snow*.)"}},
-						//{"place.place_type":{$regex:"city"}}
-
-						// find place by its location
-
+					[
 						{ "place.full_name": { $regex: city } },
-						// text search regext snow or rain or fire
 						{ "text": { $regex: key } },
-						{ "place.place_type": { $regex: "city" } },
-						/*{
-							created_at: {
-								$gte: ISODate(start),
-								$lt: ISODate(end)
-							}
-						}*/
+						//{ "place.place_type": { $regex: "" } }
 
 					]
 
 			}
 		).toArray( function ( err, result ) {
-			//Wconsole.log(result);
+			console.log(result);
 			sendTweets( result, socket );
 			db.close();
 		} );
@@ -151,7 +138,7 @@ function splitWord(str, splitVal)
 		temparray.forEach(function(e,i,array)
 		{  if(i == 0)
 		{   var temp = e.toUpperCase();
-			returnStr += e;
+			returnStr += e ;
 			returnStr += "|" +temp
 		}
 		else
@@ -168,11 +155,11 @@ function splitWord(str, splitVal)
 		temparray.forEach(function(e,i,array)
 		{  if(i == 0)
 		{
-			returnStr += ".*"+e;
+			returnStr += ".*"+e+"*.";
 		}
 		else
 		{
-			returnStr += "|.*"+e;
+			returnStr += "|.*"+e+"*.";
 		}
 		})
 		returnStr+= ")"
