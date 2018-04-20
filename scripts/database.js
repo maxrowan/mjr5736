@@ -3,8 +3,10 @@
  */
 let MongoClient = require( 'mongodb' ).MongoClient;
 let uri = "mongodb://mjr5736:sen!0rDesign@seniordesign-shard-00-00-hiyas.mongodb.net:27017,seniordesign-shard-00-01-hiyas.mongodb.net:27017,seniordesign-shard-00-02-hiyas.mongodb.net:27017/test?ssl=true&replicaSet=SeniorDesign-shard-0&authSource=admin";
-
 let ex = module.exports = {};
+
+
+//Global Variable for ssearch
 
 let keyForDB, cityStateForDB,sDate,eDate;
 
@@ -37,16 +39,12 @@ function getAllTweetsFromDB( sendTweets, socket ) {
 	} );
 }
 
-function getSearchResults( searchVars, sendTweets ) {
-
+function getSearchResults( searchVars, sendTweets, socket ) {
 	printRes( searchVars );
 	let key = keyForDB;
 	let city = cityStateForDB
 	let start = sDate;
 	let end = eDate;
-	console.log( start );
-	console.log( end );
-	console.log( key + " Before connect" );
 	MongoClient.connect( uri, function ( err, db ) {
 
 		if ( err ) throw err;
@@ -58,10 +56,6 @@ function getSearchResults( searchVars, sendTweets ) {
 			city = any;
 		if ( key == "" )
 			key = any;
-		if ( start == "" )
-			start = "2010-04-19T11:43:47.875Z";
-		if ( end == "" )
-			end = new Date().toISOString;
 		collection.find(
 			//{"text":{$regex: "(.*snow*.|rain)"}},
 
@@ -91,13 +85,13 @@ function getSearchResults( searchVars, sendTweets ) {
 			}
 		).toArray( function ( err, result ) {
 			//Wconsole.log(result);
-			sendTweets( result );
+			sendTweets( result, socket );
 			db.close();
 		} );
 	} );
 	keyForDB = "" , cityStateForDB = "", sDate0 = "", eDate;
-}
 
+}
 function printRes( searchVars ) {
 
 	let keywords = searchVars.keywords,
@@ -105,84 +99,83 @@ function printRes( searchVars ) {
 		states = searchVars.states,
 		startDate = searchVars.startDate,
 		endDate = searchVars.endDate;
-	startDate = sDate;
-	console.log( "Start Date is " + sDate )
-	endDate = eDate;
-	console.log( "End Date is " + sDate )
 	let k = '',
 		c = '',
 		s = '';
 
-	if ( keywords !== undefined ) {
+	if ( keywords !== undefined )
+	{
 		k = keywords;
-		keyForDB = splitWord( k, ' ' );
-		console.log( keyForDB + " Key For DB" );
+		keyForDB = splitWord(k , ' ');
+		console.log(keyForDB+ " Key For DB");
 	}
 	else
 		k = 'couldn\'t get keywords';
-
-
-	if ( states !== undefined ) {
+	if ( states !== undefined )
+	{
 		s = states;
-		if ( s.length != 0 )
-			cityStateForDB = splitWord( s, ',' )
+		if(s.length != 0 )
+			cityStateForDB = splitWord(s , ',')
 	}
-	else {
+	else
+	{
 		s = 'couldn\'nt get states';
 	}
-	if ( cities !== undefined ) {
+	if ( cities !== undefined )
+	{
 		c = cities;
-		if ( s.length != 0 )
-			cityStateForDB += "|" + c + ")";
+		if(s.length != 0 )
+			cityStateForDB += "|" + c +")";
 
 	}
-	else {
+	else{
 		c = 'couldn\'t get cities';
-		if ( s.length != 0 )
+		if(s.length != 0 )
 			cityStateForDB += ")";
-	}
-	/*
-		console.log( '\n\n' +
-			k.toString() + '\n' +
-			c.toString() + '\n' +
-			s.toString() + '\n' +
-			startDate.toString() + '\n' +
-			endDate.toString() + '\n\n'
-		);*/
+	}/*
+    console.log( '\n\n' +
+        k.toString() + '\n' +
+        c.toString() + '\n' +
+        s.toString() + '\n' +
+        startDate.toString() + '\n' +
+        endDate.toString() + '\n\n'
+    );*/
 	return null;
 }
-
-function splitWord( str, splitVal ) {
-	let returnStr = "(";
+function splitWord(str, splitVal)
+{   var returnStr = "(";
 
 	//for state
-	if ( splitVal == ',' ) {
-		let temparray = str;
-		temparray.forEach( function ( e, i, array ) {
-			if ( i == 0 ) {
-				let temp = e.toUpperCase();
-				returnStr += e;
-				returnStr += "|" + temp
-			}
-			else {
-				let temp = e.toUpperCase();
-				returnStr += "|" + e;
-				returnStr += "|" + temp
-			}
-		} )
+	if(splitVal == ',')
+	{var temparray = str;
+		temparray.forEach(function(e,i,array)
+		{  if(i == 0)
+		{   var temp = e.toUpperCase();
+			returnStr += e;
+			returnStr += "|" +temp
+		}
+		else
+		{   var temp = e.toUpperCase();
+			returnStr += "|"+e;
+			returnStr += "|" +temp
+		}
+		})
 	}
-	else if ( splitVal == ' ' ) {
-		console.log( 'hi' )
-		let temparray = str.split( splitVal );
-		temparray.forEach( function ( e, i, array ) {
-			if ( i == 0 ) {
-				returnStr += ".*" + e;
-			}
-			else {
-				returnStr += "|.*" + e;
-			}
-		} )
-		returnStr += ")"
+	else if (splitVal == ' ')
+	{
+		console.log(str)
+		var temparray = str;
+		temparray.forEach(function(e,i,array)
+		{  if(i == 0)
+		{
+			returnStr += ".*"+e;
+		}
+		else
+		{
+			returnStr += "|.*"+e;
+		}
+		})
+		returnStr+= ")"
 	}
 	return returnStr;
 }

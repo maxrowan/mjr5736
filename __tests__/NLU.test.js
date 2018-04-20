@@ -397,9 +397,6 @@ describe( 'Asserts that weather-related tweets are classified correctly', () => 
 	} );
 
 	test( 'assert that STATION tweets are classified correctly', done => {
-		/**
-		 * printInfo mock
-		 */
 		nlu.printInfo = jest.fn().mockImplementation( ( tweet, entities, weather, inclement ) => {
 			expect( weather ).toBe( true );
 			expect( inclement ).toBe( false );
