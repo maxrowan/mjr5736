@@ -1,39 +1,121 @@
 let map;
-let inclementTweets = [],    // rgba( 0, 255, 0, 1)
-    rainTweets = [],         // rgba( 255, 165, 0, 1)
-    snowTweets = [],         // rgba( 0, 255, 255, 1)
-    hailTweets = [],         // rgba( 219, 112, 147, 1)
-    windTweets = [],         // rgba( 255, 20, 147, 1)
-    iceTweets = [];          // rgba( 139, 0, 139, 1)
-let live = true,
-    inclement = true,
-    rain = true,
-    snow = true,
-    hail = true,
-    wind = true,
-    ice = true;
+
+/**
+ *
+ * Container = {
+ * 		entityType:
+ * 		color:
+ * 		tweets: [
+ * 			marker:
+ * 			id:
+ * 		 	text:
+ * 			searchHidden:
+ * 		]
+ * 		toggleHidden:
+ * 	}
+ *
+ */
+
+let entityContainers = [
+	{
+		entityType: 'INCLEMENT_WEATHER',
+		color: '#76ff03',
+		tweets: [],
+		toggleHidden: false
+	},
+	{
+		entityType: 'RAIN',
+		color: '#ff9800',
+		tweets: [],
+		toggleHidden: false
+	},
+	{
+		entityType: 'SNOW',
+		color: '#2962ff',
+		tweets: [],
+		toggleHidden: false
+	},
+	{
+		entityType: 'HAIL',
+		color: '#9c27b0',
+		tweets: [],
+		toggleHidden: false
+	},
+	{
+		entityType: 'WIND',
+		color: '#ffff00',
+		tweets: [],
+		toggleHidden: false
+	},
+	{
+		entityType: 'ICE',
+		color: '#18ffff',
+		tweets: [],
+		toggleHidden: false
+	}
+];
+let PA_BB = [
+		-80.519895,
+		39.7197989,
+		-74.6895018,
+		42.516072
+	],
+	NY_BB = [
+		-79.7625901,
+		40.4773991,
+		-71.777491,
+		45.015865
+	],
+	OH_BB = [
+		-84.8203049,    // west long (left)
+		38.4034229,     // south lat (bottom)
+		-80.5182,       // east long (right)
+		42.327132       // north lat (top)
+	];
+let filter = new RegExp( '.', 'i' );
+
+function getContainerByEntity( entity, callback ) {
+	forEachContainer( function ( container ) {
+		if ( container.entityType === entity ) {
+			callback( container );
+		}
+	} );
+}
+
+function forEachContainer( callback ) {
+	for ( let i = 0; i < entityContainers.length; i++ ) {
+		callback( entityContainers[ i ] );
+	}
+}
+
+function forEachTweet( tweets, callback ) {
+	for ( let i = 0; i < tweets.length; i++ ) {
+		callback( tweets[ i ] );
+	}
+}
+
+let live = true;
 
 // initialize map
 function initMap() {
 
-    /* google map */
-    let erieInsurance = { lat: 42.130601, lng: -80.083889 };
-    map = new google.maps.Map(document.getElementById('map'), {
-        zoom: 6,
-        center: erieInsurance,
-        gestureHandling: 'greedy'
-    });
+	/* google map */
+	let erieInsurance = { lat: 42.130601, lng: -80.083889 };
+	map = new google.maps.Map( document.getElementById( 'map' ), {
+		zoom: 6,
+		center: erieInsurance,
+		gestureHandling: 'greedy'
+	} );
 
-    /* legend */
-    let legend = document.getElementById( 'legend' );
-    map.controls[ google.maps.ControlPosition.RIGHT_BOTTOM ].push( legend );
+	/* legend */
+	let legend = document.getElementById( 'legend' );
+	map.controls[ google.maps.ControlPosition.RIGHT_BOTTOM ].push( legend );
 
-    /* search bar */
-    let searchBar = document.getElementById( 'search-bar' );
-    map.controls[ google.maps.ControlPosition.TOP ].push( searchBar );
+	/* search bar */
+	let searchBar = document.getElementById( 'search-bar' );
+	map.controls[ google.maps.ControlPosition.TOP ].push( searchBar );
 
-    // TODO: enable retrieve
-    //retrieveFromDB();
+	retrieveFromDB();
 }
 
 let socket = io();
@@ -41,292 +123,454 @@ let socket = io();
 /**
  * add point to array and show it on map when it's received from the server
  */
-socket.on('tweetEvent', function( tweet ) {
-    if ( live )
-        showTweet( tweet, 'tweet-content-body' );
-});
+socket.on( 'tweetEvent', function ( tweet ) {
+	if ( live )
+		addTweet( tweet, 'tweet-content-body' );
+} );
 
-socket.on( 'getTweets', function( tweets ) {
-    console.log( 'got tweet' );
-    showTweets( tweets );
-});
+socket.on( 'getTweets', function ( tweets ) {
+	console.log( 'got tweet' );
+	addTweets( tweets );
+} );
 
 /**
  ***** search functions *****
  */
 function search() {
-    let keywords = getKeywords();
-    let cities = getCities();
-    let states = getStates();
-    let startDate = getStartDate();
-    let endDate = getEndDate();
+	let keywords = getKeywords();
+	let cities = getCities();
+	let states = getStates();
+	let startDate = getStartDate();
+	let endDate = getEndDate();
 
-    let searchVars = {
-        keywords: keywords,
-        cities: cities,
-        states: states,
-        startDate: startDate,
-        endDate: endDate
-    };
+	let searchVars = {
+		keywords: keywords,
+		cities: cities,
+		states: states,
+		startDate: startDate,
+		endDate: endDate
+	};
 
-    clearAllTweets();
-    socket.emit( 'searchEvent', searchVars );
+	if ( live ) {
+		liveSearch( keywords );
+	} else {
+		eraseAll();
+		socket.emit( 'searchEvent', searchVars );
+	}
 }
 
 function getKeywords() {
-    let keywords = document.getElementById( 'keyword-search' ).value;
-    keywords.split( ' ' );
-
-    console.log( keywords.toString() );
-
-    return keywords;
+	let keywords = document.getElementById( 'keyword-search' ).value;
+	return keywords.split( ' ' );
 }
 
 function getCities() {
-    let cities = document.getElementById( 'city-search' ).value;
-    cities.split( ' ' );
-
-    console.log( cities.toString() );
-
-    return cities;
+	let cities = document.getElementById( 'city-search' ).value;
+	return cities.split( ' ' );
 }
 
 function getStates() {
+	let pa = document.getElementById( 'dropdown-pa' ).classList.contains( 'active' );
+	let ny = document.getElementById( 'dropdown-ny' ).classList.contains( 'active' );
+	let oh = document.getElementById( 'dropdown-oh' ).classList.contains( 'active' );
 
-    let pa = document.getElementById( 'dropdown-pa' ).classList.contains( 'active' );
-    let ny = document.getElementById( 'dropdown-ny' ).classList.contains( 'active' );
-    let oh = document.getElementById( 'dropdown-oh' ).classList.contains( 'active' );
+	let states = [];
 
-    let states = [];
+	if ( pa )
+		states.push( 'pa' );
+	if ( ny )
+		states.push( 'ny' );
+	if ( oh )
+		states.push( 'oh' );
 
-    if ( pa )
-        states.push( 'pa' );
-    if ( ny )
-        states.push( 'ny' );
-    if ( oh )
-        states.push( 'oh' );
-
-    return states;
+	return states;
 }
 
 function getStartDate() {
-    let date = document.getElementById( 'start-date-search' ).value;
-
-    return date;
+	return document.getElementById( 'start-date-search' ).value;
 }
 
 function getEndDate() {
-    let date = document.getElementById( 'end-date-search' ).value;
-
-    return date;
+	return document.getElementById( 'end-date-search' ).value;
 }
+
+function liveSearch( keywords ) {
+
+	filter = new RegExp( buildRegExpression( keywords ), 'i' );
+
+	// TODO
+	console.log( '\n' + filter );
+
+	forEachContainer( function ( container ) {
+		forEachTweet( container.tweets, function ( tweet ) {
+			if ( filter.test( tweet.text ) ) {
+				show( container, tweet, true );
+			} else {                                                                 // if the tweet doesn't contain a keyword
+				hide( container, tweet, true );
+			}
+		} );
+	} );
+
+	scrollToBottom();
+}
+
+function buildRegExpression( keywords ) {
+	let expression = '';
+
+	for ( let i = 0; i < keywords.length; i++ ) {
+		expression += keywords[ i ];
+
+		try {
+			if ( keywords[ i + 1 ] !== undefined ) {
+				expression += '|'
+			}
+		} catch ( e ) {
+			console.error( 'regEx', e.message );
+		}
+	}
+
+	return expression;
+}
+
+function hide( container, tweet, search ) {
+	if ( search )
+		container.searchHidden = true;
+
+	// todo
+	console.log( '\n\n' + container.toggleHidden );
+	console.log( tweet.searchHidden + '\n\n' );
+
+
+	hideTweetListItem( tweet.id );
+	hideMarker( tweet.marker );
+}
+function hideTweetListItem( id ) {
+	let li = document.getElementById( id );
+
+	if ( !li.classList.contains( 'hide' ) ) {
+		li.classList.add( 'hide' );
+	}
+}
+function hideMarker( marker ) {
+	marker.setMap( null );
+}
+
+function show( container, tweet, search ) {
+
+	if ( search )
+		container.searchHidden = false;
+
+	// todo
+	console.log( '\n\n' + container.toggleHidden );
+	console.log( tweet.searchHidden + '\n\n' );
+
+	if ( !container.toggleHidden && !tweet.searchHidden ) {
+		showTweetListItem( tweet.id );
+		showMarker( tweet.marker );
+	}
+}
+
+function showTweetListItem( id ) {
+	let li = document.getElementById( id );
+
+	if ( li.classList.contains( 'hide' ) ) {
+		li.classList.remove( 'hide' );
+	}
+}
+
+function showMarker( marker ) {
+	marker.setMap( map );
+}
+
 /**
  ***** ***** *****
  */
 
-function showTweets( tweets ) {
-    for ( let i = 0; i < tweets.length; i++ ) {
-        showTweet( tweets[i], 'tweet-content-body' );
-    }
+
+/**
+ ***** add functions *****
+ */
+function addTweets( tweets ) {
+	for ( let i = 0; i < tweets.length; i++ ) {
+		addTweet( tweets[ i ] );
+	}
 }
 
-function addToMap( tweet, color ) {
-    let marker = setMarker( tweet.geoPoint, color );
-    addToList( tweet.NLUEntity, marker );
+function addTweet( tweet ) {
+	getContainerByEntity( tweet.NLUEntity, function ( container ) {
+		let color = container.color;
+
+		let passFilter = filter.test( tweet.text );
+		let visible = (!(!passFilter || container.toggleHidden));
+
+		// TODO
+		console.log( passFilter );
+		console.log( visible );
+
+		addToContainer( tweet, container, passFilter, visible );
+		addToSidebar( tweet, color, visible );
+	} );
 }
 
-function addToList( entity, marker ) {
-    switch ( entity ) {
-        case "INCLEMENT_WEATHER":
-            inclementTweets.push( marker );
-            break;
-        case "RAIN" :
-            rainTweets.push( marker );
-            break;
-        case "SNOW" :
-            snowTweets.push( marker );
-            break;
-        case "HAIL" :
-            hailTweets.push( marker );
-            break;
-        case "WIND" :
-            windTweets.push( marker );
-            break;
-        case "ICE" :
-            iceTweets.push( marker );
-            break;
-    }
+/**
+ *** add to map functions ***
+ */
+function addToContainer( tweet, container, passFilter, visible ) {
+	let marker = createMarker( tweet.geoPoint, container.color, visible );
+
+	// maps tweet id (li id) to list position
+	container.tweets.push( {
+		marker: marker,
+		id: tweet.id,
+		text: tweet.text,
+		searchHidden: !passFilter
+	} );
 }
 
-function setMarker( geoPoint, color ) {
+function createMarker( geoPoint, color, visible ) {
 
-    let mapIcon = {
-        path: google.maps.SymbolPath.CIRCLE,
-        fillColor: color,
-        fillOpacity: 0.5,
-        scale: 10,
-        strokeColor: 'white',
-        strokeWeight: 1
-    };
+	let mapIcon = {
+		path: google.maps.SymbolPath.CIRCLE,
+		fillColor: color,
+		fillOpacity: 0.5,
+		scale: 10,
+		strokeColor: 'white',
+		strokeWeight: 1
+	};
 
-    return new google.maps.Marker({
-        position: {
-            lat: geoPoint.lat,
-            lng: geoPoint.lng
-        },
-        icon: mapIcon,
-        map: map
-    });
+	return new google.maps.Marker( {
+		position: {
+			lat: geoPoint.lat,
+			lng: geoPoint.lng
+		},
+		icon: mapIcon,
+		map: (visible ? map : null)
+	} );
 }
 
-function addToSidebar( tweet, color ) {
+/**
+ *** *** ***
+ */
 
-    let image = addImage( tweet );
-    let user = tweet.user;
 
-    let profilePic = user.profile_image_url;
-    let name = user.name;
-    let handle = user.screen_name;
-    let header = addHeader( profilePic, name, handle );
+/**
+ *** add to sidebar functions ***
+ */
+function addToSidebar( tweet, color, visible ) {
 
-    let text = tweet.text;
+	let hide = (visible ? '' : 'hide');
+	let id = tweet.id;
+	let image = addImage( tweet.entities );
+	let user = tweet.user;
+	let profilePic = user.profile_image_url;
+	let name = user.name;
+	let handle = user.screen_name;
+	let header = addHeader( profilePic, name, handle );
+	let text = tweet.text;
+	let timestamp = getTimestamp( tweet.created_at );
 
-    let tweetContent = document.getElementById( 'tweet-content' );
-    let tweetList = document.getElementById( 'tweet-list' );
+	let tweetList = document.getElementById( 'tweet-list' );
 
-    tweetList.innerHTML +=
-        '<li class="list-group-item p-0 unhighlighted onclick=highlight(this)">' +
-            '<div class="card" style="border-left: 6px solid' + color +'">' +
+	tweetList.innerHTML +=
+		'<li id="' + id + '" class="list-group-item p-0 unhighlighted onclick=highlight(this) ' + hide + '">' +
+		'<div class="card" style="border-left: 6px solid' + color + '">' +
 
-            <!-- Tweet Image -->
-            image +
+		<!-- Tweet Image -->
+		image +
 
-            <!-- Tweet Text Content -->
-            '<div class="card-body">' +
-                <!-- Header -->
-                header +
-                <!--Text-->
-                '<p class="card-text">' + text + ' </p>' +
-                '</div>' +
-            '</div>' +
-        '</li>';
+		<!-- Tweet Text Content -->
+		'<div class="card-body">' +
 
-    scrollToBottom();
+		<!-- Header -->
+		header +
+
+		<!--Text-->
+		'<p class="card-text">' + text + '</p>' +
+
+		// TODO: add Timestamp
+		'</div>' +
+		'</div>' +
+		'</li>';
+
+	scrollToBottom();
 }
 
-function scrollToBottom() {
-    let tweetContent = document.getElementById( 'tweet-content' );
-    tweetContent.scrollTop = tweetContent.scrollHeight;
-}
+function addImage( entities ) {
 
-function addImage() {
-    return '';//'<img class="img-fluid" src="https://mdbootstrap.com/img/Photos/Others/images/43.jpg" alt="Card image cap">';
+	let img = '';
+	if ( entities.media !== undefined ) {
+		img = '<img class="img-fluid" src="' + entities.media[ 0 ].media_url + '" alt="Card image cap">';
+	}
+	return img;
 }
 
 function addHeader( profilePic, name, handle ) {
 
-    return (
-        '<div class="card-title">' +
-            '<div class="row pl-3">' +
-                '<img src="' + profilePic + '" onerror="this.src=\'https://abs.twimg.com/sticky/default_profile_images/default_profile_bigger.png\';" alt class="profile-pic mr-2" >' +
-                '<div>' +
-                    '<div class="twitter-name mb-0"><strong>' + name + '</strong></div>' +
-                    '<div class="twitter-handle">' + '@' + handle + '</div>' +
-                '</div>' +
-            '</div>' +
-        '</div>'
-    );
+	return (
+		'<div class="card-title">' +
+		'<div class="row pl-3">' +
+		'<img src="' + profilePic + '" onerror="this.src=\'https://abs.twimg.com/sticky/default_profile_images/default_profile_bigger.png\';" alt class="profile-pic mr-2" >' +
+		'<div>' +
+		'<div class="twitter-name mb-0"><strong>' + name + '</strong></div>' +
+		'<div class="twitter-handle">' + '@' + handle + '</div>' +
+		'</div>' +
+		'</div>' +
+		'</div>'
+	);
 }
 
-function getColor( entity ) {
-    switch ( entity ) {
-        case "INCLEMENT_WEATHER":
-            return '#76ff03';
-        case "RAIN" :
-            return '#ff9800';
-        case "SNOW" :
-            return '#2962ff';
-        case "HAIL" :
-            return '#9c27b0';
-        case "WIND" :
-            return '#ffff00';
-        case "ICE" :
-            return '#18ffff';
-    }
+function getTimestamp( date ) {
+	return (
+		'<div>' +
+		// TODO: finish Timestamp
+		'</div>'
+	);
 }
 
-function showTweet( tweet ) {
-    let color = getColor( tweet.NLUEntity );
-    addToMap( tweet, color );
-    addToSidebar( tweet, color );
+/**
+ *** *** ***
+ ***** ***** *****
+ */
+
+function retrieveFromDB() {
+	eraseAll();                                             // remove all data
+
+	socket.emit( 'retrieveAll' );                           // tell server to retrieve and send all tweets from DB
 }
 
+function eraseAll() {
+	eraseMap();
+	eraseSidebar();
+}
+
+function eraseMap() {
+
+	forEachContainer( function ( container ) {
+		forEachTweet( container.tweets, function ( tweet ) {
+			hideMarker( tweet.marker );
+		} );
+		container.tweets = [];
+	} );
+}
+
+function eraseSidebar() {
+	document.getElementById( 'tweet-list' ).innerHTML = '';
+}
+
+function scrollToBottom() {
+	let tweetContent = document.getElementById( 'tweet-content' );
+	tweetContent.scrollTop = tweetContent.scrollHeight;
+}
+
+/**
+ ***** options menu functions *****
+ */
+function setLive() {
+	live = !live;
+}
+
+function toggleInclement() {
+	toggleEntityHidden( 'INCLEMENT_WEATHER' );
+}
+
+function toggleRain() {
+	toggleEntityHidden( 'RAIN' );
+}
+
+function toggleSnow() {
+	toggleEntityHidden( 'SNOW' );
+}
+
+function toggleHail() {
+	toggleEntityHidden( 'HAIL' );
+}
+
+function toggleWind() {
+	toggleEntityHidden( 'WIND' );
+}
+
+function toggleIce() {
+	toggleEntityHidden( 'ICE' );
+}
+
+function toggleEntityHidden( entity ) {
+	getContainerByEntity( entity, function ( container ) {
+		container.toggleHidden = !container.toggleHidden;
+		forEachTweet( container.tweets, function ( tweet ) {
+			toggleHide( container, tweet );
+		} );
+	} );
+}
+
+function toggleHide( container, tweet ) {
+	if ( container.toggleHidden ) {
+		hide( container, tweet, false );
+	} else {
+		show( container, tweet, false );
+	}
+}
+
+/**
+ ***** ***** *****
+ */
+
+$( document ).ready( function () {
+	$( "#live-btn" ).click( function () {
+		$( this ).toggleClass( 'btn-blue-grey btn-outline-blue-grey' );
+		if ( $( this ).text() === "Live" ) {
+			$( this ).text( "Historical" );
+		} else {
+			$( this ).text( "Live" );
+		}
+	} );
+
+	/* state drop-down toggles */
+	$( '.dropdown-menu' ).click( function ( e ) {
+		e.stopPropagation();
+	} );
+	$( "#dropdown-pa" ).click( function () {
+		$( this ).toggleClass( 'active' );
+	} );
+	$( "#dropdown-ny" ).click( function () {
+		$( this ).toggleClass( 'active' );
+	} );
+	$( "#dropdown-oh" ).click( function () {
+		$( this ).toggleClass( 'active' );
+	} );
+
+	/* entity type toggles */
+	$( '#inclement-toggle' ).click( function () {
+		$( '#inclement-box' ).toggleClass( 'empty' );
+	} );
+	$( '#rain-toggle' ).click( function () {
+		$( '#rain-box' ).toggleClass( 'empty' );
+	} );
+	$( '#snow-toggle' ).click( function () {
+		$( '#snow-box' ).toggleClass( 'empty' );
+	} );
+	$( '#hail-toggle' ).click( function () {
+		$( '#hail-box' ).toggleClass( 'empty' );
+	} );
+	$( '#wind-toggle' ).click( function () {
+		$( '#wind-box' ).toggleClass( 'empty' );
+	} );
+	$( '#ice-toggle' ).click( function () {
+		$( '#ice-box' ).toggleClass( 'empty' );
+	} );
+} );
+
+
+/*******************
+ * ADMIN FUNCTIONS *
+ *******************/
 function stopStream() {
-    socket.emit( 'stopStream' );
+	socket.emit( 'stopStream' );
 }
 
 function startStream() {
-    socket.emit( 'startStream' );
+	socket.emit( 'startStream' );
 }
 
-function retrieveFromDB () {
-
-    // remove data from real-time sidebar
-    document.getElementById( 'tweet-list' ).innerHTML = '';
-
-    // remove data from all heatmaps
-    clearMarkers();
-
-    // tell server to retrieve and send all tweets from DB
-    socket.emit( 'retrieveAll' );
-}
-
-function clearAllTweets() {
-    document.getElementById( 'tweet-list' ).innerHTML = '';
-
-    clearMarkers();
-}
-
-function clearMarkers() {
-    setMap( inclementTweets, null );
-    setMap( rainTweets, null );
-    setMap( snowTweets, null );
-    setMap( hailTweets, null );
-    setMap( windTweets, null );
-    setMap( iceTweets, null );
-}
-
-function setMap( markers, map) {
-    for ( let i = 0; i < markers.length; i++) {
-        markers[i].setMap( map );
-    }
-}
-
-/** button functions **/
-function setLive() {
-    live = !live;
-}
-function setInclement() {
-    inclement = !inclement;
-    setMap( inclementTweets, inclement ? map : null );
-}
-function setRain() {
-    rain = !rain;
-    setMap( rainTweets, rain ? map : null );
-}
-function setSnow() {
-    snow = !snow;
-    setMap( snowTweets, snow ? map : null );
-}
-function setHail() {
-    hail = !hail;
-    setMap( hailTweets, hail ? map : null );
-}
-function setWind() {
-    wind = !wind;
-    setMap( windTweets, wind ? map : null );
-}
-function setIce() {
-    ice = !ice;
-    setMap( iceTweets, ice ? map : null );
-}
+/*******************
+ *******************
+ *******************/

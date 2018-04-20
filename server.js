@@ -10,6 +10,8 @@ let http = require('http').Server(app);
 let io = require('socket.io')(http);
 let path = require('path');
 
+let debug = require( 'debug' )( 'http' );
+
 let ex = module.exports = {};
 
 const db = require( './scripts/database' );
@@ -89,8 +91,8 @@ function onTweet( tweet ) {
 /**
  * sends multiple tweets to client from the database
  */
-function sendTweets( result ) {
-    io.emit( 'getTweets', result );
+function sendTweets( result, socket ) {
+    socket.emit( 'getTweets', result );
 }
 
 /**
@@ -140,6 +142,7 @@ function displayMessage ( msg ) {
 
 /**
  * socket functions
+ * TODO: fix socket emission (currently broadcasts)
  */
 io.on( 'connection', function( socket ) {
 
@@ -152,14 +155,14 @@ io.on( 'connection', function( socket ) {
     });
 
     socket.on( 'searchEvent', function( searchVars ) {
-        db.getSearchResults( searchVars, sendTweets );
+        db.getSearchResults( searchVars, sendTweets, socket );
     });
 
     /**
      * retrieveFromDB event -> get all tweets from the DB
      */
     socket.on( 'retrieveAll', function () {
-        db.getAllTweetsFromDB( sendTweets );
+        db.getAllTweetsFromDB( sendTweets, socket );
     });
 });
 

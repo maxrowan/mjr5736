@@ -1,456 +1,475 @@
-const nlu = require ('../scripts/NLU');
+const nlu = require( '../scripts/NLU' );
 
 test( 'splits string to see if weather is correctly recognized as such', () => {
-    expect( nlu.isWeather( '/science/weather/natural disaster' )).toBe( true );
-});
+	expect( nlu.isWeather( '/science/weather/natural disaster' ) ).toBe( true );
+} );
 
 describe( 'Asserts that weather-related tweets are classified correctly', () => {
 
-    // mock tweets
-    let mockInclementTweet = {
-        created_at: "Mon Jan 1 00:00:00 +0000 2018",
-        id: 999999999999999999,
-        id_str: "999999999999999999",
-        text: 'When theres really bad weather and they start announcing all of the sports that are canceled over the loud speaker',
-        geoPoint: {
-            lat: 26.71903,
-            lng: -80.05049
-        },
-        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
-        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
-        place:
-            { id: '4de072969805ac41',
-                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
-                place_type: 'city',
-                name: 'West Palm Beach',
-                full_name: 'West Palm Beach, FL',
-                country_code: 'US',
-                country: 'United States',
-                bounding_box: { type: 'Polygon', coordinates: [Array] },
-                attributes: {} },
-    };
-    let mockRainTweet = {
-        created_at: "Mon Jan 1 00:00:00 +0000 2018",
-        id: 999999999999999999,
-        id_str: "999999999999999999",
-        text: 'Good dreary, rainy, foggy, drizzly, misty, stormy morning everyone.',
-        geoPoint: {
-            lat: 26.71903,
-            lng: -80.05049
-        },
-        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
-        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
-        place:
-            { id: '4de072969805ac41',
-                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
-                place_type: 'city',
-                name: 'West Palm Beach',
-                full_name: 'West Palm Beach, FL',
-                country_code: 'US',
-                country: 'United States',
-                bounding_box: { type: 'Polygon', coordinates: [Array] },
-                attributes: {} },
-    };
-    let mockSnowTweet = {
-        created_at: "Mon Jan 1 00:00:00 +0000 2018",
-        id: 999999999999999999,
-        id_str: "999999999999999999",
-        text: 'Wednesday - Snow showers. Snow accumulation 3 to 5 inches. Highs in the 30s.',
-        geoPoint: {
-            lat: 26.71903,
-            lng: -80.05049
-        },
-        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
-        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
-        place:
-            { id: '4de072969805ac41',
-                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
-                place_type: 'city',
-                name: 'West Palm Beach',
-                full_name: 'West Palm Beach, FL',
-                country_code: 'US',
-                country: 'United States',
-                bounding_box: { type: 'Polygon', coordinates: [Array] },
-                attributes: {} },
-    };
-    let mockHailTweet = {
-        created_at: "Mon Jan 1 00:00:00 +0000 2018",
-        id: 999999999999999999,
-        id_str: "999999999999999999",
-        text: 'covered in hail earlier tonight.',
-        geoPoint: {
-            lat: 26.71903,
-            lng: -80.05049
-        },
-        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
-        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
-        place:
-            { id: '4de072969805ac41',
-                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
-                place_type: 'city',
-                name: 'West Palm Beach',
-                full_name: 'West Palm Beach, FL',
-                country_code: 'US',
-                country: 'United States',
-                bounding_box: { type: 'Polygon', coordinates: [Array] },
-                attributes: {} },
-    };
-    let mockWindTweet = {
-        created_at: "Mon Jan 1 00:00:00 +0000 2018",
-        id: 999999999999999999,
-        id_str: "999999999999999999",
-        text: 'It\'s super windy out today',
-        geoPoint: {
-            lat: 26.71903,
-            lng: -80.05049
-        },
-        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
-        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
-        place:
-            { id: '4de072969805ac41',
-                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
-                place_type: 'city',
-                name: 'West Palm Beach',
-                full_name: 'West Palm Beach, FL',
-                country_code: 'US',
-                country: 'United States',
-                bounding_box: { type: 'Polygon', coordinates: [Array] },
-                attributes: {} },
-    };
-    let mockIceTweet = {
-        created_at: "Mon Jan 1 00:00:00 +0000 2018",
-        id: 999999999999999999,
-        id_str: "999999999999999999",
-        text: 'Careful, the roads are icy',
-        geoPoint: {
-            lat: 26.71903,
-            lng: -80.05049
-        },
-        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
-        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
-        place:
-            { id: '4de072969805ac41',
-                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
-                place_type: 'city',
-                name: 'West Palm Beach',
-                full_name: 'West Palm Beach, FL',
-                country_code: 'US',
-                country: 'United States',
-                bounding_box: { type: 'Polygon', coordinates: [Array] },
-                attributes: {} },
-    };
-    let mockStationTweet = {
-        created_at: "Mon Jan 1 00:00:00 +0000 2018",
-        id: 999999999999999999,
-        id_str: "999999999999999999",
-        text: 'Temp 66.3°F Wind Chill 66.3 °F RH 60% Wind 2.9 W Gust 11.0 W SLP 29.839 in Falling quickly Rain 0.08 in Solar 165 UV 1.2 #VAWX #SWVAWX #WVWX',
-        geoPoint: {
-            lat: 26.71903,
-            lng: -80.05049
-        },
-        geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
-        coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
-        place:
-            { id: '4de072969805ac41',
-                url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
-                place_type: 'city',
-                name: 'West Palm Beach',
-                full_name: 'West Palm Beach, FL',
-                country_code: 'US',
-                country: 'United States',
-                bounding_box: { type: 'Polygon', coordinates: [Array] },
-                attributes: {} },
-    };
+	// mock tweets
+	let mockInclementTweet = {
+		created_at: "Mon Jan 1 00:00:00 +0000 2018",
+		id: 999999999999999999,
+		id_str: "999999999999999999",
+		text: 'When theres really bad weather and they start announcing all of the sports that are canceled over the loud speaker',
+		geoPoint: {
+			lat: 26.71903,
+			lng: -80.05049
+		},
+		geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+		coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+		place:
+			{
+				id: '4de072969805ac41',
+				url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+				place_type: 'city',
+				name: 'West Palm Beach',
+				full_name: 'West Palm Beach, FL',
+				country_code: 'US',
+				country: 'United States',
+				bounding_box: { type: 'Polygon', coordinates: [ Array ] },
+				attributes: {}
+			},
+	};
+	let mockRainTweet = {
+		created_at: "Mon Jan 1 00:00:00 +0000 2018",
+		id: 999999999999999999,
+		id_str: "999999999999999999",
+		text: 'Good dreary, rainy, foggy, drizzly, misty, stormy morning everyone.',
+		geoPoint: {
+			lat: 26.71903,
+			lng: -80.05049
+		},
+		geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+		coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+		place:
+			{
+				id: '4de072969805ac41',
+				url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+				place_type: 'city',
+				name: 'West Palm Beach',
+				full_name: 'West Palm Beach, FL',
+				country_code: 'US',
+				country: 'United States',
+				bounding_box: { type: 'Polygon', coordinates: [ Array ] },
+				attributes: {}
+			},
+	};
+	let mockSnowTweet = {
+		created_at: "Mon Jan 1 00:00:00 +0000 2018",
+		id: 999999999999999999,
+		id_str: "999999999999999999",
+		text: 'Wednesday - Snow showers. Snow accumulation 3 to 5 inches. Highs in the 30s.',
+		geoPoint: {
+			lat: 26.71903,
+			lng: -80.05049
+		},
+		geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+		coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+		place:
+			{
+				id: '4de072969805ac41',
+				url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+				place_type: 'city',
+				name: 'West Palm Beach',
+				full_name: 'West Palm Beach, FL',
+				country_code: 'US',
+				country: 'United States',
+				bounding_box: { type: 'Polygon', coordinates: [ Array ] },
+				attributes: {}
+			},
+	};
+	let mockHailTweet = {
+		created_at: "Mon Jan 1 00:00:00 +0000 2018",
+		id: 999999999999999999,
+		id_str: "999999999999999999",
+		text: 'covered in hail earlier tonight.',
+		geoPoint: {
+			lat: 26.71903,
+			lng: -80.05049
+		},
+		geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+		coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+		place:
+			{
+				id: '4de072969805ac41',
+				url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+				place_type: 'city',
+				name: 'West Palm Beach',
+				full_name: 'West Palm Beach, FL',
+				country_code: 'US',
+				country: 'United States',
+				bounding_box: { type: 'Polygon', coordinates: [ Array ] },
+				attributes: {}
+			},
+	};
+	let mockWindTweet = {
+		created_at: "Mon Jan 1 00:00:00 +0000 2018",
+		id: 999999999999999999,
+		id_str: "999999999999999999",
+		text: 'It\'s super windy out today',
+		geoPoint: {
+			lat: 26.71903,
+			lng: -80.05049
+		},
+		geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+		coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+		place:
+			{
+				id: '4de072969805ac41',
+				url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+				place_type: 'city',
+				name: 'West Palm Beach',
+				full_name: 'West Palm Beach, FL',
+				country_code: 'US',
+				country: 'United States',
+				bounding_box: { type: 'Polygon', coordinates: [ Array ] },
+				attributes: {}
+			},
+	};
+	let mockIceTweet = {
+		created_at: "Mon Jan 1 00:00:00 +0000 2018",
+		id: 999999999999999999,
+		id_str: "999999999999999999",
+		text: 'Careful, the roads are icy',
+		geoPoint: {
+			lat: 26.71903,
+			lng: -80.05049
+		},
+		geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+		coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+		place:
+			{
+				id: '4de072969805ac41',
+				url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+				place_type: 'city',
+				name: 'West Palm Beach',
+				full_name: 'West Palm Beach, FL',
+				country_code: 'US',
+				country: 'United States',
+				bounding_box: { type: 'Polygon', coordinates: [ Array ] },
+				attributes: {}
+			},
+	};
+	let mockStationTweet = {
+		created_at: "Mon Jan 1 00:00:00 +0000 2018",
+		id: 999999999999999999,
+		id_str: "999999999999999999",
+		text: 'Wind 2.5 mph NW. Barometer 30.32 in, Rising. Temperature 46.0 °F. Rain today 0.00 in. Humidity 53%',
+		geoPoint: {
+			lat: 26.71903,
+			lng: -80.05049
+		},
+		geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+		coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+		place:
+			{
+				id: '4de072969805ac41',
+				url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+				place_type: 'city',
+				name: 'West Palm Beach',
+				full_name: 'West Palm Beach, FL',
+				country_code: 'US',
+				country: 'United States',
+				bounding_box: { type: 'Polygon', coordinates: [ Array ] },
+				attributes: {}
+			},
+	};
 
-    // dummy database callback
-    function dummyAddToDB( tweet ) {}
+	// dummy database callback
+	function dummyAddToDB( tweet ) {
+	}
 
-    function logFail( label, entity, text ) {
-        console.log(
-            '******* NLU Top Label *******\n' +
-            label + '\n' +
-            '******* WKS-NLU Entities *******\n' +
-            entity + '\n' +
+	function logFail( label, entity, text ) {
+		console.log(
+			'******* NLU Top Label *******\n' +
+			label + '\n' +
+			'******* WKS-NLU Entities *******\n' +
+			entity + '\n' +
 
-            '/******* Tweet Text *******\n' +
-            text + '\n\n'
-        );
-    }
-    function logPass( label, entity, text ) {
-        console.log(
-            '\\********************************************************\\\n' +
-            '\\************************************************\\\n\n' +
+			'/******* Tweet Text *******\n' +
+			text + '\n\n'
+		);
+	}
 
-            '******* NLU Top Label *******\n' +
-            label + '\n\n' +
+	function logPass( label, entity, text ) {
+		console.log(
+			'\\********************************************************\\\n' +
+			'\\************************************************\\\n\n' +
 
-            '******* WKS-NLU Entities *******\n' +
-            entity+ '\n' +
+			'******* NLU Top Label *******\n' +
+			label + '\n\n' +
 
-            '/******* Tweet Text *******\n' +
-            text + '\n\n' +
-            '\\************************************************\\\n' +
-            '\\********************************************************\\\n'
-        );
-    }
+			'******* WKS-NLU Entities *******\n' +
+			entity + '\n' +
 
-    test( 'assert that INCLEMENT_WEATHER tweets are classified correctly', done => {
+			'/******* Tweet Text *******\n' +
+			text + '\n\n' +
+			'\\************************************************\\\n' +
+			'\\********************************************************\\\n'
+		);
+	}
 
-        /**
-         * printInfo mock
-         */
-        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
-            expect( weather ).toBe( true );
-            expect( inclement ).toBe( true );
+	test( 'assert that INCLEMENT_WEATHER tweets are classified correctly', done => {
 
-            let label = tweet.NLULabel;
-            let entity = tweet.NLUEntity;
-            expect( entity ).toBe( 'INCLEMENT_WEATHER' );
+		/**
+		 * printInfo mock
+		 */
+		nlu.printInfo = jest.fn().mockImplementation( ( tweet, entities, weather, inclement ) => {
+			expect( weather ).toBe( true );
+			expect( inclement ).toBe( true );
 
-            let text = tweet.text;
+			let label = tweet.NLULabel;
+			let entity = tweet.NLUEntity;
+			expect( entity ).toBe( 'INCLEMENT_WEATHER' );
 
-            if ( !weather || !inclement ) {
-                logFail( label, entity, text );
-                done();
-            } else {
-                logPass( label, entity, text );
-            }
-        });
+			let text = tweet.text;
 
-        function dummyClientCallback( tweet ) {
-            done();
-        }
+			if ( !weather || !inclement ) {
+				logFail( label, entity, text );
+				done();
+			} else {
+				logPass( label, entity, text );
+			}
+		} );
 
-        // test getClassification
-        nlu.classify( mockInclementTweet, dummyAddToDB, dummyClientCallback);
-    });
+		function dummyClientCallback( tweet ) {
+			done();
+		}
 
-    test( 'assert that RAIN tweets are classified correctly', done => {
+		// test getClassification
+		nlu.classify( mockInclementTweet, dummyAddToDB, dummyClientCallback );
+	} );
 
-        /**
-         * printInfo mock
-         */
-        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
-            expect( weather ).toBe( true );
-            expect( inclement ).toBe( true );
+	test( 'assert that RAIN tweets are classified correctly', done => {
 
-            let label = tweet.NLULabel;
-            let entity = tweet.NLUEntity;
-            expect( entity ).toBe( 'RAIN' );
+		/**
+		 * printInfo mock
+		 */
+		nlu.printInfo = jest.fn().mockImplementation( ( tweet, entities, weather, inclement ) => {
+			expect( weather ).toBe( true );
+			expect( inclement ).toBe( true );
 
-            let text = tweet.text;
+			let label = tweet.NLULabel;
+			let entity = tweet.NLUEntity;
+			expect( entity ).toBe( 'RAIN' );
 
-            if ( !weather || !inclement ) {
-                logFail( label, entity, text );
-                done();
-            } else {
-                logPass( label, entity, text );
-            }
-        });
+			let text = tweet.text;
 
-        function dummyClientCallback( tweet ) {
-            done();
-        }
+			if ( !weather || !inclement ) {
+				logFail( label, entity, text );
+				done();
+			} else {
+				logPass( label, entity, text );
+			}
+		} );
 
-        // test getClassification
-        nlu.classify( mockRainTweet, dummyAddToDB, dummyClientCallback);
-    });
+		function dummyClientCallback( tweet ) {
+			done();
+		}
 
-    test( 'assert that SNOW tweets are classified correctly', done => {
+		// test getClassification
+		nlu.classify( mockRainTweet, dummyAddToDB, dummyClientCallback );
+	} );
 
-        /**
-         * printInfo mock
-         */
-        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
-            expect( weather ).toBe( true );
-            expect( inclement ).toBe( true );
+	test( 'assert that SNOW tweets are classified correctly', done => {
 
-            let label = tweet.NLULabel;
-            let entity = tweet.NLUEntity;
-            expect( entity ).toBe( 'SNOW' );
+		/**
+		 * printInfo mock
+		 */
+		nlu.printInfo = jest.fn().mockImplementation( ( tweet, entities, weather, inclement ) => {
+			expect( weather ).toBe( true );
+			expect( inclement ).toBe( true );
 
-            let text = tweet.text;
+			let label = tweet.NLULabel;
+			let entity = tweet.NLUEntity;
+			expect( entity ).toBe( 'SNOW' );
 
-            if ( !weather || !inclement ) {
-                logFail( label, entity, text );
-                done();
-            } else {
-                logPass( label, entity, text );
-            }
-        });
+			let text = tweet.text;
 
-        function dummyClientCallback( tweet ) {
-            done();
-        }
+			if ( !weather || !inclement ) {
+				logFail( label, entity, text );
+				done();
+			} else {
+				logPass( label, entity, text );
+			}
+		} );
 
-        // test getClassification
-        nlu.classify( mockSnowTweet, dummyAddToDB, dummyClientCallback);
-    });
+		function dummyClientCallback( tweet ) {
+			done();
+		}
 
-    test( 'assert that HAIL tweets are classified correctly', done => {
+		// test getClassification
+		nlu.classify( mockSnowTweet, dummyAddToDB, dummyClientCallback );
+	} );
 
-        /**
-         * printInfo mock
-         */
-        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
-            expect( weather ).toBe( true );
-            expect( inclement ).toBe( true );
+	test( 'assert that HAIL tweets are classified correctly', done => {
 
-            let label = tweet.NLULabel;
-            let entity = tweet.NLUEntity;
-            expect( entity ).toBe( 'HAIL' );
+		/**
+		 * printInfo mock
+		 */
+		nlu.printInfo = jest.fn().mockImplementation( ( tweet, entities, weather, inclement ) => {
+			expect( weather ).toBe( true );
+			expect( inclement ).toBe( true );
 
-            let text = tweet.text;
+			let label = tweet.NLULabel;
+			let entity = tweet.NLUEntity;
+			expect( entity ).toBe( 'HAIL' );
 
-            if ( !weather || !inclement ) {
-                logFail( label, entity, text );
-                done();
-            } else {
-                logPass( label, entity, text );
-            }
-        });
+			let text = tweet.text;
 
-        function dummyClientCallback( tweet ) {
-            done();
-        }
+			if ( !weather || !inclement ) {
+				logFail( label, entity, text );
+				done();
+			} else {
+				logPass( label, entity, text );
+			}
+		} );
 
-        // test getClassification
-        nlu.classify( mockHailTweet, dummyAddToDB, dummyClientCallback);
-    });
+		function dummyClientCallback( tweet ) {
+			done();
+		}
 
-    test( 'assert that WIND tweets are classified correctly', done => {
+		// test getClassification
+		nlu.classify( mockHailTweet, dummyAddToDB, dummyClientCallback );
+	} );
 
-        /**
-         * printInfo mock
-         */
-        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
-            expect( weather ).toBe( true );
-            expect( inclement ).toBe( true );
+	test( 'assert that WIND tweets are classified correctly', done => {
 
-            let label = tweet.NLULabel;
-            let entity = tweet.NLUEntity;
-            expect( entity ).toBe( 'WIND' );
+		/**
+		 * printInfo mock
+		 */
+		nlu.printInfo = jest.fn().mockImplementation( ( tweet, entities, weather, inclement ) => {
+			expect( weather ).toBe( true );
+			expect( inclement ).toBe( true );
 
-            let text = tweet.text;
+			let label = tweet.NLULabel;
+			let entity = tweet.NLUEntity;
+			expect( entity ).toBe( 'WIND' );
 
-            if ( !weather || !inclement ) {
-                logFail( label, entity, text );
-                done();
-            } else {
-                logPass( label, entity, text );
-            }
-        });
+			let text = tweet.text;
 
-        function dummyClientCallback( tweet ) {
-            done();
-        }
+			if ( !weather || !inclement ) {
+				logFail( label, entity, text );
+				done();
+			} else {
+				logPass( label, entity, text );
+			}
+		} );
 
-        // test getClassification
-        nlu.classify( mockWindTweet, dummyAddToDB, dummyClientCallback);
-    });
+		function dummyClientCallback( tweet ) {
+			done();
+		}
 
-    test( 'assert that ICE tweets are classified correctly', done => {
+		// test getClassification
+		nlu.classify( mockWindTweet, dummyAddToDB, dummyClientCallback );
+	} );
 
-        /**
-         * printInfo mock
-         */
-        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
-            expect( weather ).toBe( true );
-            expect( inclement ).toBe( true );
+	test( 'assert that ICE tweets are classified correctly', done => {
 
-            let label = tweet.NLULabel;
-            let entity = tweet.NLUEntity;
-            expect( entity ).toBe( 'ICE' );
+		/**
+		 * printInfo mock
+		 */
+		nlu.printInfo = jest.fn().mockImplementation( ( tweet, entities, weather, inclement ) => {
+			expect( weather ).toBe( true );
+			expect( inclement ).toBe( true );
 
-            let text = tweet.text;
+			let label = tweet.NLULabel;
+			let entity = tweet.NLUEntity;
+			expect( entity ).toBe( 'ICE' );
 
-            if ( !weather || !inclement ) {
-                logFail( label, entity, text );
-                done();
-            } else {
-                logPass( label, entity, text );
-            }
-        });
+			let text = tweet.text;
 
-        function dummyClientCallback( tweet ) {
-            done();
-        }
+			if ( !weather || !inclement ) {
+				logFail( label, entity, text );
+				done();
+			} else {
+				logPass( label, entity, text );
+			}
+		} );
 
-        // test getClassification
-        nlu.classify( mockIceTweet, dummyAddToDB, dummyClientCallback);
-    });
+		function dummyClientCallback( tweet ) {
+			done();
+		}
 
-    test( 'assert that STATION tweets are classified correctly', done => {
-        /**
-         * printInfo mock
-         */
-        nlu.printInfo = jest.fn().mockImplementation(( tweet, weather, inclement ) => {
-            expect( weather ).toBe( true );
-            expect( inclement ).toBe( false );
+		// test getClassification
+		nlu.classify( mockIceTweet, dummyAddToDB, dummyClientCallback );
+	} );
 
-            let entity = tweet.NLUEntity;
-            expect( entity ).toBe( 'STATION' );
+	test( 'assert that STATION tweets are classified correctly', done => {
+		/**
+		 * printInfo mock
+		 */
+		nlu.printInfo = jest.fn().mockImplementation( ( tweet, entities, weather, inclement ) => {
+			expect( weather ).toBe( true );
+			expect( inclement ).toBe( false );
 
-            done();
-        });
+			let entity = tweet.NLUEntity;
+			expect( entity ).toBe( 'STATION' );
 
-        function dummyClientCallback( tweet ) {
-            done();
-        }
+			done();
+		} );
 
-        // test getClassification
-        nlu.classify( mockStationTweet, dummyAddToDB, dummyClientCallback);
-    });
-});
+		function dummyClientCallback( tweet ) {
+			done();
+		}
+
+		// test getClassification
+		nlu.classify( mockStationTweet, dummyAddToDB, dummyClientCallback );
+	} );
+} );
 
 describe( 'Asserts that non-weather (or weather station tweets are classified correctly', () => {
 
 
+	test( 'assert that non-weather tweets are classified correctly', done => {
 
-    test( 'assert that non-weather tweets are classified correctly', done => {
+		// mock data
+		let mockTweet = {
+			created_at: "Mon Jan 1 00:00:00 +0000 2018",
+			id: 999999999999999999,
+			id_str: "999999999999999999",
+			text: 'I think I\'m going to go ice skating this weekend!',
+			geoPoint: {
+				lat: 26.71903,
+				lng: -80.05049
+			},
+			geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
+			coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
+			place:
+				{
+					id: '4de072969805ac41',
+					url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
+					place_type: 'city',
+					name: 'West Palm Beach',
+					full_name: 'West Palm Beach, FL',
+					country_code: 'US',
+					country: 'United States',
+					bounding_box: { type: 'Polygon', coordinates: [ Array ] },
+					attributes: {}
+				},
+		};
 
-        // mock data
-        let mockTweet = {
-            created_at: "Mon Jan 1 00:00:00 +0000 2018",
-            id: 999999999999999999,
-            id_str: "999999999999999999",
-            text: 'I think I\'m going to go ice skating this weekend!',
-            geoPoint: {
-                lat: 26.71903,
-                lng: -80.05049
-            },
-            geo: { type: 'Point', coordinates: [ 26.71903, -80.05049 ] },
-            coordinates: { type: 'Point', coordinates: [ -80.05049, 26.71903 ] },
-            place:
-                { id: '4de072969805ac41',
-                    url: 'https://api.twitter.com/1.1/geo/id/4de072969805ac41.json',
-                    place_type: 'city',
-                    name: 'West Palm Beach',
-                    full_name: 'West Palm Beach, FL',
-                    country_code: 'US',
-                    country: 'United States',
-                    bounding_box: { type: 'Polygon', coordinates: [Array] },
-                    attributes: {} },
-        };
+		// mock callbacks
+		function dontAddToDB( tweet ) {
+		}
 
-        // mock callbacks
-        function dontAddToDB( tweet ) {}
-        function mockClientCallback( tweet ) {
-            done();
-        }
+		function mockClientCallback( tweet ) {
+			done();
+		}
 
-        // mock isWeather
-        nlu.isWeather = jest.fn().mockImplementation( ( label ) => {
+		// mock isWeather
+		nlu.isWeather = jest.fn().mockImplementation( ( label ) => {
 
-            let labels = label.split('/');
-            let w = labels.includes( 'weather' );
+			let labels = label.split( '/' );
+			let w = labels.includes( 'weather' );
 
-            expect( w ).toBe( false );
+			expect( w ).toBe( false );
 
-            done();
-        });
+			done();
+		} );
 
-        // test getClassification
-        nlu.classify( mockTweet, dontAddToDB, mockClientCallback);
-    });
-});
+		// test getClassification
+		nlu.classify( mockTweet, dontAddToDB, mockClientCallback );
+	} );
+} );
