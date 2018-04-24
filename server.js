@@ -17,11 +17,15 @@ let ex = module.exports = {};
 const db = require( './scripts/database' );
 const nlu = require( './scripts/NLU' );
 
+app.use(express.static(__dirname + '/public'));
 // resolve path to ui page
 app.get('/', function(req, res) {
     res.sendFile(path.resolve('index.html'));
 });
-app.use(express.static(__dirname + '/public'));
+app.get('/admin', function(req, res) {
+	res.sendFile(path.resolve('admin.html'));
+});
+
 
 // import secret.json file
 let secret = require("./secret");
@@ -147,10 +151,12 @@ io.on( 'connection', function( socket ) {
 
     socket.on( 'stopStream', function() {
         stream.stop();
+        console.log( '\n\nstopped\n\n' );
     });
 
     socket.on( 'startStream', function() {
         stream.start();
+		console.log( '\n\nstarted\n\n' );
     });
 
     socket.on( 'searchEvent', function( searchVars ) {
