@@ -54,25 +54,30 @@ let entityContainers = [
 		toggleHidden: false
 	}
 ];
-let PA_BB = [
-		-80.519895,
-		39.7197989,
-		-74.6895018,
-		42.516072
-	],
-	NY_BB = [
-		-79.7625901,
-		40.4773991,
-		-71.777491,
-		45.015865
-	],
-	OH_BB = [
-		-84.8203049,    // west long (left)
-		38.4034229,     // south lat (bottom)
-		-80.5182,       // east long (right)
-		42.327132       // north lat (top)
-	];
-let filter = new RegExp( '.', 'i' );
+let boundingBoxes = [ {
+	state: 'pa',
+	active: true,
+	left: -80.519895,
+	bottom: 39.7197989,
+	right: -74.6895018,
+	top: 42.516072
+}, {
+	state: 'ny',
+	active: true,
+	left: -79.7625901,
+	bottom: 40.4773991,
+	right: -71.777491,
+	top: 45.015865
+}, {
+	state: 'oh',
+	active: true,
+	left: -84.8203049,    	// west long (left)
+	bottom: 38.4034229,     // south lat (bottom)
+	right: -80.5182,      	// east long (right)
+	top: 42.327132       	// north lat (top)
+} ];
+
+let filterExpression = new RegExp( '.', 'i' );
 
 function getContainerByEntity( entity, callback ) {
 	forEachContainer( function ( container ) {
@@ -92,6 +97,24 @@ function forEachTweet( tweets, callback ) {
 	for ( let i = 0; i < tweets.length; i++ ) {
 		callback( tweets[ i ] );
 	}
+}
+
+function isInBoundingBox( geoPoint ) {
+	for ( let i = 0; i < boundingBoxes.length; i++) {
+		if ( inBB( geoPoint, boundingBoxes[i]) ) {
+			return true;
+		}
+	}
+	return false;
+}
+
+function inBB( geoPoint, box ) {
+
+	console.log( box.state + ': ' + box.active );
+
+	return( box.active &&
+		box.left < geoPoint.lng && geoPoint.lng < box.right &&
+		box.bottom < geoPoint.lat && geoPoint.lat < box.top )
 }
 
 let live = true;
@@ -152,7 +175,7 @@ function search() {
 	};
 
 	if ( live ) {
-		liveSearch( keywords );
+		liveSearch( keywords, states );
 	} else {
 		eraseAll();
 		socket.emit( 'searchEvent', searchVars );
@@ -194,16 +217,15 @@ function getEndDate() {
 	return document.getElementById( 'end-date-search' ).value;
 }
 
-function liveSearch( keywords ) {
+function liveSearch( keywords, states ) {
 
-	filter = new RegExp( buildRegExpression( keywords ), 'i' );
+	setActiveStates( states );
 
-	// TODO
-	console.log( '\n' + filter );
+	filterExpression = new RegExp( buildRegExpression( keywords ), 'i' );
 
 	forEachContainer( function ( container ) {
 		forEachTweet( container.tweets, function ( tweet ) {
-			if ( filter.test( tweet.text ) ) {
+			if ( filter( tweet.text, tweet.geoPoint ) ) {
 				show( container, tweet, true );
 			} else {                                                                 // if the tweet doesn't contain a keyword
 				hide( container, tweet, true );
@@ -212,6 +234,16 @@ function liveSearch( keywords ) {
 	} );
 
 	scrollToBottom();
+}
+
+function setActiveStates( states ) {
+	for ( let i = 0; i < boundingBoxes.length; i++ ) {
+		boundingBoxes[i].active = states.includes( boundingBoxes[i].state );
+	}
+}
+
+function filter( text, point ) {
+	return ( filterExpression.test( text ) && isInBoundingBox( point ) );
 }
 
 function buildRegExpression( keywords ) {
@@ -234,16 +266,12 @@ function buildRegExpression( keywords ) {
 
 function hide( container, tweet, search ) {
 	if ( search )
-		container.searchHidden = true;
-
-	// todo
-	console.log( '\n\n' + container.toggleHidden );
-	console.log( tweet.searchHidden + '\n\n' );
-
+		tweet.searchHidden = true;
 
 	hideTweetListItem( tweet.id );
 	hideMarker( tweet.marker );
 }
+
 function hideTweetListItem( id ) {
 	let li = document.getElementById( id );
 
@@ -251,6 +279,7 @@ function hideTweetListItem( id ) {
 		li.classList.add( 'hide' );
 	}
 }
+
 function hideMarker( marker ) {
 	marker.setMap( null );
 }
@@ -258,11 +287,7 @@ function hideMarker( marker ) {
 function show( container, tweet, search ) {
 
 	if ( search )
-		container.searchHidden = false;
-
-	// todo
-	console.log( '\n\n' + container.toggleHidden );
-	console.log( tweet.searchHidden + '\n\n' );
+		tweet.searchHidden = false;
 
 	if ( !container.toggleHidden && !tweet.searchHidden ) {
 		showTweetListItem( tweet.id );
@@ -300,12 +325,8 @@ function addTweet( tweet ) {
 	getContainerByEntity( tweet.NLUEntity, function ( container ) {
 		let color = container.color;
 
-		let passFilter = filter.test( tweet.text );
+		let passFilter = filter( tweet.text, tweet.geoPoint );
 		let visible = (!(!passFilter || container.toggleHidden));
-
-		// TODO
-		console.log( passFilter );
-		console.log( visible );
 
 		addToContainer( tweet, container, passFilter, visible );
 		addToSidebar( tweet, color, visible );
@@ -321,6 +342,7 @@ function addToContainer( tweet, container, passFilter, visible ) {
 	// maps tweet id (li id) to list position
 	container.tweets.push( {
 		marker: marker,
+		geoPoint: tweet.geoPoint,
 		id: tweet.id,
 		text: tweet.text,
 		searchHidden: !passFilter
@@ -516,6 +538,21 @@ function toggleHide( container, tweet ) {
 
 $( document ).ready( function () {
 	$( "#live-btn" ).click( function () {
+
+		let startSearch = $( '#start-date-search' );
+		let endSearch = $( '#end-date-search' );
+		let citySearch = $( '#city-search' );
+		if ( startSearch.attr( 'hidden' ) && endSearch.attr( 'hidden' ) && citySearch.attr( 'hidden' ) ) {
+			startSearch.removeAttr( 'hidden' );
+			endSearch.removeAttr( 'hidden' );
+			citySearch.removeAttr( 'hidden' );
+		} else {
+			startSearch.attr( 'hidden', 'true' );
+			endSearch.attr( 'hidden', 'true' );
+			citySearch.attr( 'hidden', 'true' );
+		}
+
+
 		$( this ).toggleClass( 'btn-blue-grey btn-outline-blue-grey' );
 		if ( $( this ).text() === "Live" ) {
 			$( this ).text( "Historical" );
@@ -536,6 +573,15 @@ $( document ).ready( function () {
 	} );
 	$( "#dropdown-oh" ).click( function () {
 		$( this ).toggleClass( 'active' );
+	} );
+
+	$( '#options-button' ).click( () => {
+
+		let optionsBtn = $( '#options-icon' );
+		optionsBtn.toggleClass( 'fa-chevron-up' );
+		optionsBtn.toggleClass( 'fa-chevron-down' );
+
+		console.log( optionsBtn.classList );
 	} );
 
 	/* entity type toggles */

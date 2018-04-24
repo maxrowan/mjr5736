@@ -64,11 +64,11 @@
                 </ul>
 
                 <!-- Search Bar -->
-                <div id="search-bar" class="col-10 input-group md-form form-sm mt-2">
+                <div id="search-bar" class="col-10 input-group md-form form-sm pt-3">
                     <input id="keyword-search" type="text" class="form-control blue-border left" placeholder="Keywords">
-                    <input id="city-search" type="text" class="form-control blue-border mid" placeholder="City">
-                    <input id="start-date-search" type="date" class="form-control blue-border mid">
-                    <input id="end-date-search" type="date" class="form-control blue-border mid">
+                    <input id="city-search" type="text" class="form-control blue-border mid" placeholder="City" hidden>
+                    <input id="start-date-search" type="date" class="form-control blue-border mid" hidden>
+                    <input id="end-date-search" type="date" class="form-control blue-border mid" hidden>
 
                     <!-- State Dropdown -->
                     <div class="input-group-btn">
@@ -125,8 +125,8 @@
                     <!-- Options -->
                     <div>
                         <!-- Options Button -->
-                        <div id="options-button">
-                            <button type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" onclick="scrollToBottom()" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button><!-- TODO: toggle chevron up to down on click -->
+                        <div>
+                            <button id="options-button" type="button" class="btn btn-lg btn-outline-blue-grey btn-block bottom p-4" onclick="scrollToBottom()" data-toggle="collapse" data-target="#options-menu" aria-expanded="false" aria-controls="options-menu">Options  <i id="options-icon" class="fa fa-chevron-up"></i></button>
                         </div>
 
                         <!-- Options Menu -->

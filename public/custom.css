@@ -233,6 +233,12 @@ body {
     border: 1px solid #90caf9;
     box-shadow: none;
 }
+
+#search-bar {
+    left: 50%;
+    margin-right: -50%;
+    transform: translate(-50%, -50%);
+}
 /** ** **/
 
 /** Buttons **/

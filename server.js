@@ -142,7 +142,6 @@ function displayMessage ( msg ) {
 
 /**
  * socket functions
- * TODO: fix socket emission (currently broadcasts)
  */
 io.on( 'connection', function( socket ) {
 

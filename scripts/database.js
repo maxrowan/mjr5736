@@ -6,7 +6,7 @@ let uri = "mongodb://mjr5736:sen!0rDesign@seniordesign-shard-00-00-hiyas.mongodb
 let ex = module.exports = {};
 
 
-//Global Variable for ssearch
+//Global letiable for ssearch
 
 let keyForDB, cityStateForDB,sDate,eDate;
 
@@ -39,11 +39,11 @@ function getAllTweetsFromDB( sendTweets, socket ) {
 	} );
 }
 
-function getSearchResults( searchVars, sendTweets ) {
+function getSearchResults( searchlets, sendTweets ) {
 
-printRes( searchVars );
+printRes( searchlets );
 	let key = keyForDB;
-	let city = cityStateForDB
+	let city = cityStateForDB;
 	let start = sDate;
 	let end = eDate;
 	console.log( start );
@@ -99,20 +99,20 @@ printRes( searchVars );
 	} );
 	keyForDB = "" , cityStateForDB = "", sDate0 = "", eDate;
 
-    printRes( searchVars );
+    printRes( searchlets );
     console.log(keyForDB);
     console.log(cityStateForDB);
-    var key = keyForDB;
-    var city = cityStateForDB
-    var start = sDate;
-    var end = eDate;
+    key = keyForDB;
+    city = cityStateForDB;
+    start = sDate;
+    end = eDate;
     
     console.log(snow);
     MongoClient.connect(uri, function (err, db) {
         
         if (err) throw err;
-        var any = ".*";
-        //var tempDate = new Date("Sun Apr 1 21:46:15 +0000 2017".toISOString())
+        let any = ".*";
+        //let tempDate = new Date("Sun Apr 1 21:46:15 +0000 2017".toISOString())
         let database = db.db("test");
         let collection = database.collection("test");
         if(cityStateForDB == "")
@@ -156,13 +156,13 @@ printRes( searchVars );
 
 }
 
-function printRes( searchVars ) {
+function printRes( searchlets ) {
 
-	let keywords = searchVars.keywords,
-		cities = searchVars.cities,
-		states = searchVars.states,
-		startDate = searchVars.startDate,
-		endDate = searchVars.endDate;
+	let keywords = searchlets.keywords,
+		cities = searchlets.cities,
+		states = searchlets.states,
+		startDate = searchlets.startDate,
+		endDate = searchlets.endDate;
 	startDate = sDate;
 	console.log( "Start Date is " + sDate )
 	endDate = eDate;
@@ -244,11 +244,11 @@ function splitWord( str, splitVal ) {
 	}
 	return returnStr;
 
-    let keywords = searchVars.keywords,
-        cities = searchVars.cities,
-        states = searchVars.states,
-        startDate = searchVars.startDate,
-        endDate = searchVars.endDate;
+    let keywords = searchlets.keywords,
+        cities = searchlets.cities,
+        states = searchlets.states,
+        startDate = searchlets.startDate,
+        endDate = searchlets.endDate;
     startDate = sDate;
     endDate= eDate;
     let k = '',
@@ -298,19 +298,19 @@ function splitWord( str, splitVal ) {
     return null; 
 }
 function splitWord(str, splitVal)
-{   var returnStr = "(";
+{   let returnStr = "(";
     
     //for state 
     if(splitVal == ',')
-    {var temparray = str;
+    {let temparray = str;
         temparray.forEach(function(e,i,array)
         {  if(i == 0)
-            {   var temp = e.toUpperCase();
+            {   let temp = e.toUpperCase();
                 returnStr += e;
                 returnStr += "|" +temp
             }
             else
-            {   var temp = e.toUpperCase();
+            {   let temp = e.toUpperCase();
                 returnStr += "|"+e;
                 returnStr += "|" +temp
             }
@@ -319,7 +319,7 @@ function splitWord(str, splitVal)
     else if (splitVal == ' ')
     {
         console.log('hi')
-        var temparray = str.split(splitVal);
+        let temparray = str.split(splitVal);
     temparray.forEach(function(e,i,array)
     {  if(i == 0)
         {

@@ -7,7 +7,7 @@ const natural_language_understanding = new NaturalLanguageUnderstandingV1( {
 	'password': 'fFdDZIwG2QUQ',
 	'version_date': '2017-02-27'
 } );
-const wks_model_id = '10:40ec8277-7949-49c9-8ffc-1f7b1a53e546';
+const wks_model_id = '10:74962e75-5021-4558-b4a1-39e2f0ec4e53';
 
 let ex = module.exports = {};
 
@@ -111,9 +111,6 @@ function getEntity( entities ) {
 	let entity = 'Could not Classify';
 
 	if ( entities !== undefined && entities[0] !== undefined ) {
-
-		// TODO: get most common entity
-
 
 		entity = entities[ 0 ].type;
 
