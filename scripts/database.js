@@ -141,7 +141,13 @@ function printRes( searchVars ) {
 	{
 		c = cities;
 		if(s.length != 0 )
+		{	if(c != "")
 			cityStateForDB += "|" + c +")";
+			else
+			cityStateForDB += ")";
+		}
+		else
+		cityStateForDB = c;
 
 	}
 	else{
