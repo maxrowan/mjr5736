@@ -61,20 +61,20 @@ function getSearchResults( searchVars, sendTweets, socket ) {
 			eDate=new Date("2019-05-18T16:00:00Z").toISOString();
 		if(sDate == "")
 			sDate =new Date("2010-05-18T16:00:00Z").toISOString();
-		
+
 		console.log(eDate+	 " " + sDate+	 " " + city+	 " " + key)
 		collection.find(
 			//{"text":{$regex: "(.*snow*.|rain)"}},
 			{
 				$and:
-					[    
+					[
 						{ "place.full_name": { $regex: city } },
 						{ "text": { $regex: key } },
 						//{ "place.place_type": { $regex: "" } }
 						{"created_at": {
-							$gte: sDate,
-							$lte: eDate
-						}}
+								$gte: sDate,
+								$lte: eDate
+							}}
 					]
 
 			}
@@ -94,32 +94,32 @@ function printRes( searchVars ) {
 		states = searchVars.states,
 		startDate = searchVars.startDate,
 		endDate = searchVars.endDate;
-	
+
 	let k = '',
 		c = '',
 		s = '';
-		console.log("date Starts here");
-		console.log(startDate);
-		var sdate = moment(startDate);
-		var edate = moment(endDate);
-		if(sdate.isValid())
-		{
-			sDate = new Date(startDate).toISOString();
+	console.log("date Starts here");
+	console.log(startDate);
+	var sdate = moment(startDate);
+	var edate = moment(endDate);
+	if(sdate.isValid())
+	{
+		sDate = new Date(startDate).toISOString();
 
-		}
-		else
-		{
-			sDate = "";
-		}
-		if(edate.isValid())
-		{
-			eDate = new Date(endDate).toISOString();
+	}
+	else
+	{
+		sDate = "";
+	}
+	if(edate.isValid())
+	{
+		eDate = new Date(endDate).toISOString();
 
-		}	
-		else
-		{
-			eDate = "";
-		}
+	}
+	else
+	{
+		eDate = "";
+	}
 	if ( keywords !== undefined )
 	{
 		k = keywords;
@@ -143,11 +143,11 @@ function printRes( searchVars ) {
 		if(s.length != 0 )
 		{	if(c != "")
 			cityStateForDB += "|" + c +")";
-			else
+		else
 			cityStateForDB += ")";
 		}
 		else
-		cityStateForDB = c;
+			cityStateForDB = c;
 
 	}
 	else{
